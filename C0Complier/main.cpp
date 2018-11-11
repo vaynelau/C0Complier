@@ -1,11 +1,10 @@
 #include <iostream>
 #include <cstdio>
+#include "my_header.h"
 using namespace std;
 
-int main()
+int main(void)
 {
-    int a = 0077;
-    printf("%d", a);
-
+    test();
     return 0;
 }
