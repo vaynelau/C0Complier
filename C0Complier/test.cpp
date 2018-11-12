@@ -1,21 +1,16 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <cstdio>
-
-using namespace std;
-
-const int _ = 1, MAXN = 100;
+const int _ = 1;
+const int __2 = 2, __3 = 3;
 const char add = '+', sub = '-', mul = '*', _div = '/';
 
 int n, m;
 int fibo[100], num[100];
-char str[100];
+char str[1000];
 
 void init_fibo()
 {
     int i;
     i = 0;
-    while (i < MAXN) {
+    while (i < MAX_FIBO) {
         fibo[i] = 0;
         i = i + 1;
     }
@@ -96,28 +91,28 @@ void strrev(int i, int j)
     }
 }
 
-int test()
+void main()
 {
     int result;
     int a, b;
     int i, tmp;
 
-    printf("test start:\n");
-    printf("test calculate:\n");
+    printf("test start:");
+    printf("test calculate:");
     a = -123 * 456 + -987 / +321 * (2 - 1);
     b = (-a + -0 * 156) / 123;
-    printf("a: %d\n", a);
-    printf("b: %d\n", b);
+    printf("a: ", a);
+    printf("b: ", b);
     result = calculate(a, b, add);
-    printf("a b add: %d\n", result);
+    printf("a b add: ", result);
     result = calculate(a, b, sub);
-    printf("a b sub: %d\n", result);
+    printf("a b sub: ", result);
     result = calculate(a, b, mul);
-    printf("a b mul: %d\n", result);
+    printf("a b mul: ", result);
     result = calculate(a, b, _div);
-    printf("a b div: %d\n", result);
+    printf("a b div: ", result);
 
-    printf("test strrev:\n");
+    printf("test strrev:");
     str[0] = 'H';
     str[1] = 'e';
     str[2] = 'l';
@@ -130,35 +125,34 @@ int test()
     strrev(0, 8);
     i = 0;
     while (i < 9) {
-        printf("%c\n", str[i]);
+        printf(str[i]);
         i = i + 1;
     }
 
-
-    printf("Please input n, m:\n");
-    scanf("%d %d", &n, &m);
-    printf("test factorial n: %d\n", factorial(n));
+    printf("Please input n, m:");
+    scanf(n, m);
+    printf("test factorial n: ", factorial(n));
 
     init_fibo();
-    printf("test fibonacci m: %d\n", fibonacci(m));
+    printf("test fibonacci m: ", fibonacci(m));
 
 
-    printf("Please input 10 numbers:\n");
+    printf("Please input 10 numbers:");
     i = 0;
     while (i < 10) {
-        scanf("%d", &tmp);
+        scanf(tmp);
         num[i] = tmp;
         i = i + 1;
     }
     sort(0, 9);
-    printf("test sort:\n");
+    printf("test sort:");
     i = 0;
     while (i < 10) {
-        printf("%d\n", num[i]);
+        printf(num[i]);
         i = i + 1;
     };
 
     printf("test finished.");
 
-    return 0;
+    return;
 }
