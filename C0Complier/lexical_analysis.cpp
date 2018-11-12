@@ -66,7 +66,9 @@ void setup(FILE *in)
 
 void error()
 {
-
+    printf("error.\n");
+    fclose(psin);
+    exit(1);
 }
 
 void nextch()
