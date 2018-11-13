@@ -1,5 +1,5 @@
-#ifndef __LEXICAL_ANALYSIS_H__
-#define __LEXICAL_ANALYSIS_H__
+#ifndef _LEXICAL_ANALYSIS_H_
+#define _LEXICAL_ANALYSIS_H_
 
 #include <cstdio>
 
@@ -19,4 +19,4 @@ void setup(FILE *in);
 void insymbol();
 void printsymbol();
 
-#endif // !__LEXICAL_ANALYSIS_H__
+#endif // !_LEXICAL_ANALYSIS_H_

@@ -213,10 +213,10 @@ void printsymbol()
         printf("%-3d %-10s %d\n", ++cnt, symstr[sy], inum);
         break;
     case charcon:
-        printf("%-3d %-10s %c\n", ++cnt, symstr[sy], inum);
+        printf("%-3d %-10s \'%c\'(%d)\n", ++cnt, symstr[sy], inum, inum);
         break;
     case stringcon:
-        printf("%-3d %-10s %s (length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
+        printf("%-3d %-10s \"%s\"(length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
         break;
     default:
         printf("%-3d %-10s %s\n", ++cnt, symstr[sy], id.c_str());
