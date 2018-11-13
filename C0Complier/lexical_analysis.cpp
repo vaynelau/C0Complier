@@ -10,7 +10,7 @@ using namespace std;
 
 FILE *psin; //源代码文件指针
 
-char ch; //记录当前从源程序中读取的一个字符
+char ch; //记录从源程序中读取的上一个字符
 string id; //记录标识符的名字或特殊符号
 symbol sy; //记录当前单词符号的类型
 int inum; //记录整数常量或字符常量的值
@@ -20,9 +20,11 @@ map<string, symbol> ksy; //保留字表
 map<char, symbol> sps; //特殊字符表
 vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
-int cnt; //统计已分析的单词个数
+int sycnt; //统计已分析的单词个数
+int lcnt, chcnt; // 记录当前字符所在的行数和列数
+bool errflag;
 
-const char *symstr[] = { //单词类别码对应的助记符
+const char *symstr[] = { //单词类别码对应的助记符，顺序应该与symbol成员定义的顺序一致
     "intcon", "charcon", "stringcon",
     "plus", "minus", "times", "idiv",
     "eql", "neq", "gtr", "geq", "lss", "leq",
@@ -30,15 +32,17 @@ const char *symstr[] = { //单词类别码对应的助记符
     "comma", "semicolon", "colon", "becomes",
     "ident", "mainsy", "scanfsy", "printfsy",
     "constsy", "returnsy", "intsy", "charsy", "voidsy",
-    "ifsy", "switchsy", "casesy", "defaultsy", "whilesy" 
+    "ifsy", "switchsy", "casesy", "defaultsy", "whilesy"
 };
 
 void setup(FILE *in)
 {
-    psin = in; 
+    psin = in;
     sx = -1;
     ch = ' ';
-    cnt = 0;
+    sycnt = 0;
+    lcnt = 1;
+    chcnt = 0;
 
     ksy["const"] = constsy;
     ksy["if"] = ifsy;
@@ -69,33 +73,90 @@ void setup(FILE *in)
     sps[':'] = colon;
 }
 
+
 void nextch()
 {
-    do {
-        ch = fgetc(psin);
-        if (ch == EOF) {
-            fclose(psin);
-            exit(0);
-        }
-    } while (ch == '\n');
+    static bool eofflag = false, eolnflag = false;
+
+    if (eofflag) {
+        exit(0);
+    }
+    else if (eolnflag) {
+        lcnt++;
+        chcnt = 0;
+        eolnflag = false;
+    }
+
+    ch = fgetc(psin);
+    chcnt++;
+    if (ch == EOF) {
+        eofflag = true;
+    }
+    else if (ch == '\n') {
+        eolnflag = true;
+    }
 }
 
-void error()
+void error(int n)
 {
-    printf("Lexical Analysis Error.\n");
-    fclose(psin);
-    exit(1);
+    errflag = true;
+    printf("%s:%d:%d: error: ", sourcefile.c_str(), lcnt, chcnt);
+    switch (n) {
+    case 0:
+        puts("illegal integer constant with a leading '0'");
+        break;
+    case 1:
+        printf("illegal character constant '%c'\n", ch);
+        nextch();
+        break;
+    case 2:
+        puts("missing terminating ' character");
+        nextch();
+        break;
+    case 3:
+        puts("missing terminating \" character");
+        nextch();
+        break;
+    case 4:
+        puts("illegal symbol '!' in program");
+        break;
+    case 5:
+        printf("illegal symbol '%c' in program\n", ch);
+        nextch();
+        break;
+    default:
+        break;
+    }
+}
+
+void printsymbol()
+{
+    switch (sy) {
+    case intcon:
+        printf("%-3d %-10s %d\n", ++sycnt, symstr[sy], inum);
+        break;
+    case charcon:
+        printf("%-3d %-10s \'%c\'(%d)\n", ++sycnt, symstr[sy], inum, inum);
+        break;
+    case stringcon:
+        printf("%-3d %-10s \"%s\"(length: %d)\n", ++sycnt, symstr[sy], stab[inum].c_str(), sleng);
+        break;
+    default:
+        printf("%-3d %-10s %s\n", ++sycnt, symstr[sy], id.c_str());
+        break;
+    }
 }
 
 void insymbol()
 {
     int k = 0;
     id.clear();
+    errflag = false;
 
-    while (ch==' ' || ch == '\t') {
+    while (ch == ' ' || ch == '\t' || ch == '\n' || ch == EOF) {
         nextch();
     }
-    
+
     if (isalpha(ch) || ch == '_') { //标识符或保留字
         do {
             id += ch;
@@ -109,13 +170,25 @@ void insymbol()
             sy = ident;
         }
     }
-    else if (isdigit(ch)) { //整数常量
-        inum = 0;
-        sy = intcon;
-        do {
-            inum = inum * 10 + ch - '0';
+    else if (isdigit(ch)) { //无符号整数常量
+        if (ch != '0') {
+            inum = 0;
+            sy = intcon;
+            do {
+                inum = inum * 10 + ch - '0';
+                nextch();
+            } while (isdigit(ch));
+        }
+        else {
             nextch();
-        } while (isdigit(ch));
+            if (isdigit(ch)) {
+                error(0); //整数前导零错误
+            }
+            else {
+                inum = 0;
+                sy = intcon;
+            }
+        }
     }
     else if (ch == '\'') { //字符常量
         nextch();
@@ -127,26 +200,37 @@ void insymbol()
                 nextch();
             }
             else {
-                error();
+                error(2); //字符常量后无单引号
             }
         }
         else {
-            error();
+            error(1);  //不合法的字符常量错误
         }
     }
     else if (ch == '\"') { //字符串字面量
         k = 0;
         nextch();
         while (ch != '\"') {
-            id += ch;
-            k++;
+            if (ch >= 32 && ch <= 126) {
+                id += ch;
+                k++;
+                nextch();
+            }
+            else {
+                errflag = true;
+                break;
+            }
+        }
+        if (!errflag) {
+            sy = stringcon;
+            stab.push_back(id);
+            inum = ++sx;
+            sleng = k;
             nextch();
         }
-        sy = stringcon;
-        stab.push_back(id);
-        inum = ++sx;
-        sleng = k;
-        nextch();
+        else {
+            error(3); //字符串中含有非法字符
+        }
     }
     else if (ch == '>') { //大于号，大于等于号
         id += ch;
@@ -193,33 +277,19 @@ void insymbol()
             nextch();
         }
         else {
-            error();
+            error(4); //不合法的特殊符号
         }
     }
     else if (sps.count(ch)) { //其他合法的特殊符号
-        id += ch; 
+        id += ch;
         sy = sps[ch];
         nextch();
     }
     else {
-        error();
+        error(5); //不合法的特殊符号
     }
-}
 
-void printsymbol()
-{
-    switch (sy) {
-    case intcon:
-        printf("%-3d %-10s %d\n", ++cnt, symstr[sy], inum);
-        break;
-    case charcon:
-        printf("%-3d %-10s \'%c\'(%d)\n", ++cnt, symstr[sy], inum, inum);
-        break;
-    case stringcon:
-        printf("%-3d %-10s \"%s\"(length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
-        break;
-    default:
-        printf("%-3d %-10s %s\n", ++cnt, symstr[sy], id.c_str());
-        break;
+    if (!errflag) {
+        //printsymbol();
     }
 }

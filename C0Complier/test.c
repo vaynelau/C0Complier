@@ -1,6 +1,6 @@
-const int _ = 1;
-const int __2 = 2, __3 = 3;
-const char add = '+', sub = '-', mul = '*', _div = '/';
+const@ int _ = 1;
+const int __2 = 2, __3 = 003;
+const char add = '@', sub = '-', mul = '*', _div = '/';
 const int MAX_FIBO = 100;
 
 int n, m;
@@ -153,7 +153,7 @@ void main()
         i = i + 1;
     };
 
-    printf("test finished.");
+    printf("test\finished.");
 
     return;
 }

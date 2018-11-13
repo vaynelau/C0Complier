@@ -2,7 +2,9 @@
 #define _LEXICAL_ANALYSIS_H_
 
 #include <cstdio>
+#include <string>
 
+using namespace std;
 
 typedef enum symbol {
     intcon, charcon, stringcon, //ÕûÊý  ×Ö·û  ×Ö·û´®
@@ -14,6 +16,8 @@ typedef enum symbol {
     constsy, returnsy, intsy, charsy, voidsy, 
     ifsy, switchsy, casesy, defaultsy, whilesy
 } symbol;
+
+extern string sourcefile;
 
 void setup(FILE *in);
 void insymbol();
