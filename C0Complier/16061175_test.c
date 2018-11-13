@@ -1,6 +1,7 @@
 const int _ = 1;
 const int __2 = 2, __3 = 3;
 const char add = '+', sub = '-', mul = '*', _div = '/';
+const int MAX_FIBO = 100;
 
 int n, m;
 int fibo[100], num[100];
@@ -19,13 +20,13 @@ void init_fibo()
 int fibonacci(int n)
 {
     switch (n) {
-    case 0: return (0);
-    case 1: return (1);
-    default: {
-        if (fibo[n] == 0)
-            fibo[n] = fibonacci(n - 1) + fibonacci(n - 2);
-        return (fibo[n]);
-    }
+        case 0: return (0);
+        case 1: return (1);
+        default: {
+            if (fibo[n] == 0)
+                fibo[n] = fibonacci(n - 1) + fibonacci(n - 2);
+            return (fibo[n]);
+        }
     }
 }
 
@@ -70,10 +71,10 @@ void sort(int left, int right)
 int calculate(int a, int b, char op)
 {
     switch (op) {
-    case '+': return (a + b);
-    case '-': return (a - b);
-    case '*': return (a * b);
-    case '/': return (a / b);
+        case '+': return (a + b);
+        case '-': return (a - b);
+        case '*': return (a * b);
+        case '/': return (a / b);
     }
     return (0);
 }

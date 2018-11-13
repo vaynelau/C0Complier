@@ -5,29 +5,31 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "my_header.h"
+#include "lexical_analysis.h"
 using namespace std;
 
-FILE *psin;
-char ch;
+FILE *psin; //源代码文件指针
 
-string id;
-symbol sy;
-int inum, sleng;
+char ch; //记录当前从源程序中读取的一个字符
+string id; //记录标识符的名字或特殊符号
+symbol sy; //记录当前单词符号的类型
+int inum; //记录整数常量或字符常量的值
+int sleng; //记录字符串长度
 
-map<string, symbol> ksy;
-map<char, symbol> sps;
-vector<string> stab;
-int sx;
+map<string, symbol> ksy; //保留字表
+map<char, symbol> sps; //特殊字符表
+vector<string> stab; //字符串常量表
+int sx; //字符串常量表索引
+int cnt; //统计已分析的单词个数
 
-const char *symstr[] = {
+const char *symstr[] = { //单词类别码对应的助记符
     "intcon", "charcon", "stringcon",
     "_plus", "_minus", "times", "idiv",
     "eql", "neq", "gtr", "geq", "lss", "leq",
     "lparent", "rparent", "lbracket", "rbracket", "lbrace", "rbrace",
     "comma", "semicolon", "colon", "becomes",
-    "ident",
-    "constsy", "intsy", "charsy", "voidsy", "mainsy", "returnsy",
+    "ident", "mainsy", "scanfsy", "printfsy",
+    "constsy", "returnsy", "intsy", "charsy", "voidsy",
     "ifsy", "switchsy", "casesy", "defaultsy", "whilesy" 
 };
 
@@ -36,6 +38,7 @@ void setup(FILE *in)
     psin = in; 
     sx = -1;
     ch = ' ';
+    cnt = 0;
 
     ksy["const"] = constsy;
     ksy["if"] = ifsy;
@@ -47,7 +50,9 @@ void setup(FILE *in)
     ksy["int"] = intsy;
     ksy["char"] = charsy;
     ksy["void"] = voidsy;
-    //ksy["main"] = mainsy;
+    ksy["main"] = mainsy;
+    ksy["scanf"] = scanfsy;
+    ksy["printf"] = printfsy;
 
     sps['+'] = _plus;
     sps['-'] = _minus;
@@ -64,13 +69,6 @@ void setup(FILE *in)
     sps[':'] = colon;
 }
 
-void error()
-{
-    printf("error.\n");
-    fclose(psin);
-    exit(1);
-}
-
 void nextch()
 {
     do {
@@ -82,44 +80,62 @@ void nextch()
     } while (ch == '\n');
 }
 
+void printsy()
+{
+    switch (sy) {
+    case intcon:
+        printf("%-3d %-10s %d\n", ++cnt, symstr[sy], inum);
+        break;
+    case charcon:
+        printf("%-3d %-10s %c\n", ++cnt, symstr[sy], inum);
+        break;
+    case stringcon:
+        printf("%-3d %-10s %s (length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
+        break;
+    default:
+        printf("%-3d %-10s %s\n", ++cnt, symstr[sy], id.c_str());
+        break;
+    }
+}
+
+void error()
+{
+    printf("Lexical Analysis Error.\n");
+    fclose(psin);
+    exit(1);
+}
+
 void insymbol()
 {
-    int k;
+    int k = 0;
+    id.clear();
 
     while (ch==' ' || ch == '\t') {
         nextch();
     }
     
-    if (isalpha(ch) || ch == '_') {
-        id.clear();
+    if (isalpha(ch) || ch == '_') { //标识符或保留字
         do {
             id += ch;
             nextch();
         } while (isalnum(ch) || ch == '_');
-        
+
         if (ksy.count(id)) {
             sy = ksy[id];
-            
         }
         else {
             sy = ident;
         }
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-    
-    if (isdigit(ch)) {
+    else if (isdigit(ch)) { //整数常量
         inum = 0;
         sy = intcon;
         do {
             inum = inum * 10 + ch - '0';
             nextch();
         } while (isdigit(ch));
-        printf("%s: %d\n", symstr[sy], inum);
-        return;
     }
-
-    if (ch == '\'') {
+    else if (ch == '\'') { //字符常量
         nextch();
         if (isalnum(ch) || ch == '_' || ch == '+' || ch == '-' || ch == '*' || ch == '/') {
             inum = (int)ch;
@@ -135,31 +151,22 @@ void insymbol()
         else {
             error();
         }
-        printf("%s: %c\n", symstr[sy], inum);
-        return;
     }
-
-    if (ch == '\"') {
+    else if (ch == '\"') { //字符串字面量
         k = 0;
-        id.clear();
         nextch();
         while (ch != '\"') {
             id += ch;
             k++;
             nextch();
         }
-        
         sy = stringcon;
         stab.push_back(id);
         inum = ++sx;
         sleng = k;
         nextch();
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-
-    if (ch == '>') {
-        id.clear();
+    else if (ch == '>') { //大于号，大于等于号
         id += ch;
         nextch();
         if (ch == '=') {
@@ -170,12 +177,8 @@ void insymbol()
         else {
             sy = gtr;
         }
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-
-    if (ch == '<') {
-        id.clear();
+    else if (ch == '<') { //小于号，小于等于号
         id += ch;
         nextch();
         if (ch == '=') {
@@ -186,12 +189,8 @@ void insymbol()
         else {
             sy = lss;
         }
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-
-    if (ch == '=') {
-        id.clear();
+    else if (ch == '=') { //赋值符号，等于号
         id += ch;
         nextch();
         if (ch == '=') {
@@ -202,12 +201,8 @@ void insymbol()
         else {
             sy = becomes;
         }
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-
-    if (ch == '!') {
-        id.clear();
+    else if (ch == '!') { //不等号
         id += ch;
         nextch();
         if (ch == '=') {
@@ -218,18 +213,17 @@ void insymbol()
         else {
             error();
         }
-        printf("%s: %s\n", symstr[sy], id.c_str());
-        return;
     }
-
-    if (sps.count(ch)) {
+    else if (sps.count(ch)) { //其他合法的特殊符号
+        id += ch; 
         sy = sps[ch];
-        printf("%s: %c\n", symstr[sy], ch);
         nextch();
-        return;
+    }
+    else {
+        error();
     }
 
-    error();
+    printsy();
 }
 
 

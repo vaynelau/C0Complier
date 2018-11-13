@@ -1,7 +1,8 @@
-#pragma once
-#ifndef MY_HEADER
+#ifndef __LEXICAL_ANALYSIS_H__
+#define __LEXICAL_ANALYSIS_H__
 
-#define MY_HEADER
+#include <cstdio>
+
 
 typedef enum symbol {
     intcon, charcon, stringcon, //ÕûÊý  ×Ö·û  ×Ö·û´®
@@ -9,13 +10,12 @@ typedef enum symbol {
     eql, neq, gtr, geq, lss, leq, //==  !=  >  >=  <  <=
     lparent, rparent, lbracket, rbracket, lbrace, rbrace, //( ) [ ] { } 
     comma, semicolon, colon, becomes, //, ; : =  
-    ident,
-    constsy, intsy, charsy, voidsy, mainsy, returnsy,
+    ident, mainsy, scanfsy, printfsy,
+    constsy, returnsy, intsy, charsy, voidsy, 
     ifsy, switchsy, casesy, defaultsy, whilesy
-
 } symbol;
 
 void setup(FILE *in);
 void insymbol();
 
-#endif // !MY_HEADER
+#endif // !__LEXICAL_ANALYSIS_H__

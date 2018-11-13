@@ -23,7 +23,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="my_header.h">
+    <ClInclude Include="lexical_analysis.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
