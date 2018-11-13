@@ -10,6 +10,7 @@ int main(void)
     setup(in);
     while (true) {
         insymbol();
+        printsymbol();
     }
     return 0;
 }

@@ -17,5 +17,6 @@ typedef enum symbol {
 
 void setup(FILE *in);
 void insymbol();
+void printsymbol();
 
 #endif // !__LEXICAL_ANALYSIS_H__

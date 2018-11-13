@@ -24,7 +24,7 @@ int cnt; //统计已分析的单词个数
 
 const char *symstr[] = { //单词类别码对应的助记符
     "intcon", "charcon", "stringcon",
-    "_plus", "_minus", "times", "idiv",
+    "plus", "minus", "times", "idiv",
     "eql", "neq", "gtr", "geq", "lss", "leq",
     "lparent", "rparent", "lbracket", "rbracket", "lbrace", "rbrace",
     "comma", "semicolon", "colon", "becomes",
@@ -78,24 +78,6 @@ void nextch()
             exit(0);
         }
     } while (ch == '\n');
-}
-
-void printsy()
-{
-    switch (sy) {
-    case intcon:
-        printf("%-3d %-10s %d\n", ++cnt, symstr[sy], inum);
-        break;
-    case charcon:
-        printf("%-3d %-10s %c\n", ++cnt, symstr[sy], inum);
-        break;
-    case stringcon:
-        printf("%-3d %-10s %s (length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
-        break;
-    default:
-        printf("%-3d %-10s %s\n", ++cnt, symstr[sy], id.c_str());
-        break;
-    }
 }
 
 void error()
@@ -222,8 +204,22 @@ void insymbol()
     else {
         error();
     }
-
-    printsy();
 }
 
-
+void printsymbol()
+{
+    switch (sy) {
+    case intcon:
+        printf("%-3d %-10s %d\n", ++cnt, symstr[sy], inum);
+        break;
+    case charcon:
+        printf("%-3d %-10s %c\n", ++cnt, symstr[sy], inum);
+        break;
+    case stringcon:
+        printf("%-3d %-10s %s (length: %d)\n", ++cnt, symstr[sy], stab[inum].c_str(), sleng);
+        break;
+    default:
+        printf("%-3d %-10s %s\n", ++cnt, symstr[sy], id.c_str());
+        break;
+    }
+}
