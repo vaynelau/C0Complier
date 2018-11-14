@@ -22,7 +22,7 @@ vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 int sycnt; //统计已分析的单词个数
 int lcnt, chcnt; // 记录当前字符所在的行数和列数
-bool errflag;
+bool errflag; //标记是否发生错误
 
 const char *symstr[] = { //单词类别码对应的助记符，顺序应该与symbol成员定义的顺序一致
     "intcon", "charcon", "stringcon",
@@ -102,26 +102,23 @@ void error(int n)
     errflag = true;
     printf("%s:%d:%d: error: ", sourcefile.c_str(), lcnt, chcnt);
     switch (n) {
-    case 0:
-        puts("illegal integer constant with a leading '0'");
-        break;
+        //case 0:
+            //puts("illegal integer constant with a leading '0'");
+        //    break;
     case 1:
         printf("illegal character constant '%c'\n", ch);
-        nextch();
         break;
     case 2:
         puts("missing terminating ' character");
-        nextch();
         break;
     case 3:
         puts("missing terminating \" character");
-        nextch();
         break;
     case 4:
-        puts("illegal symbol '!' in program");
+        puts("illegal '!' in program");
         break;
     case 5:
-        printf("illegal symbol '%c' in program\n", ch);
+        printf("illegal '%c' in program\n", ch);
         nextch();
         break;
     default:
@@ -133,16 +130,16 @@ void printsymbol()
 {
     switch (sy) {
     case intcon:
-        printf("%-3d %-10s %d\n", ++sycnt, symstr[sy], inum);
+        printf("%-4d %-10s %d\n", ++sycnt, symstr[sy], inum);
         break;
     case charcon:
-        printf("%-3d %-10s \'%c\'(%d)\n", ++sycnt, symstr[sy], inum, inum);
+        printf("%-4d %-10s \'%c\'\n", ++sycnt, symstr[sy], inum);
         break;
     case stringcon:
-        printf("%-3d %-10s \"%s\"(length: %d)\n", ++sycnt, symstr[sy], stab[inum].c_str(), sleng);
+        printf("%-4d %-10s \"%s\"\n", ++sycnt, symstr[sy], stab[inum].c_str());
         break;
     default:
-        printf("%-3d %-10s %s\n", ++sycnt, symstr[sy], id.c_str());
+        printf("%-4d %-10s %s\n", ++sycnt, symstr[sy], id.c_str());
         break;
     }
 }
@@ -171,40 +168,33 @@ void insymbol()
         }
     }
     else if (isdigit(ch)) { //无符号整数常量
-        if (ch != '0') {
-            inum = 0;
-            sy = intcon;
+        inum = 0;
+        sy = intcon;
+        if (ch == '0') {
+            nextch();
+        }
+        else {
             do {
                 inum = inum * 10 + ch - '0';
                 nextch();
             } while (isdigit(ch));
-        }
-        else {
-            nextch();
-            if (isdigit(ch)) {
-                error(0); //整数前导零错误
-            }
-            else {
-                inum = 0;
-                sy = intcon;
-            }
         }
     }
     else if (ch == '\'') { //字符常量
         nextch();
         if (isalnum(ch) || ch == '_' || ch == '+' || ch == '-' || ch == '*' || ch == '/') {
             inum = (int)ch;
-            nextch();
-            if (ch == '\'') {
-                sy = charcon;
-                nextch();
-            }
-            else {
-                error(2); //字符常量后无单引号
-            }
+            sy = charcon;
         }
         else {
-            error(1);  //不合法的字符常量错误
+            error(1);  //不合法的字符常量
+        }
+        nextch();
+        if (ch == '\'') {
+            nextch();
+        }
+        else {
+            error(2); //字符常量后无单引号
         }
     }
     else if (ch == '\"') { //字符串字面量
@@ -229,7 +219,7 @@ void insymbol()
             nextch();
         }
         else {
-            error(3); //字符串中含有非法字符
+            error(3); //字符串不以双引号结束
         }
     }
     else if (ch == '>') { //大于号，大于等于号
@@ -277,7 +267,7 @@ void insymbol()
             nextch();
         }
         else {
-            error(4); //不合法的特殊符号
+            error(4); //不合法的特殊符号'!'
         }
     }
     else if (sps.count(ch)) { //其他合法的特殊符号
@@ -290,6 +280,6 @@ void insymbol()
     }
 
     if (!errflag) {
-        //printsymbol();
+        printsymbol();
     }
 }
