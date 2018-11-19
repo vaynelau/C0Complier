@@ -1,8 +1,9 @@
 #ifndef _TABS_H_
 #define _TABS_H_
 #include <string>
-#include <vector>
 #include <map>
+#include <vector>
+
 using namespace std;
 
 typedef enum symbol {

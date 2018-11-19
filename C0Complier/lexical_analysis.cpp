@@ -1,6 +1,13 @@
+#include <iostream>
+#include <cstdio>
+#include <string>
+#include <map>
+#include <vector>
 #include "lexical_analysis.h"
 #include "error.h"
 #include "tabs.h"
+
+using namespace std;
 
 char ch; //¼ÇÂ¼´ÓÔ´³ÌĞòÖĞ¶ÁÈ¡µÄÉÏÒ»¸ö×Ö·û
 string id; //¼ÇÂ¼±êÊ¶·ûµÄÃû×Ö»òÌØÊâ·ûºÅ
@@ -24,43 +31,13 @@ const char *symstr[] = { //µ¥´ÊÀà±ğÂë¶ÔÓ¦µÄÖú¼Ç·û£¬Ë³ĞòÓ¦¸ÃÓësymbol³ÉÔ±¶¨ÒåµÄË³Ğ
     "ifsy", "switchsy", "casesy", "defaultsy", "whilesy"
 };
 
-void setup()
+void lexcial_init()
 {
-    sx = -1;
     ch = ' ';
     sycnt = 0;
     lcnt = 1;
     chcnt = 0;
-
-    ksy["const"] = constsy;
-    ksy["if"] = ifsy;
-    ksy["switch"] = switchsy;
-    ksy["case"] = casesy;
-    ksy["default"] = defaultsy;
-    ksy["while"] = whilesy;
-    ksy["return"] = returnsy;
-    ksy["int"] = intsy;
-    ksy["char"] = charsy;
-    ksy["void"] = voidsy;
-    ksy["main"] = mainsy;
-    ksy["scanf"] = scanfsy;
-    ksy["printf"] = printfsy;
-
-    sps['+'] = _plus;
-    sps['-'] = _minus;
-    sps['*'] = times;
-    sps['/'] = idiv;
-    sps['('] = lparent;
-    sps[')'] = rparent;
-    sps['['] = lbracket;
-    sps[']'] = rbracket;
-    sps['{'] = lbrace;
-    sps['}'] = rbrace;
-    sps[','] = comma;
-    sps[';'] = semicolon;
-    sps[':'] = colon;
 }
-
 
 void nextch()
 {
