@@ -1,25 +1,20 @@
 #ifndef _LEXICAL_ANALYSIS_H_
 #define _LEXICAL_ANALYSIS_H_
-
+#include <iostream>
 #include <cstdio>
 #include <string>
+#include <map>
+#include <vector>
 
 using namespace std;
 
-typedef enum symbol {
-    intcon, charcon, stringcon, //整数  字符  字符串
-    _plus, _minus, times, idiv, //+  -  *  /
-    eql, neq, gtr, geq, lss, leq, //==  !=  >  >=  <  <=
-    lparent, rparent, lbracket, rbracket, lbrace, rbrace, //( ) [ ] { } 
-    comma, semicolon, colon, becomes, //, ; : =  
-    ident, mainsy, scanfsy, printfsy,
-    constsy, returnsy, intsy, charsy, voidsy, 
-    ifsy, switchsy, casesy, defaultsy, whilesy
-} symbol;
+extern string sourcefilename;
+extern FILE *psin;
+extern char ch;
+extern int lcnt, chcnt; // 记录当前字符所在的行数和列数
 
-extern string sourcefile;
-
-void setup(FILE *in);
+void setup();
+void nextch();
 void insymbol();
 void printsymbol();
 

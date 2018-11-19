@@ -21,9 +21,24 @@
     <ClCompile Include="lexical_analysis.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="syntax_analysis.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="error.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexical_analysis.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="syntax_analysis.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tabs.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

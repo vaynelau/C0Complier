@@ -1,14 +1,6 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cctype>
-#include <string>
-#include <map>
-#include <vector>
 #include "lexical_analysis.h"
-using namespace std;
-
-FILE *psin; //Ô´´úÂëÎÄ¼şÖ¸Õë
+#include "error.h"
+#include "tabs.h"
 
 char ch; //¼ÇÂ¼´ÓÔ´³ÌĞòÖĞ¶ÁÈ¡µÄÉÏÒ»¸ö×Ö·û
 string id; //¼ÇÂ¼±êÊ¶·ûµÄÃû×Ö»òÌØÊâ·ûºÅ
@@ -16,13 +8,10 @@ symbol sy; //¼ÇÂ¼µ±Ç°µ¥´Ê·ûºÅµÄÀàĞÍ
 int inum; //¼ÇÂ¼ÕûÊı³£Á¿»ò×Ö·û³£Á¿µÄÖµ
 int sleng; //¼ÇÂ¼×Ö·û´®³¤¶È
 
-map<string, symbol> ksy; //±£Áô×Ö±í
-map<char, symbol> sps; //ÌØÊâ×Ö·û±í
-vector<string> stab; //×Ö·û´®³£Á¿±í
-int sx; //×Ö·û´®³£Á¿±íË÷Òı
 int sycnt; //Í³¼ÆÒÑ·ÖÎöµÄµ¥´Ê¸öÊı
 int lcnt, chcnt; // ¼ÇÂ¼µ±Ç°×Ö·ûËùÔÚµÄĞĞÊıºÍÁĞÊı
 bool errflag; //±ê¼ÇÊÇ·ñ·¢Éú´íÎó
+
 
 const char *symstr[] = { //µ¥´ÊÀà±ğÂë¶ÔÓ¦µÄÖú¼Ç·û£¬Ë³ĞòÓ¦¸ÃÓësymbol³ÉÔ±¶¨ÒåµÄË³ĞòÒ»ÖÂ
     "intcon", "charcon", "stringcon",
@@ -35,9 +24,8 @@ const char *symstr[] = { //µ¥´ÊÀà±ğÂë¶ÔÓ¦µÄÖú¼Ç·û£¬Ë³ĞòÓ¦¸ÃÓësymbol³ÉÔ±¶¨ÒåµÄË³Ğ
     "ifsy", "switchsy", "casesy", "defaultsy", "whilesy"
 };
 
-void setup(FILE *in)
+void setup()
 {
-    psin = in;
     sx = -1;
     ch = ' ';
     sycnt = 0;
@@ -97,34 +85,7 @@ void nextch()
     }
 }
 
-void error(int n)
-{
-    errflag = true;
-    printf("%s:%d:%d: error: ", sourcefile.c_str(), lcnt, chcnt);
-    switch (n) {
-        //case 0:
-            //puts("illegal integer constant with a leading '0'");
-        //    break;
-    case 1:
-        printf("illegal character constant '%c'\n", ch);
-        break;
-    case 2:
-        puts("missing terminating ' character");
-        break;
-    case 3:
-        puts("missing terminating \" character");
-        break;
-    case 4:
-        puts("illegal '!' in program");
-        break;
-    case 5:
-        printf("illegal '%c' in program\n", ch);
-        nextch();
-        break;
-    default:
-        break;
-    }
-}
+
 
 void printsymbol()
 {
@@ -277,9 +238,5 @@ void insymbol()
     }
     else {
         error(5); //²»ºÏ·¨µÄÌØÊâ·ûºÅ
-    }
-
-    if (!errflag) {
-        printsymbol();
     }
 }
