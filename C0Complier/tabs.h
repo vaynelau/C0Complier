@@ -14,18 +14,26 @@ typedef enum symbol {
     comma, semicolon, colon, becomes, //, ; : =  
     ident, mainsy, scanfsy, printfsy,
     constsy, returnsy, intsy, charsy, voidsy,
-    ifsy, switchsy, casesy, defaultsy, whilesy
+    ifsy, switchsy, casesy, defaultsy, whilesy, eofsy
 } symbol;
+
+typedef enum objtyp {
+    constant, variable, function
+} objtyp;
+
+typedef enum types {
+    notyp, ints, chars, arrints, arrchars, voids
+} types;
 
 typedef struct tabitem {//符号表
     string name;
     int link; //指向同一函数中上一个标识符在tab表中的位置
-    int obj; // 标识符种类：常量、变量、函数等
-    int typ; // 标识符类型：int型、char型、int数组型、char数组型、void型等
+    objtyp obj; // 标识符种类：常量、变量、函数等
+    types typ; // 标识符类型：int型、char型、int数组型、char数组型、void型等
+    int lev; // 标识符所在的静态层次，全局常量、变量或函数为0，局部常量、变量大于0
     int ref; //函数名：指向其在btab表中的指针值  
     int arrcnt; //数组元素个数
-    int adr; // 变量、形参：在运行栈s中的相对地址；过程名、函数名：相应目标代码的入口地址；整型常量：对应数值；
-    int lev; // 标识符所在的静态层次，全局常量、变量或函数为0，局部常量、变量为1
+    int adr; // 变量、形参：在运行栈s中的相对地址；函数名：相应目标代码的入口地址；整型常量：对应数值；
 } tabitem;
 
 typedef struct btabitem {

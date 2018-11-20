@@ -62,10 +62,11 @@ void setup()
 
 int main(int argc, char *argv[])
 {
+    int main;
     puts("Please input the source file name:");
     getline(cin, sourcefilename);
     if (sourcefilename.empty()) {
-        sourcefilename = "16061175_test.txt";
+        sourcefilename = "testcode.c";
     }
     psin = fopen(sourcefilename.c_str(), "r");
     setup();

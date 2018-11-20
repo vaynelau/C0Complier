@@ -1,11 +1,12 @@
+#include "lexical_analysis.h"
+#include "error.h"
+#include "tabs.h"
 #include <iostream>
 #include <cstdio>
 #include <string>
 #include <map>
 #include <vector>
-#include "lexical_analysis.h"
-#include "error.h"
-#include "tabs.h"
+
 
 using namespace std;
 
@@ -88,7 +89,7 @@ void insymbol()
     id.clear();
     errflag = false;
 
-    while (ch == ' ' || ch == '\t' || ch == '\n' || ch == EOF) {
+    while (ch == ' ' || ch == '\t' || ch == '\n') {
         nextch();
     }
 
@@ -212,6 +213,9 @@ void insymbol()
         id += ch;
         sy = sps[ch];
         nextch();
+    }
+    else if (ch == EOF) {
+        sy = eofsy;
     }
     else {
         error(5); //不合法的特殊符号
