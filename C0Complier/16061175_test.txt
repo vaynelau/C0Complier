@@ -53,10 +53,10 @@ void swap(int i, int j)
 
 void sort(int left, int right)
 {
+    int i, j;
     if (left >= right) {
         return;
     }
-    int i, j;
     i = left;
     j = left + 1;
     while (j <= right) {
@@ -119,6 +119,7 @@ void main()
     int result;
     int a, b;
     int i, tmp;
+    char c;
 
     printf("Test start:");
     printf("Test printf:");
@@ -143,8 +144,8 @@ void main()
     scanf(a);
     printf("int a is ", a);
     printf("Please input char x:");
-    scanf(x);
-    printf("char x is ", x);
+    scanf(c);
+    printf("char x is ", c);
 
     printf("Test charcomp:");
     i=1;

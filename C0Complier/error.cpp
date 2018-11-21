@@ -7,9 +7,9 @@ void error(int n)
 {
     printf("%s:%d:%d: error: ", sourcefilename.c_str(), lcnt, chcnt);
     switch (n) {
-        //case 0:
-            //puts("illegal integer constant with a leading '0'");
-        //    break;
+        case 0:
+            puts("Óï·¨·ÖÎö´íÎó");
+            break;
     case 1:
         printf("illegal character constant '%c'\n", ch);
         break;

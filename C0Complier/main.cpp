@@ -39,9 +39,9 @@ void setup()
     ksy["int"] = intsy;
     ksy["char"] = charsy;
     ksy["void"] = voidsy;
-    ksy["main"] = mainsy;
-    ksy["scanf"] = scanfsy;
-    ksy["printf"] = printfsy;
+    //ksy["main"] = mainsy;
+    //ksy["scanf"] = scanfsy;
+    //ksy["printf"] = printfsy;
 
     sps['+'] = _plus;
     sps['-'] = _minus;
@@ -62,11 +62,11 @@ void setup()
 
 int main(int argc, char *argv[])
 {
-    int main;
     puts("Please input the source file name:");
     getline(cin, sourcefilename);
     if (sourcefilename.empty()) {
-        sourcefilename = "testcode.c";
+        //sourcefilename = "testcode.c";
+        sourcefilename = "16061175_test.txt";
     }
     psin = fopen(sourcefilename.c_str(), "r");
     setup();

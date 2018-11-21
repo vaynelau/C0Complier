@@ -27,9 +27,9 @@ const char *symstr[] = { //µ¥´ÊÀà±ğÂë¶ÔÓ¦µÄÖú¼Ç·û£¬Ë³ĞòÓ¦¸ÃÓësymbol³ÉÔ±¶¨ÒåµÄË³Ğ
     "eql", "neq", "gtr", "geq", "lss", "leq",
     "lparent", "rparent", "lbracket", "rbracket", "lbrace", "rbrace",
     "comma", "semicolon", "colon", "becomes",
-    "ident", "mainsy", "scanfsy", "printfsy",
+    "ident", //"mainsy", "scanfsy", "printfsy",
     "constsy", "returnsy", "intsy", "charsy", "voidsy",
-    "ifsy", "switchsy", "casesy", "defaultsy", "whilesy"
+    "ifsy", "switchsy", "casesy", "defaultsy", "whilesy","eofsy"
 };
 
 void lexcial_init()
@@ -220,4 +220,5 @@ void insymbol()
     else {
         error(5); //²»ºÏ·¨µÄÌØÊâ·ûºÅ
     }
+    //printsymbol();
 }
