@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cstdio>
 #include <string>
 #include <map>
@@ -11,7 +10,9 @@
 
 using namespace std;
 
-int dx, prt, prb, level;
+int dx, prt;
+bool retflag;
+
 
 void constdef()
 {
@@ -22,7 +23,7 @@ void constdef()
         do {
             insymbol();
             if (sy == ident) {
-                enter(id, constant, ints, 0);
+                tab_enter(id, constant, ints, 0);
                 insymbol();
                 if (sy == becomes) {
                     insymbol();
@@ -51,7 +52,7 @@ void constdef()
         do {
             insymbol();
             if (sy == ident) {
-                enter(id, constant, chars, 0);
+                tab_enter(id, constant, chars, 0);
                 insymbol();
                 if (sy == becomes) {
                     insymbol();
@@ -93,7 +94,8 @@ void vardef(types typ, string name)
         insymbol();
         if (sy == intcon) {
             if (inum > 0) {
-                enter(name, arrays, typ, inum);
+                tab_enter(name, arrays, typ, dx);
+                dx += (typ == ints) ? (inum * 4) : inum;
             }
             else {
                 error(10);//数组元素个数不大于0
@@ -111,7 +113,8 @@ void vardef(types typ, string name)
         }
     }
     else {
-        enter(name, variable, typ, 0);
+        tab_enter(name, variable, typ, dx);
+        dx += (typ == ints) ? 4 : 1;
     }
 
     while (sy == comma) {
@@ -123,7 +126,8 @@ void vardef(types typ, string name)
                 insymbol();
                 if (sy == intcon) {
                     if (inum > 0) {
-                        enter(name, arrays, typ, inum);
+                        tab_enter(name, arrays, typ, dx);
+                        dx += (typ == ints) ? (inum * 4) : inum;
                     }
                     else {
                         error(10);//数组元素个数不大于0
@@ -141,7 +145,8 @@ void vardef(types typ, string name)
                 }
             }
             else {
-                enter(name, variable, typ, 0);
+                tab_enter(name, variable, typ, dx);
+                dx += (typ == ints) ? 4 : 1;
             }
         }
         else {
@@ -258,6 +263,7 @@ types factor(int *value)
     return typ;
 }
 
+
 types term(int *value)
 {
     int val, tmp;
@@ -280,6 +286,7 @@ types term(int *value)
     printf("line %d: 这是一个项\n", lcnt);
     return typ;
 }
+
 
 types expression(int *value)
 {
@@ -316,6 +323,7 @@ types expression(int *value)
     }
 }
 
+
 void ifstatement()
 {
     insymbol();
@@ -350,6 +358,8 @@ void ifstatement()
     statement();
     printf("line %d: 这是一个条件语句\n", lcnt - 1);
 }
+
+
 void whilestatement()
 {
     insymbol();
@@ -384,6 +394,7 @@ void whilestatement()
     statement();
     printf("line %d: 这是一个循环语句\n", lcnt - 1);
 }
+
 
 void onecase(types typ)
 {
@@ -422,6 +433,7 @@ void onecase(types typ)
     statement();
     printf("line %d: 这是一个情况子语句\n", lcnt - 1);
 }
+
 
 void switchstatement()
 {
@@ -481,6 +493,7 @@ void returnstatement()
 {
     types typ = ints;
     int value;
+    retflag = true;
     insymbol();
     if (sy == lparent) {
         insymbol();
@@ -537,6 +550,7 @@ void assignment(int i)
     }
     printf("line %d: 这是一个赋值语句\n", lcnt);
 }
+
 
 void standfunc()
 {
@@ -607,36 +621,51 @@ void call(int i)
 
     insymbol();
     if (sy == lparent) {
-        do {
-            insymbol();
-            if (sy != rparent) {
-                cpos++;
-                typ = expression(&value);
-                if (cpos > lastp) {
-                    error(34); //实参过多
-                }
-                else {
-                    if (typ != tab[cpos].typ) {
-                        error(35);
-                    }
-                }
-            }
-        } while (sy == comma);
-        printf("line %d: 这是一个值参数表\n", lcnt);
+        insymbol();
     }
     else {
         error(26);
     }
 
+    if (sy != rparent) {
+        cpos++;
+        typ = expression(&value);
+        if (cpos > lastp) {
+            error(34); //实参过多
+        }
+        else {
+            if (typ != tab[cpos].typ) {
+                error(35);
+            }
+        }
+
+        while (sy == comma) {
+            insymbol();
+            cpos++;
+            typ = expression(&value);
+            if (cpos > lastp) {
+                error(34); //实参过多
+            }
+            else {
+                if (typ != tab[cpos].typ) {
+                    error(35);
+                }
+            }
+        
+        }
+    }
+    printf("line %d: 这是一个值参数表\n", lcnt);
+    
+    if (cpos < lastp) {
+        error(36); //实参过少
+    }
     if (sy == rparent) {
         insymbol();
     }
     else {
         error(14);
     }
-    if (cpos < lastp) {
-        error(36); //实参过少
-    }
+
     if (tab[i].typ == voids) {
         printf("line %d: 这是一个无返回值的函数调用语句\n", lcnt);
     }
@@ -743,6 +772,7 @@ void compoundstatement()
             error(6); //缺变量名标识符
         }
     }
+    btab[b].vsize = dx;
 
     while (statbegsys.count(sy)) {
         statement();//语句处理函数遇到分号读下一个字符
@@ -756,16 +786,16 @@ int paralist()
 {
     int paracnt = 0;
     types typ = ints;
-    do {
-        insymbol();
+
+    insymbol();
+
+    if (sy != rparent) {
         if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
             insymbol();
             if (sy == ident) {
-                enter(id, variable, typ, 0);
-                tab[t].adr = dx;
-                //dx += (typ == ints) ? 4 : 1;
-                dx += 4;
+                tab_enter(id, variable, typ, dx);
+                dx += (typ == ints) ? 4 : 1;
                 paracnt++;
                 insymbol();
             }
@@ -773,10 +803,32 @@ int paralist()
                 error(6); //缺少参数名标识符
             }
         }
-        else if (sy != rparent) {
+        else{
             error(9); //缺少参数类型标识符
         }
-    } while (sy == comma);
+
+        while (sy == comma) {
+            insymbol();
+            if (sy == intsy || sy == charsy) {
+                typ = (sy == intsy) ? ints : chars;
+                insymbol();
+                if (sy == ident) {
+                    tab_enter(id, variable, typ, dx);
+                    dx += (typ == ints) ? 4 : 1;
+                    paracnt++;
+                    insymbol();
+                }
+                else {
+                    error(6); //缺少参数名标识符
+                }
+            }
+            else if (sy != rparent) {
+                error(9); //缺少参数类型标识符
+            }
+        }
+
+    }
+
     if (sy == rparent) {
         insymbol();
     }
@@ -790,25 +842,19 @@ int paralist()
 
 bool funcdef(types typ, string name)
 {
-    enter(name, function, typ, 0);
-    dx = 0; //待改
+    int paracnt;
+    
+    btab_enter();
+    tab_enter(name, function, typ, 0);
+    tab[t].ref = b;
     prt = t;
 
-    ++b;
-    btabitem item;
-    item.last = 0;
-    item.lastpar = 0;
-    item.psize = 0;
-    item.vsize = 0;
-    btab.push_back(item);
-
-    prb = b;
-    tab[prt].ref = prb;
-    level = 1;
-    int paracnt = paralist();
+    dx = 0;
+    paracnt = paralist();
     btab[b].lastpar = t;
     btab[b].psize = dx;
-
+    
+    retflag = false;
     if (sy == lbrace) {
         insymbol();
         compoundstatement();
@@ -816,6 +862,11 @@ bool funcdef(types typ, string name)
     else {
         error(15);//缺复合语句的左大括号
     }
+
+    if (typ != voids && !retflag) {
+        error(39);//缺返回语句
+    }
+
     if (sy == rbrace) {
         insymbol();
     }
@@ -827,7 +878,7 @@ bool funcdef(types typ, string name)
         printf("line %d: 这是一个主函数的定义\n", lcnt);
         return true;
     }
-    if (typ == voids) {
+    else if (typ == voids) {
         printf("line %d: 这是一个无返回值函数的定义\n", lcnt - 1);
     }
     else {
@@ -836,39 +887,23 @@ bool funcdef(types typ, string name)
     return false;
 }
 
-void syntax_init()
-{
-    tabinit("", variable, voids, 0); //占位
-    tabinit("scanf", function, voids, 0);
-    tabinit("printf", function, voids, 0);
 
-    ++b;
-    btabitem item;
-    item.last = t;
-    item.lastpar = 0;
-    item.psize = 0;
-    item.vsize = 0;
-    btab.push_back(item);
-    
-    dx = 0; //待定
-    prt = t;
-    prb = b;
-    level = 0;
-}
-
-
-void program()
+void syntax_analysis()
 {
     bool funcflag = false;
     bool mainflag = false;
     string name;
     types typ = ints;
+    
+    btab_enter();
+    tab_enter("scanf", function, voids, 1);
+    tab_enter("printf", function, voids, 2);
 
+    dx = 0;
     insymbol();
     while (sy == constsy) {
         constdef();
     }
-
     while ((sy == intsy || sy == charsy || sy == voidsy) && !mainflag) {
         if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
@@ -877,6 +912,9 @@ void program()
                 name = id;
                 insymbol();
                 if (sy == lparent) {
+                    if (!funcflag) {
+                        btab[0].vsize = dx;
+                    }
                     funcflag = true;
                     funcdef(typ, name);
                 }
@@ -897,6 +935,9 @@ void program()
                 name = id;
                 insymbol();
                 if (sy == lparent) {
+                    if (!funcflag) {
+                        btab[0].vsize = dx;
+                    }
                     funcflag = true;
                     mainflag = funcdef(voids, name);
                 }
@@ -908,7 +949,6 @@ void program()
                 error(6);
             }
         }
-        level = 0;
     }
 
     if (!mainflag) {

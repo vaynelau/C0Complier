@@ -3,8 +3,7 @@
 
 using namespace std;
 
-void syntax_init();
-void program();
+void syntax_analysis();
 
 types expression(int *value);
 void call(int i);

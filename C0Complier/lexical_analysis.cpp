@@ -1,12 +1,10 @@
-#include "lexical_analysis.h"
-#include "error.h"
-#include "tabs.h"
-#include <iostream>
 #include <cstdio>
 #include <string>
 #include <map>
 #include <vector>
-
+#include "lexical_analysis.h"
+#include "error.h"
+#include "tabs.h"
 
 using namespace std;
 
@@ -53,7 +51,7 @@ void nextch()
         eolnflag = false;
     }
 
-    ch = (char)fgetc(psin);
+    ch = (char)fgetc(src_file);
     chcnt++;
     if (ch == EOF) {
         eofflag = true;
@@ -65,7 +63,7 @@ void nextch()
 
 
 
-void printsymbol()
+void print_symbol()
 {
     switch (sy) {
     case intcon:
@@ -220,5 +218,5 @@ void insymbol()
     else {
         error(5); //不合法的特殊符号
     }
-    //printsymbol();
+    //print_symbol();
 }

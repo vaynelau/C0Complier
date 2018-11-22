@@ -10,22 +10,21 @@
 
 using namespace std;
 
-string sourcefilename; //源代码文件名
-FILE *psin; //源代码文件指针
+string src_file_name; //源代码文件名
+FILE *src_file; //源代码文件指针
 
 
 int main(void)
 {
     puts("Please input the source file name:");
-    getline(cin, sourcefilename);
-    if (sourcefilename.empty()) {
+    getline(cin, src_file_name);
+    if (src_file_name.empty()) {
         //sourcefilename = "testcode.c";
-        sourcefilename = "16061175_test.txt";
+        src_file_name = "16061175_test.txt";
     }
-    psin = fopen(sourcefilename.c_str(), "r");
-    setup();
+    src_file = fopen(src_file_name.c_str(), "r");
+    tabs_init();
     lexcial_init();
-    syntax_init();
-    program();
+    syntax_analysis();
     return 0;
 }

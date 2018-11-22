@@ -9,6 +9,7 @@ using namespace std;
 
 map<string, symbol> ksy; //保留字表
 map<char, symbol> sps; //特殊字符表
+
 vector<tabitem> tab; //符号表
 int t;
 vector<btabitem> btab; //分程序表
@@ -26,11 +27,22 @@ symbol s2[] = {
 };
 set<symbol> relationop(s2, s2 + sizeof(s2) / sizeof(s2[0]));
 
-void setup()
+void tabs_init()
 {
-    t = -1;
     b = -1;
     sx = -1;
+    t = 0;
+
+    tabitem item;
+    item.name = "";
+    item.link = 0;
+    item.obj = function;
+    item.typ = voids;
+    item.adr = 0;
+    item.ref = 0;
+    item.lev = 0;
+    item.arrcnt = 0;
+    tab.push_back(item);
 
     ksy["const"] = constsy;
     ksy["if"] = ifsy;
@@ -63,64 +75,62 @@ void setup()
 
 int loc(string name)
 {
+    int i;
+    
     tab[0].name = name;
-    int j = btab[b].last;
-    while (tab[j].name != name) {
-        j = tab[j].link;
+    i = btab[b].last;
+    while (tab[i].name != name) {
+        i = tab[i].link;
     }
-    if (j != 0) {
-        return j;
+    if (i != 0) {
+        return i;
     }
-    j = btab[0].last;
-    while (tab[j].name != name) {
-        j = tab[j].link;
+    i = btab[0].last;
+    while (tab[i].name != name) {
+        i = tab[i].link;
     }
-    return j;
+    return i;
 }
 
 
-
-void tabinit(string name, objtyp obj, types typ, int adr)
+void tab_enter(string name, objtyp obj, types typ, int adr)
 {
-    ++t;
-    tabitem item;
-    item.name = name;
-    item.link = (t > 0) ? (t - 1) : 0;
-    item.obj = obj;
-    item.typ = typ;
-    item.adr = adr;
-    item.ref = 0;
-    item.lev = 0;
-    item.arrcnt = 0;
-    tab.push_back(item);
-}
+    int i, prb;
 
-
-void enter(string name, objtyp obj, types typ, int arrcnt)
-{
+    prb = (obj == function) ? 0 : b;
     tab[0].name = name;
-    int i, j;
-    int btmp = (obj == function) ? 0 : b;
-    i = j = btab[btmp].last;
-    while (tab[j].name != name) {
-        j = tab[j].link;
+    i = btab[prb].last;
+    while (tab[i].name != name) {
+        i = tab[i].link;
     }
-    if (j != 0) {
-        error(19); //标识符重定义错误
-    }
-    else {
+
+    if (i == 0) {
         ++t;
         tabitem item;
         item.name = name;
-        item.link = i;
         item.obj = obj;
         item.typ = typ;
-        item.arrcnt = arrcnt;
-        item.lev = btmp;
-        item.adr = 0;
+        item.adr = adr;
         item.ref = 0;
+        item.arrcnt = 0;
+        item.lev = prb;
+        item.link = btab[prb].last;
+        btab[prb].last = t;
         tab.push_back(item);
-        btab[btmp].last = t;
     }
-
+    else {
+        error(19); //标识符重定义错误
+    }
 }
+
+void btab_enter()
+{
+    ++b;
+    btabitem item;
+    item.last = 0;
+    item.lastpar = 0;
+    item.psize = 0;
+    item.vsize = 0;
+    btab.push_back(item);
+}
+

@@ -6,8 +6,8 @@
 
 using namespace std;
 
-extern string sourcefilename;
-extern FILE *psin;
+extern string src_file_name;
+extern FILE *src_file;
 extern char ch;
 extern int lcnt, chcnt; // 记录当前字符所在的行数和列数
 extern string id; //记录标识符的名字或特殊符号
@@ -18,6 +18,6 @@ extern int sleng; //记录字符串长度
 void lexcial_init();
 void nextch();
 void insymbol();
-void printsymbol();
+void print_symbol();
 
 #endif // !_LEXICAL_ANALYSIS_H_

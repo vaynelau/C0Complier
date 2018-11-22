@@ -1,11 +1,12 @@
+#include <cstdio>
 #include "error.h"
 #include "lexical_analysis.h"
 
-
+using namespace std;
 
 void error(int n)
 {
-    printf("%s:%d:%d: error: ", sourcefilename.c_str(), lcnt, chcnt);
+    printf("%s:%d:%d: error: ", src_file_name.c_str(), lcnt, chcnt);
     switch (n) {
     case 1:
         printf("不合法的字符常量'%c'\n", ch);
@@ -121,6 +122,9 @@ void error(int n)
         break;
     case 38:
         puts("没有合法的main函数");
+        break;
+    case 39:
+        puts("函数缺少返回语句");
         break;
     default:
         puts("其他错误");
