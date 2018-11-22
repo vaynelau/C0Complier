@@ -53,7 +53,7 @@ void nextch()
         eolnflag = false;
     }
 
-    ch = fgetc(psin);
+    ch = (char)fgetc(psin);
     chcnt++;
     if (ch == EOF) {
         eofflag = true;

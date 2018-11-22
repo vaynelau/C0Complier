@@ -127,6 +127,7 @@
     <ClCompile Include="lexical_analysis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="syntax_analysis.cpp" />
+    <ClCompile Include="tabs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error.h" />

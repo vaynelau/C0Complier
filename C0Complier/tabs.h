@@ -2,6 +2,7 @@
 #define _TABS_H_
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 
 using namespace std;
@@ -57,5 +58,14 @@ extern int b;
 
 extern vector<string> stab; //字符串常量表
 extern int sx; //字符串常量表索引
+
+extern set<symbol> statbegsys;
+extern set<symbol> relationop;
+
+void setup();
+int loc(string name);
+void tabinit(string name, objtyp obj, types typ, int adr);
+void enter(string name, objtyp obj, types typ, int arrcnt);
+
 
 #endif // !_TABS_H_
