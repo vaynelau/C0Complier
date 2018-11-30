@@ -17,6 +17,9 @@ int b;
 vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 
+vector<midcodeitem> midecode;
+int mx;
+
 symbol s1[] = {
     ifsy, whilesy, lbrace, ident, semicolon, switchsy, returnsy
 };
@@ -29,10 +32,12 @@ set<symbol> relationop(s2, s2 + sizeof(s2) / sizeof(s2[0]));
 
 void tabs_init()
 {
+    t = -1;
     b = -1;
     sx = -1;
-    t = 0;
+    mx = -1;
 
+    ++t;
     tabitem item;
     item.name = "";
     item.link = 0;
@@ -58,8 +63,8 @@ void tabs_init()
     //ksy["scanf"] = scanfsy;
     //ksy["printf"] = printfsy;
 
-    sps['+'] = _plus;
-    sps['-'] = _minus;
+    sps['+'] = _plus_;
+    sps['-'] = _minus_;
     sps['*'] = times;
     sps['/'] = idiv;
     sps['('] = lparent;
@@ -134,3 +139,13 @@ void btab_enter()
     btab.push_back(item);
 }
 
+void midcode_enter(objtyp obj, int typ, string name, int value)
+{
+    ++mx;
+    midcodeitem item;
+    item.obj = obj;
+    item.v1 = typ;
+    item.s2 = name;
+    item.v3 = value;
+    midecode.push_back(item);
+}

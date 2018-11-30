@@ -9,7 +9,7 @@ using namespace std;
 
 typedef enum symbol {
     intcon, charcon, stringcon, //整数  字符  字符串
-    _plus, _minus, times, idiv, //+  -  *  /
+    _plus_, _minus_, times, idiv, //+  -  *  /
     eql, neq, gtr, geq, lss, leq, //==  !=  >  >=  <  <=
     lparent, rparent, lbracket, rbracket, lbrace, rbrace, //( ) [ ] { } 
     comma, semicolon, colon, becomes, //, ; : =  
@@ -19,7 +19,10 @@ typedef enum symbol {
 } symbol;
 
 typedef enum objtyp {
-    constant, variable, arrays, function
+    constant, variable, arrays, function, para, push, call, ret, 
+    assign, arrassign, arrload, label, go_to, bez, bz,
+    _plus, _minus, _times, _idiv, //+  -  *  /
+    _eql, _neq, _gtr, _geq, _lss, _leq, //==  !=  >  >=  <  <=
 } objtyp;
 
 typedef enum types {
@@ -31,10 +34,10 @@ typedef struct tabitem {//符号表
     int link; //指向同一函数中上一个标识符在tab表中的位置
     objtyp obj; // 标识符种类：常量、变量、数组变量、函数等
     types typ; // 标识符类型：int型、char型、void型等
-    int lev; // 标识符所在的静态层次，全局常量、变量或函数为0，局部常量、变量为1
+    int lev; // 标识符所在的静态层次，全局常量、变量或函数为0，局部常量、变量大于1，为对应函数在btab表的指针
     int ref; //函数名：指向其在btab表中的指针值  
     int arrcnt; //数组元素个数
-    int adr; // 变量、形参：在运行栈s中的相对地址；函数名：相应目标代码的入口地址；整型常量：对应数值；
+    int adr; // 变量、形参：在全局变量区或运行栈s中的相对地址；函数名：相应目标代码的入口地址；整型常量：对应数值；
 } tabitem;
 
 typedef struct btabitem {
@@ -66,5 +69,18 @@ void tabs_init();
 void tab_enter(string name, objtyp obj, types typ, int adr);
 void btab_enter();
 int loc(string name);
+
+typedef struct {
+    objtyp obj;
+    types typ;
+    string s1, s2, s3;
+    int v1, v2, v3;
+    int lev;
+} midcodeitem;
+
+extern vector<midcodeitem> midecode;
+extern int mx;
+
+void midcode_enter(objtyp obj, int typ, string name, int value);
 
 #endif // !_TABS_H_

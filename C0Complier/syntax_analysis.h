@@ -6,7 +6,7 @@ using namespace std;
 void syntax_analysis();
 
 types expression(int *value);
-void call(int i);
+void funccall(int i);
 void statement();
 
 #endif // !_SYNTAX_ANALYSIS_H_

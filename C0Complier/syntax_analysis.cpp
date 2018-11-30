@@ -31,12 +31,13 @@ void constdef()
                 else {
                     error(7);
                 }
-                if (sy == _plus || sy == _minus) {
-                    sign = (sy == _minus) ? -1 : 1;
+                if (sy == _plus_ || sy == _minus_) {
+                    sign = (sy == _minus_) ? -1 : 1;
                     insymbol();
                 }
                 if (sy == intcon) {
                     tab[t].adr = sign * inum;
+                    midcode_enter(constant, ints, tab[t].name, tab[t].adr);
                     insymbol();
                 }
                 else {
@@ -62,6 +63,7 @@ void constdef()
                 }
                 if (sy == charcon) {
                     tab[t].adr = inum;
+                    midcode_enter(constant, chars, tab[t].name, tab[t].adr);
                     insymbol();
                 }
                 else {
@@ -95,6 +97,8 @@ void vardef(types typ, string name)
         if (sy == intcon) {
             if (inum > 0) {
                 tab_enter(name, arrays, typ, dx);
+                tab[t].arrcnt = inum;
+                midcode_enter(arrays, typ, name, inum);
                 dx += (typ == ints) ? (inum * 4) : inum;
             }
             else {
@@ -114,6 +118,7 @@ void vardef(types typ, string name)
     }
     else {
         tab_enter(name, variable, typ, dx);
+        midcode_enter(variable, typ, name, 0);
         dx += (typ == ints) ? 4 : 1;
     }
 
@@ -127,6 +132,8 @@ void vardef(types typ, string name)
                 if (sy == intcon) {
                     if (inum > 0) {
                         tab_enter(name, arrays, typ, dx);
+                        tab[t].arrcnt = inum;
+                        midcode_enter(arrays, typ, name, inum);
                         dx += (typ == ints) ? (inum * 4) : inum;
                     }
                     else {
@@ -146,6 +153,7 @@ void vardef(types typ, string name)
             }
             else {
                 tab_enter(name, variable, typ, dx);
+                midcode_enter(variable, typ, name, 0);
                 dx += (typ == ints) ? 4 : 1;
             }
         }
@@ -175,9 +183,9 @@ types factor(int *value)
         typ = chars;
         insymbol();
         break;
-    case _plus:
-    case _minus:
-        sign = (sy == _plus) ? 1 : -1;
+    case _plus_:
+    case _minus_:
+        sign = (sy == _plus_) ? 1 : -1;
         insymbol();
         if (sy == intcon) {
             *value = inum * sign;
@@ -240,7 +248,7 @@ types factor(int *value)
                 if (tab[i].typ != voids) {
                     typ = tab[i].typ;
                     *value = 1;
-                    call(i);
+                    funccall(i);
                 }
                 else {
                     error(23);
@@ -293,20 +301,20 @@ types expression(int *value)
     int sign = 1;
     int val, tmp;
     types typ = chars, typ1 = chars;
-    if (sy == _plus || sy == _minus) {
-        sign = (sy == _plus) ? 1 : -1;
+    if (sy == _plus_ || sy == _minus_) {
+        sign = (sy == _plus_) ? 1 : -1;
         insymbol();
         typ = ints;
     }
     typ1 = term(&val);
     val *= sign;
     symbol op;
-    while (sy == _plus || sy == _minus) {
+    while (sy == _plus_ || sy == _minus_) {
         typ = ints;
         op = sy;
         insymbol();
         term(&tmp);
-        if (op == _plus) {
+        if (op == _plus_) {
             val += tmp;
         }
         else {
@@ -408,8 +416,8 @@ void onecase(types typ)
         }
     }
     else {
-        if (sy == _plus || sy == _minus) {
-            sign = (sy == _plus) ? 1 : -1;
+        if (sy == _plus_ || sy == _minus_) {
+            sign = (sy == _plus_) ? 1 : -1;
             insymbol();
         }
         if (sy == intcon) {
@@ -611,7 +619,7 @@ void standfunc()
 }
 
 
-void call(int i)
+void funccall(int i)
 {
 
     int lastp = btab[tab[i].ref].lastpar;
@@ -729,7 +737,7 @@ void statement()
                     standfunc();
                 }
                 else {
-                    call(i);
+                    funccall(i);
                 }
                 if (sy == semicolon) {
                     insymbol();
@@ -795,6 +803,7 @@ int paralist()
             insymbol();
             if (sy == ident) {
                 tab_enter(id, variable, typ, dx);
+                midcode_enter(para, typ, id, 0);
                 dx += (typ == ints) ? 4 : 1;
                 paracnt++;
                 insymbol();
@@ -814,6 +823,7 @@ int paralist()
                 insymbol();
                 if (sy == ident) {
                     tab_enter(id, variable, typ, dx);
+                    midcode_enter(para, typ, id, 0);
                     dx += (typ == ints) ? 4 : 1;
                     paracnt++;
                     insymbol();
@@ -846,6 +856,7 @@ bool funcdef(types typ, string name)
     
     btab_enter();
     tab_enter(name, function, typ, 0);
+    midcode_enter(function, typ, name, 0);
     tab[t].ref = b;
     prt = t;
 
