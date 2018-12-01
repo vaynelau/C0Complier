@@ -12,7 +12,7 @@ using namespace std;
 
 int dx, prt, prmx;
 bool retflag;
-
+int labelx;
 
 void constdef()
 {
@@ -175,7 +175,7 @@ void vardef(types typ, string name)
 int factor(types *ptyp, int tmp)
 {
     types typ = ints, typ1;
-    int sign = 1, ret;
+    int sign = 1, ret = tmp;
     int i;
 
     switch (sy) {
@@ -337,26 +337,29 @@ int expression(types *ptyp, int tmp)
 
 void ifstatement()
 {
+    int ret1, ret2;
+    types typ1, typ2;
+    int prlabelx = ++labelx;
+
     insymbol();
-    int value1, value2;
-    types typ1 = ints, typ2 = ints;
     if (sy == lparent) {
         insymbol();
     }
     else {
         error(26);
     }
-    typ1 = expression(&value1);
+    ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
         insymbol();
-        typ2 = expression(&value2);
+        ret2 = expression(&typ2, ret1+1);
         if (typ2 != typ1) {
-            error(27);
+            error(27); //关系运算符左右类型不一致
         }
+        midcode_enter((optyp)(sy - eql + _eql), ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
-            error(28);
+            error(28); //表达式的值不为整数
         }
     }
     printf("line %d: 这是一个条件\n", lcnt);
@@ -366,29 +369,37 @@ void ifstatement()
     else {
         error(14);
     }
+
+    midcode_enter(_bz, prlabelx, -1, -1);
     statement();
+    midcode_enter(_label, prlabelx, -1, -1);
     printf("line %d: 这是一个条件语句\n", lcnt - 1);
 }
 
 
 void whilestatement()
 {
-    insymbol();
-    int value1, value2;
+    int ret1, ret2;
     types typ1 = ints, typ2 = ints;
+    int prlabelx1 = ++labelx;
+    int prlabelx2 = ++labelx;
+
+    midcode_enter(_label, prlabelx1, -1, -1);
+    insymbol();
     if (sy == lparent) {
         insymbol();
     }
     else {
         error(26);
     }
-    typ1 = expression(&value1);
+    ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
         insymbol();
-        typ2 = expression(&value2);
+        ret2 = expression(&typ2, ret1 + 1);
         if (typ2 != typ1) {
             error(27);
         }
+        midcode_enter((optyp)(sy - eql + _eql), ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
@@ -402,17 +413,23 @@ void whilestatement()
     else {
         error(14);
     }
+
+    midcode_enter(_bz, prlabelx2, -1, -1);
     statement();
+    midcode_enter(_goto, prlabelx1, -1, -1);
+    midcode_enter(_label, prlabelx2, -1, -1);
     printf("line %d: 这是一个循环语句\n", lcnt - 1);
 }
 
 
-void onecase(types typ)
+void onecase(types typ, int tmp, int labelxend)
 {
+    int sign = 1; 
+    int labelx1 = ++labelx;
+    
     insymbol();
-    int sign = 1, value;
     if (sy == charcon) {
-        value = inum;
+        midcode_enter(_conload, tmp + 1, chars, inum);
         insymbol();
         if (typ != chars) {
             error(29);
@@ -424,7 +441,7 @@ void onecase(types typ)
             insymbol();
         }
         if (sy == intcon) {
-            value = sign * inum;
+            midcode_enter(_conload, tmp + 1, ints, sign * inum);
             insymbol();
             if (typ != ints) {
                 error(29);
@@ -434,20 +451,27 @@ void onecase(types typ)
             error(8);
         }
     }
-
     if (sy == colon) {
         insymbol();
     }
     else {
         error(21);
     }
+    midcode_enter(_eql, tmp, tmp, tmp + 1);
+    midcode_enter(_bz, labelx1, -1, -1);
     statement();
+    midcode_enter(_goto, labelxend, -1, -1);
+    midcode_enter(_label, labelx1, -1, -1);
     printf("line %d: 这是一个情况子语句\n", lcnt - 1);
 }
 
 
 void switchstatement()
 {
+    int ret;
+    types typ;
+    int labelxend = ++labelx;
+
     insymbol();
     if (sy == lparent) {
         insymbol();
@@ -455,8 +479,7 @@ void switchstatement()
     else {
         error(26);
     }
-    int value;
-    types typ = expression(&value);
+    ret = expression(&typ, 0);
     if (sy == rparent) {
         insymbol();
     }
@@ -473,7 +496,7 @@ void switchstatement()
 
     if (sy == casesy) {
         do {
-            onecase(typ);
+            onecase(typ, ret, labelxend);
         } while (sy == casesy);
     }
     else {
@@ -496,6 +519,7 @@ void switchstatement()
     else {
         error(16);
     }
+    midcode_enter(_label, labelxend, -1, -1);
     printf("line %d: 这是一个情况语句\n", lcnt - 1);
 }
 
@@ -510,7 +534,7 @@ void returnstatement()
         insymbol();
         ret = expression(&typ, 0);
         if (typ != tab[prt].typ) {
-            error(25);//返回值类型不一致
+            error(25); //返回值类型不一致
         }
         midcode_enter(_ret, ret, -1, -1);
         if (sy == rparent) {
@@ -894,7 +918,7 @@ bool funcdef(types typ, string name)
 
     dx = 0;
     paracnt = paralist();
-    midecode[prmx].v3 = paracnt;
+    midcode[prmx].v3 = paracnt;
     btab[b].lastpar = t;
     btab[b].psize = dx;
     
@@ -938,7 +962,8 @@ void syntax_analysis()
     bool mainflag = false;
     string name;
     types typ = ints;
-    
+    labelx = -1;
+
     btab_enter();
     tab_enter("scanf", function, voids, 1);
     tab_enter("printf", function, voids, 2);

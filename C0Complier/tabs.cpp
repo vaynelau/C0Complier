@@ -17,7 +17,7 @@ int b;
 vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 
-vector<midcodeitem> midecode;
+vector<midcodeitem> midcode;
 int mx;
 
 symbol s1[] = {
@@ -81,7 +81,7 @@ void tabs_init()
 int loc(string name)
 {
     int i;
-    
+
     tab[0].name = name;
     i = btab[b].last;
     while (tab[i].name != name) {
@@ -149,5 +149,40 @@ void midcode_enter(optyp op, int v1, int v2, int v3)
     item.v1 = v1;
     item.v2 = v2;
     item.v3 = v3;
-    midecode.push_back(item);
+    midcode.push_back(item);
+}
+
+void print_midcode()
+{
+    for (int i = 0; i <= mx; i++) {
+        switch (midcode[i].op) {
+        case _const:
+            if (midcode[i].v1 == ints) {
+                printf("const int %s = %d\n", tab[midcode[i].v2].name.c_str(), midcode[i].v3);
+            }
+            else {
+                printf("const char %s = '%c'\n", tab[midcode[i].v2].name.c_str(), midcode[i].v3);
+            }
+            break;
+        case _var:
+            if (midcode[i].v1 == ints) {
+                printf("var int %s\n", tab[midcode[i].v2].name.c_str());
+            }
+            else {
+                printf("var char %s\n", tab[midcode[i].v2].name.c_str());
+            }
+            break;
+
+        case _array:
+            if (midcode[i].v1 == ints) {
+                printf("array int %s %d\n", tab[midcode[i].v2].name.c_str(), midcode[i].v3);
+            }
+            else {
+                printf("array char %s %d\n", tab[midcode[i].v2].name.c_str(), midcode[i].v3);
+            }
+            break;
+        default:
+            break;
+        }
+    }
 }

@@ -94,7 +94,7 @@ void error(int n)
         puts("表达式的值不为整数");
         break;
     case 29:
-        puts("case语句的常量类型与switch不一致");
+        puts("case语句的常量类型与switch表达式的值不一致");
         break;
     case 30:
         puts("缺少case语句");

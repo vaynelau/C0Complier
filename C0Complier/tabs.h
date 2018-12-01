@@ -78,14 +78,14 @@ typedef enum optyp {
 
 typedef struct {
     optyp op;
-    string s1, s2, s3;
     int v1, v2, v3;
-    int lev;
+    //int lev;
 } midcodeitem;
 
-extern vector<midcodeitem> midecode;
+extern vector<midcodeitem> midcode;
 extern int mx;
 
 void midcode_enter(optyp op, int v1, int v2, int v3);
+void print_midcode();
 
 #endif // !_TABS_H_
