@@ -139,13 +139,15 @@ void btab_enter()
     btab.push_back(item);
 }
 
-void midcode_enter(objtyp obj, int typ, string name, int value)
+
+
+void midcode_enter(optyp op, int v1, int v2, int v3)
 {
     ++mx;
     midcodeitem item;
-    item.obj = obj;
-    item.v1 = typ;
-    item.s2 = name;
-    item.v3 = value;
+    item.op = op;
+    item.v1 = v1;
+    item.v2 = v2;
+    item.v3 = v3;
     midecode.push_back(item);
 }

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int dx, prt;
+int dx, prt, prmx;
 bool retflag;
 
 
@@ -37,7 +37,7 @@ void constdef()
                 }
                 if (sy == intcon) {
                     tab[t].adr = sign * inum;
-                    midcode_enter(constant, ints, tab[t].name, tab[t].adr);
+                    midcode_enter(_const, ints, t, sign * inum);
                     insymbol();
                 }
                 else {
@@ -63,7 +63,7 @@ void constdef()
                 }
                 if (sy == charcon) {
                     tab[t].adr = inum;
-                    midcode_enter(constant, chars, tab[t].name, tab[t].adr);
+                    midcode_enter(_const, chars, t, inum);
                     insymbol();
                 }
                 else {
@@ -98,7 +98,7 @@ void vardef(types typ, string name)
             if (inum > 0) {
                 tab_enter(name, arrays, typ, dx);
                 tab[t].arrcnt = inum;
-                midcode_enter(arrays, typ, name, inum);
+                midcode_enter(_array, typ, t, inum);
                 dx += (typ == ints) ? (inum * 4) : inum;
             }
             else {
@@ -118,7 +118,7 @@ void vardef(types typ, string name)
     }
     else {
         tab_enter(name, variable, typ, dx);
-        midcode_enter(variable, typ, name, 0);
+        midcode_enter(_var, typ, t, -1);
         dx += (typ == ints) ? 4 : 1;
     }
 
@@ -133,7 +133,7 @@ void vardef(types typ, string name)
                     if (inum > 0) {
                         tab_enter(name, arrays, typ, dx);
                         tab[t].arrcnt = inum;
-                        midcode_enter(arrays, typ, name, inum);
+                        midcode_enter(_array, typ, t, inum);
                         dx += (typ == ints) ? (inum * 4) : inum;
                     }
                     else {
@@ -153,7 +153,7 @@ void vardef(types typ, string name)
             }
             else {
                 tab_enter(name, variable, typ, dx);
-                midcode_enter(variable, typ, name, 0);
+                midcode_enter(_var, typ, t, -1);
                 dx += (typ == ints) ? 4 : 1;
             }
         }
@@ -172,15 +172,17 @@ void vardef(types typ, string name)
 }
 
 
-types factor(int *value)
+int factor(types *ptyp, int tmp)
 {
-    types typ = ints;
-    int val, sign = 1;
+    types typ = ints, typ1;
+    int sign = 1, ret;
     int i;
+
     switch (sy) {
     case charcon:
-        *value = inum;
         typ = chars;
+        midcode_enter(_conload, tmp, chars, inum);
+        ret = tmp;
         insymbol();
         break;
     case _plus_:
@@ -188,8 +190,9 @@ types factor(int *value)
         sign = (sy == _plus_) ? 1 : -1;
         insymbol();
         if (sy == intcon) {
-            *value = inum * sign;
             typ = ints;
+            midcode_enter(_conload, tmp, ints, inum * sign);
+            ret = tmp;
             insymbol();
         }
         else {
@@ -197,15 +200,14 @@ types factor(int *value)
         }
         break;
     case intcon:
-        *value = inum;
         typ = ints;
+        midcode_enter(_conload, tmp, ints, inum);
+        ret = tmp;
         insymbol();
         break;
     case lparent:
         insymbol();
-        typ = ints;
-        expression(&val);
-        *value = val;
+        ret = expression(&typ, tmp);
         if (sy == rparent) {
             insymbol();
         }
@@ -218,16 +220,14 @@ types factor(int *value)
         if (i != 0) {
             switch (tab[i].obj) {
             case constant:
-                *value = tab[i].adr;
-                typ = tab[i].typ;
-                insymbol();
-                break;
             case variable:
-                *value = 1;
                 typ = tab[i].typ;
+                midcode_enter(_varload, tmp, i, -1);
+                ret = tmp;
                 insymbol();
                 break;
             case arrays:
+                typ = tab[i].typ;
                 insymbol();
                 if (sy == lbracket) {
                     insymbol();
@@ -235,8 +235,11 @@ types factor(int *value)
                 else {
                     error(22);
                 }
-                typ = tab[i].typ;
-                expression(value);
+                ret = expression(&typ1, tmp);
+                if (typ1 != ints) {
+                    error(31);
+                }
+                midcode_enter(_arrload, ret, i, ret);
                 if (sy == rbracket) {
                     insymbol();
                 }
@@ -247,8 +250,7 @@ types factor(int *value)
             case function:
                 if (tab[i].typ != voids) {
                     typ = tab[i].typ;
-                    *value = 1;
-                    funccall(i);
+                    ret = funccall(i, tmp);
                 }
                 else {
                     error(23);
@@ -260,75 +262,76 @@ types factor(int *value)
         }
         else {
             error(18);//未定义的标识符
-
         }
         break;
     default:
         error(24);
         break;
     }
+    *ptyp = typ;
     printf("line %d: 这是一个因子\n", lcnt);
-    return typ;
+    return ret;
 }
 
 
-types term(int *value)
+int term(types *ptyp, int tmp)
 {
-    int val, tmp;
-    types typ = ints;
-    typ = factor(&val);
+    types typ, typ1;
+    int ret, ret1;
     symbol op;
+
+    ret = factor(&typ, tmp);
     while (sy == times || sy == idiv) {
         typ = ints;
         op = sy;
         insymbol();
-        factor(&tmp);
+        ret1 = factor(&typ1, ret + 1);
         if (op == times) {
-            val *= tmp;
+            midcode_enter(_times, ret, ret, ret1);
         }
         else {
-            val /= tmp;
+            midcode_enter(_idiv, ret, ret, ret1);
         }
     }
-    *value = val;
+    *ptyp = typ;
     printf("line %d: 这是一个项\n", lcnt);
-    return typ;
+    return ret;
 }
 
 
-types expression(int *value)
+int expression(types *ptyp, int tmp)
 {
     int sign = 1;
-    int val, tmp;
-    types typ = chars, typ1 = chars;
+    types typ = chars, typ1;
+    int ret, ret1;
+
     if (sy == _plus_ || sy == _minus_) {
         sign = (sy == _plus_) ? 1 : -1;
         insymbol();
         typ = ints;
     }
-    typ1 = term(&val);
-    val *= sign;
+    ret = term(&typ1, tmp);
+    typ = (typ1 == ints) ? ints : typ;
+    if (sign == -1) {
+        midcode_enter(_neg, ret, ret, -1);
+        //ret++;
+    }
     symbol op;
     while (sy == _plus_ || sy == _minus_) {
         typ = ints;
         op = sy;
         insymbol();
-        term(&tmp);
+        ret1 = term(&typ1, ret + 1);
         if (op == _plus_) {
-            val += tmp;
+            midcode_enter(_plus, ret, ret, ret1);
         }
         else {
-            val -= tmp;
+            midcode_enter(_minus, ret, ret, ret1);
         }
     }
-    *value = val;
     printf("line %d: 这是一个表达式\n", lcnt);
-    if (typ == ints || typ1 == ints) {
-        return ints;
-    }
-    else {
-        return chars;
-    }
+    *ptyp = typ;
+    return ret;
 }
 
 
@@ -500,15 +503,16 @@ void switchstatement()
 void returnstatement()
 {
     types typ = ints;
-    int value;
+    int ret;
     retflag = true;
     insymbol();
     if (sy == lparent) {
         insymbol();
-        typ = expression(&value);
+        ret = expression(&typ, 0);
         if (typ != tab[prt].typ) {
             error(25);//返回值类型不一致
         }
+        midcode_enter(_ret, ret, -1, -1);
         if (sy == rparent) {
             insymbol();
         }
@@ -516,14 +520,18 @@ void returnstatement()
             error(14);
         }
     }
+    else {
+        midcode_enter(_ret, -1, -1, -1);
+    }
     printf("line %d: 这是一个返回语句\n", lcnt);
 }
 
 
 void assignment(int i)
 {
-    types typ1 = ints, typ2 = ints;
-    int value1, value2;
+    types typ1, typ2;
+    int ret1, ret2;
+
     insymbol();
     if (tab[i].obj == arrays) {
         if (sy == lbracket) {
@@ -532,13 +540,14 @@ void assignment(int i)
         else {
             error(22);
         }
-        typ1 = expression(&value1);
+        ret1 = expression(&typ1, 0);
         if (typ1 != ints) {
-            error(31);
+            error(31);  //数字下标只能为整型
         }
-        //else if(value<0 || value>tab[i].arrcnt-1) {
+        //else if(ptyp<0 || ptyp>tab[i].arrcnt-1) {
         //    error(0);//数组越界
         //}
+        
         if (sy == rbracket) {
             insymbol();
         }
@@ -552,18 +561,29 @@ void assignment(int i)
     else {
         error(7);
     }
-    typ2 = expression(&value2);
-    if (typ2 != tab[i].typ) {
-        error(32);
+    if (tab[i].obj == arrays) {
+        ret2 = expression(&typ2, ret1 + 1);
+        if (typ2 != tab[i].typ) {
+            error(32); //赋值符号左右类型不一致
+        }
+        midcode_enter(_arrassign, i, ret1, ret2);
+    }
+    else {
+        ret2 = expression(&typ2, 0);
+        if (typ2 != tab[i].typ) {
+            error(32); //赋值符号左右类型不一致
+        }
+        midcode_enter(_assign, i, ret2, -1);
     }
     printf("line %d: 这是一个赋值语句\n", lcnt);
 }
 
 
-void standfunc()
+void stdfunccall()
 {
-    int value;
+    int ret;
     types typ = ints;
+    
     if (id == "scanf") {
         insymbol();
         if (sy == lparent) {
@@ -577,6 +597,8 @@ void standfunc()
                     else if (tab[i].obj != variable) {
                         error(33);
                     }
+                    midcode_enter(_varload, 0, i, -1);
+                    midcode_enter(_push, 0, -1, -1);
                     insymbol();
                 }
                 else {
@@ -587,6 +609,7 @@ void standfunc()
         else {
             error(26);
         }
+        midcode_enter(_call, loc("scanf"), -1, -1);
         printf("line %d: 这是一个读语句\n", lcnt);
     }
     else {
@@ -598,15 +621,20 @@ void standfunc()
             error(26);
         }
         if (sy == stringcon) {
+            midcode_enter(_conload, 0, strs, inum);
+            midcode_enter(_push, 0, -1, -1);
             insymbol();
             if (sy == comma) {
                 insymbol();
-                typ = expression(&value);
+                ret = expression(&typ, 0);
+                midcode_enter(_push, ret, -1, -1);
             }
         }
         else {
-            typ = expression(&value);
+            ret = expression(&typ, 0);
+            midcode_enter(_push, ret, -1, -1);
         }
+        midcode_enter(_call, loc("printf"), -1, -1);
         printf("line %d: 这是一个写语句\n", lcnt);
     }
 
@@ -619,13 +647,12 @@ void standfunc()
 }
 
 
-void funccall(int i)
+int funccall(int i, int tmp)
 {
-
     int lastp = btab[tab[i].ref].lastpar;
     int cpos = i;
-    int value;
-    types typ = ints;
+    int ret;
+    types typ;
 
     insymbol();
     if (sy == lparent) {
@@ -637,29 +664,31 @@ void funccall(int i)
 
     if (sy != rparent) {
         cpos++;
-        typ = expression(&value);
+        ret = expression(&typ, tmp);
         if (cpos > lastp) {
             error(34); //实参过多
         }
         else {
             if (typ != tab[cpos].typ) {
-                error(35);
+                error(35); //实参与形参类型不一致
             }
+            midcode_enter(_push, ret, -1, -1);
         }
 
         while (sy == comma) {
             insymbol();
             cpos++;
-            typ = expression(&value);
+            ret = expression(&typ, tmp);
             if (cpos > lastp) {
                 error(34); //实参过多
             }
             else {
                 if (typ != tab[cpos].typ) {
-                    error(35);
+                    error(35); //实参与形参类型不一致
                 }
+                midcode_enter(_push, ret, -1, -1);
             }
-        
+            
         }
     }
     printf("line %d: 这是一个值参数表\n", lcnt);
@@ -673,13 +702,15 @@ void funccall(int i)
     else {
         error(14);
     }
-
+    midcode_enter(_call, i, -1, -1);
     if (tab[i].typ == voids) {
         printf("line %d: 这是一个无返回值的函数调用语句\n", lcnt);
     }
     else {
+        midcode_enter(_assign, tmp, RET, -1);
         printf("line %d: 这是一个有返回值的函数调用语句\n", lcnt);
     }
+    return tmp;
 }
 
 
@@ -734,10 +765,10 @@ void statement()
                 break;
             case function:
                 if (id == "scanf" || id == "printf") {
-                    standfunc();
+                    stdfunccall();
                 }
                 else {
-                    funccall(i);
+                    funccall(i, 0);
                 }
                 if (sy == semicolon) {
                     insymbol();
@@ -793,7 +824,7 @@ void compoundstatement()
 int paralist()
 {
     int paracnt = 0;
-    types typ = ints;
+    types typ;
 
     insymbol();
 
@@ -803,7 +834,7 @@ int paralist()
             insymbol();
             if (sy == ident) {
                 tab_enter(id, variable, typ, dx);
-                midcode_enter(para, typ, id, 0);
+                midcode_enter(_para, typ, t, -1);
                 dx += (typ == ints) ? 4 : 1;
                 paracnt++;
                 insymbol();
@@ -823,7 +854,7 @@ int paralist()
                 insymbol();
                 if (sy == ident) {
                     tab_enter(id, variable, typ, dx);
-                    midcode_enter(para, typ, id, 0);
+                    midcode_enter(_para, typ, t, -1);
                     dx += (typ == ints) ? 4 : 1;
                     paracnt++;
                     insymbol();
@@ -856,12 +887,14 @@ bool funcdef(types typ, string name)
     
     btab_enter();
     tab_enter(name, function, typ, 0);
-    midcode_enter(function, typ, name, 0);
+    midcode_enter(_func, typ, t, 0);
+    prmx = mx;
     tab[t].ref = b;
     prt = t;
 
     dx = 0;
     paracnt = paralist();
+    midecode[prmx].v3 = paracnt;
     btab[b].lastpar = t;
     btab[b].psize = dx;
     

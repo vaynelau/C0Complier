@@ -19,14 +19,12 @@ typedef enum symbol {
 } symbol;
 
 typedef enum objtyp {
-    constant, variable, arrays, function, para, push, call, ret, 
-    assign, arrassign, arrload, label, go_to, bez, bz,
-    _plus, _minus, _times, _idiv, //+  -  *  /
-    _eql, _neq, _gtr, _geq, _lss, _leq, //==  !=  >  >=  <  <=
+    constant, variable, arrays, function
 } objtyp;
 
+
 typedef enum types {
-    notyp, ints, chars, voids
+    ints, chars, voids, strs
 } types;
 
 typedef struct tabitem {//·ûºÅ±í
@@ -70,9 +68,16 @@ void tab_enter(string name, objtyp obj, types typ, int adr);
 void btab_enter();
 int loc(string name);
 
+typedef enum optyp {
+    _const, _var, _array, _func, _para, _push, _call, _ret,
+    _assign, _arrassign, _conload, _varload, _arrload, _label, _goto, _bez, _bz,
+    _neg, _plus, _minus, _times, _idiv, //+  -  *  /
+    _eql, _neq, _gtr, _geq, _lss, _leq, //==  !=  >  >=  <  <=
+} optyp;
+
+
 typedef struct {
-    objtyp obj;
-    types typ;
+    optyp op;
     string s1, s2, s3;
     int v1, v2, v3;
     int lev;
@@ -81,6 +86,6 @@ typedef struct {
 extern vector<midcodeitem> midecode;
 extern int mx;
 
-void midcode_enter(objtyp obj, int typ, string name, int value);
+void midcode_enter(optyp op, int v1, int v2, int v3);
 
 #endif // !_TABS_H_
