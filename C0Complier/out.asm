@@ -97,28 +97,68 @@ li $t2, 1
 subu $t1, $t1, $t2
 addiu $sp, $sp, -4
 sw $t1, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_2
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 move $t1, $v0
 lw $t2, -0($fp)
 li $t3, 2
 subu $t2, $t2, $t3
 addiu $sp, $sp, -4
 sw $t2, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_2
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 move $t2, $v0
 addu $t1, $t1, $t2
 sll $t0, $t0, 2
@@ -148,14 +188,34 @@ li $t2, 1
 subu $t1, $t1, $t2
 addiu $sp, $sp, -4
 sw $t1, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_3
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 move $t1, $v0
 mul $t0, $t0, $t1
 move $v0, $t0
@@ -218,14 +278,34 @@ sw $t0, 0($sp)
 lw $t0, -12($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_4
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 label_10:
 lw $t0, -12($fp)
 li $t1, 1
@@ -239,14 +319,34 @@ sw $t0, 0($sp)
 lw $t0, -8($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_4
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 lw $t0, -0($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
@@ -255,14 +355,34 @@ li $t1, 1
 subu $t0, $t0, $t1
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -16
+addiu $sp, $sp, -56
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_5
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 lw $t0, -8($fp)
 li $t1, 1
 addu $t0, $t0, $t1
@@ -271,14 +391,34 @@ sw $t0, 0($sp)
 lw $t0, -4($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -16
+addiu $sp, $sp, -56
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_5
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 jr $ra
 
 
@@ -583,14 +723,34 @@ sw $t0, 0($sp)
 lw $t0, -16($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_7
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
@@ -604,14 +764,34 @@ sw $t0, 0($sp)
 lw $t0, -16($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_7
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
@@ -625,14 +805,34 @@ sw $t0, 0($sp)
 lw $t0, -16($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_7
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
@@ -712,14 +912,34 @@ sw $t0, 0($sp)
 li $t0, 43
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_6
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 move $t0, $v0
 sw $t0, -0($fp)
 la $t0,str_13
@@ -739,14 +959,34 @@ sw $t0, 0($sp)
 li $t0, 45
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_6
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 move $t0, $v0
 sw $t0, -0($fp)
 la $t0,str_14
@@ -766,14 +1006,34 @@ sw $t0, 0($sp)
 li $t0, 42
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_6
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 move $t0, $v0
 sw $t0, -0($fp)
 la $t0,str_15
@@ -797,14 +1057,34 @@ sw $t0, 0($sp)
 li $t0, 47
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_6
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
@@ -855,14 +1135,34 @@ sw $t0, 0($sp)
 li $t0, 8
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 16
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 56
 jal func_8
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 20
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 60
 li $t0, 0
 sw $t0, -16($fp)
 label_33:
@@ -899,26 +1199,66 @@ syscall
 lw $t0, global_var+0
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_3
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
 syscall
-addiu $sp, $sp, -12
+addiu $sp, $sp, -52
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_1
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 la $t0,str_20
 move $a0, $t0
 li $v0, 4
@@ -926,14 +1266,34 @@ syscall
 lw $t0, global_var+4
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -8
+addiu $sp, $sp, -48
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 8
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 48
 jal func_2
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 12
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 52
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
@@ -968,14 +1328,34 @@ sw $t0, 0($sp)
 li $t0, 9
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
-addiu $sp, $sp, -16
+addiu $sp, $sp, -56
 sw $fp, 4($sp)
 sw $ra, 0($sp)
-addiu $fp, $sp, 20
+sw $t0, 8($sp)
+sw $t1, 12($sp)
+sw $t2, 16($sp)
+sw $t3, 20($sp)
+sw $t4, 24($sp)
+sw $t5, 28($sp)
+sw $t6, 32($sp)
+sw $t7, 36($sp)
+sw $t8, 40($sp)
+sw $t9, 44($sp)
+addiu $fp, $sp, 60
 jal func_5
 lw $fp, 4($sp)
 lw $ra, 0($sp)
-addiu $sp, $sp, 24
+lw $t0, 8($sp)
+lw $t1, 12($sp)
+lw $t2, 16($sp)
+lw $t3, 20($sp)
+lw $t4, 24($sp)
+lw $t5, 28($sp)
+lw $t6, 32($sp)
+lw $t7, 36($sp)
+lw $t8, 40($sp)
+lw $t9, 44($sp)
+addiu $sp, $sp, 64
 la $t0,str_22
 move $a0, $t0
 li $v0, 4

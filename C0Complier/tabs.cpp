@@ -372,16 +372,22 @@ void gen_mips()
             break;
         case _call:
             if (tab[midcode[i].v1].name != "scanf" && tab[midcode[i].v1].name != "printf") {
-                dsp = btab[tab[midcode[i].v1].ref].vsize - btab[tab[midcode[i].v1].ref].psize + 8;
-                dfp = btab[tab[midcode[i].v1].ref].vsize + 8 - 4;
-                fprintf(out, "addiu $sp, $sp, %d\n", -dsp);
+                dsp = btab[tab[midcode[i].v1].ref].vsize - btab[tab[midcode[i].v1].ref].psize + 40 + 8;
+                dfp = btab[tab[midcode[i].v1].ref].vsize + 40 + 8 - 4;
+                fprintf(out, "addiu $sp, $sp, -%d\n", dsp);
                 fprintf(out, "sw $fp, 4($sp)\n");
                 fprintf(out, "sw $ra, 0($sp)\n");
+                for (int j = 0; j < 10; j++) {
+                    fprintf(out, "sw $t%d, %d($sp)\n", j, 8 + 4 * j);
+                }
                 fprintf(out, "addiu $fp, $sp, %d\n", dfp);
                 fprintf(out, "jal func_%d\n", tab[midcode[i].v1].ref);
                 fprintf(out, "lw $fp, 4($sp)\n");
                 fprintf(out, "lw $ra, 0($sp)\n");
-                dsp = btab[tab[midcode[i].v1].ref].vsize + 8;
+                for (int j = 0; j < 10; j++) {
+                    fprintf(out, "lw $t%d, %d($sp)\n", j, 8 + 4 * j);
+                }
+                dsp = btab[tab[midcode[i].v1].ref].vsize + 40 + 8;
                 fprintf(out, "addiu $sp, $sp, %d\n", dsp);
             }
             break;
