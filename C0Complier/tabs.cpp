@@ -390,6 +390,11 @@ void gen_mips()
                 dsp = btab[tab[midcode[i].v1].ref].vsize + 40 + 8;
                 fprintf(out, "addiu $sp, $sp, %d\n", dsp);
             }
+            else if (tab[midcode[i].v1].name == "printf") {
+                fprintf(out, "li $a0, %d\n", '\n');
+                fprintf(out, "li $v0, 11\n");
+                fprintf(out, "syscall\n");
+            }
             break;
         case _ret:
             if (midcode[i].v1 != -1) {
@@ -531,9 +536,8 @@ void gen_mips()
         case _leq:
             fprintf(out, "sle $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
             break;
-
         default:
-            fprintf(out, "mmmmmmmmmp%d\n", midcode[i].op);
+            fprintf(out, "unknown midcode op: %d\n", midcode[i].op);
             break;
         }
     }

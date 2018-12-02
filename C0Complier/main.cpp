@@ -7,6 +7,7 @@
 #include "lexical_analysis.h"
 #include "syntax_analysis.h"
 #include "tabs.h"
+#include "error.h"
 
 using namespace std;
 
@@ -26,7 +27,10 @@ int main(void)
     tabs_init();
     lexcial_init();
     syntax_analysis();
-    //print_midcode();
-    gen_mips();
+    if (noerror) {
+        //print_midcode();
+        gen_mips();
+    }
+    
     return 0;
 }

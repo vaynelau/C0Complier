@@ -140,6 +140,9 @@ void insymbol()
         while (ch != '\"') {
             if (ch >= 32 && ch <= 126) {
                 id += ch;
+                if (ch == '\\') {
+                    id += ch;
+                }
                 k++;
                 nextch();
             }

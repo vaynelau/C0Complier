@@ -4,8 +4,11 @@
 
 using namespace std;
 
+bool noerror = true;
+
 void error(int n)
 {
+    noerror = false;
     printf("%s:%d:%d: error: ", src_file_name.c_str(), lcnt, chcnt);
     switch (n) {
     case 1:

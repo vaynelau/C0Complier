@@ -212,6 +212,7 @@ int factor(types *ptyp, int tmp)
     case lparent:
         insymbol();
         ret = expression(&typ, tmp);
+        typ = ints;
         if (sy == rparent) {
             insymbol();
         }

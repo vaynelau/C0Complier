@@ -7,7 +7,7 @@ str_3: .asciiz "X*2+x/3 "
 str_4: .asciiz "Test scanf:"
 str_5: .asciiz "Please input int a:"
 str_6: .asciiz "int a is "
-str_7: .asciiz "Please in\tput char x:"
+str_7: .asciiz "Please in\\tput char x:"
 str_8: .asciiz "char x is "
 str_9: .asciiz "Test charcomp:"
 str_10: .asciiz "Test calculate:"
@@ -594,20 +594,35 @@ la $t0,str_0
 move $a0, $t0
 li $v0, 4
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_1
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 la $t0,str_2
 move $a0, $t0
 li $v0, 4
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 95
 move $a0, $t0
 li $v0, 11
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 49
 move $a0, $t0
+li $v0, 11
+syscall
+li $a0, 10
 li $v0, 11
 syscall
 li $t0, 1024
@@ -615,44 +630,77 @@ neg $t0, $t0
 move $a0, $t0
 li $v0, 1
 syscall
-li $t0, 0
-move $a0, $t0
-li $v0, 1
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 0
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
+syscall
+li $t0, 0
+move $a0, $t0
+li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 2
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 3
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, -5
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 88
 move $a0, $t0
+li $v0, 11
+syscall
+li $a0, 10
 li $v0, 11
 syscall
 li $t0, 120
 move $a0, $t0
 li $v0, 11
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 88
 move $a0, $t0
+li $v0, 11
+syscall
+li $a0, 10
 li $v0, 11
 syscall
 li $t0, 120
 move $a0, $t0
 li $v0, 11
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 88
 move $a0, $t0
+li $v0, 11
+syscall
+li $a0, 10
 li $v0, 11
 syscall
 la $t0,str_3
@@ -669,13 +717,22 @@ addu $t0, $t0, $t1
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_4
 move $a0, $t0
 li $v0, 4
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_5
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $v0, 5
 syscall
@@ -688,9 +745,15 @@ lw $t0, -4($fp)
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_7
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $v0, 12
 syscall
@@ -703,9 +766,15 @@ lb $t0, -24($fp)
 move $a0, $t0
 li $v0, 11
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_9
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 1
 sw $t0, -16($fp)
@@ -755,6 +824,9 @@ move $t0, $v0
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 97
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
@@ -795,6 +867,9 @@ addiu $sp, $sp, 64
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 97
 addiu $sp, $sp, -4
@@ -837,6 +912,9 @@ move $t0, $v0
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 lw $t0, -16($fp)
 li $t1, 1
 addu $t0, $t0, $t1
@@ -846,6 +924,9 @@ label_32:
 la $t0,str_10
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 123
 li $t1, 456
@@ -895,6 +976,9 @@ lw $t0, -4($fp)
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_12
 move $a0, $t0
 li $v0, 4
@@ -902,6 +986,9 @@ syscall
 lw $t0, -8($fp)
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 lw $t0, -4($fp)
 addiu $sp, $sp, -4
@@ -950,6 +1037,9 @@ lw $t0, -0($fp)
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 lw $t0, -4($fp)
 addiu $sp, $sp, -4
 sw $t0, 0($sp)
@@ -996,6 +1086,9 @@ syscall
 lw $t0, -0($fp)
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 lw $t0, -4($fp)
 addiu $sp, $sp, -4
@@ -1044,6 +1137,9 @@ lw $t0, -0($fp)
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_16
 move $a0, $t0
 li $v0, 4
@@ -1089,9 +1185,15 @@ move $t0, $v0
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_17
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 0
 li $t1, 72
@@ -1176,6 +1278,9 @@ lb $t0, global_var+808($t0)
 move $a0, $t0
 li $v0, 11
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 lw $t0, -16($fp)
 li $t1, 1
 addu $t0, $t0, $t1
@@ -1185,6 +1290,9 @@ label_34:
 la $t0,str_18
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $v0, 5
 syscall
@@ -1230,6 +1338,9 @@ addiu $sp, $sp, 52
 move $t0, $v0
 move $a0, $t0
 li $v0, 1
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 addiu $sp, $sp, -52
 sw $fp, 4($sp)
@@ -1298,9 +1409,15 @@ move $t0, $v0
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 la $t0,str_21
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 li $t0, 0
 sw $t0, -16($fp)
@@ -1360,6 +1477,9 @@ la $t0,str_22
 move $a0, $t0
 li $v0, 4
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 li $t0, 0
 sw $t0, -16($fp)
 label_37:
@@ -1373,6 +1493,9 @@ lw $t0, global_var+408($t0)
 move $a0, $t0
 li $v0, 1
 syscall
+li $a0, 10
+li $v0, 11
+syscall
 lw $t0, -16($fp)
 li $t1, 1
 addu $t0, $t0, $t1
@@ -1382,6 +1505,9 @@ label_38:
 la $t0,str_23
 move $a0, $t0
 li $v0, 4
+syscall
+li $a0, 10
+li $v0, 11
 syscall
 jr $ra
 jr $ra
