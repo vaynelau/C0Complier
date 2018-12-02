@@ -99,7 +99,8 @@ void vardef(types typ, string name)
                 tab_enter(name, arrays, typ, dx);
                 tab[t].arrcnt = inum;
                 midcode_enter(_array, typ, t, inum);
-                dx += (typ == ints) ? (inum * 4) : inum;
+                //dx += (typ == ints) ? (inum * 4) : inum;
+                dx += inum * 4;
             }
             else {
                 error(10);//数组元素个数不大于0
@@ -119,7 +120,8 @@ void vardef(types typ, string name)
     else {
         tab_enter(name, variable, typ, dx);
         midcode_enter(_var, typ, t, -1);
-        dx += (typ == ints) ? 4 : 1;
+        //dx += (typ == ints) ? 4 : 1;
+        dx += 4;
     }
 
     while (sy == comma) {
@@ -134,7 +136,8 @@ void vardef(types typ, string name)
                         tab_enter(name, arrays, typ, dx);
                         tab[t].arrcnt = inum;
                         midcode_enter(_array, typ, t, inum);
-                        dx += (typ == ints) ? (inum * 4) : inum;
+                        //dx += (typ == ints) ? (inum * 4) : inum;
+                        dx += inum * 4;
                     }
                     else {
                         error(10);//数组元素个数不大于0
@@ -154,7 +157,8 @@ void vardef(types typ, string name)
             else {
                 tab_enter(name, variable, typ, dx);
                 midcode_enter(_var, typ, t, -1);
-                dx += (typ == ints) ? 4 : 1;
+                //dx += (typ == ints) ? 4 : 1;
+                dx += 4;
             }
         }
         else {
@@ -278,20 +282,15 @@ int term(types *ptyp, int tmp)
 {
     types typ, typ1;
     int ret, ret1;
-    symbol op;
+    optyp op;
 
     ret = factor(&typ, tmp);
     while (sy == times || sy == idiv) {
         typ = ints;
-        op = sy;
+        op = (sy == times) ? _times : _idiv;
         insymbol();
         ret1 = factor(&typ1, ret + 1);
-        if (op == times) {
-            midcode_enter(_times, ret, ret, ret1);
-        }
-        else {
-            midcode_enter(_idiv, ret, ret, ret1);
-        }
+        midcode_enter(op, ret, ret, ret1);
     }
     *ptyp = typ;
     printf("line %d: 这是一个项\n", lcnt);
@@ -304,6 +303,7 @@ int expression(types *ptyp, int tmp)
     int sign = 1;
     types typ = chars, typ1;
     int ret, ret1;
+    optyp op;
 
     if (sy == _plus_ || sy == _minus_) {
         sign = (sy == _plus_) ? 1 : -1;
@@ -316,18 +316,13 @@ int expression(types *ptyp, int tmp)
         midcode_enter(_neg, ret, ret, -1);
         //ret++;
     }
-    symbol op;
+    
     while (sy == _plus_ || sy == _minus_) {
         typ = ints;
-        op = sy;
+        op = (sy == _plus_) ? _plus : _minus;
         insymbol();
         ret1 = term(&typ1, ret + 1);
-        if (op == _plus_) {
-            midcode_enter(_plus, ret, ret, ret1);
-        }
-        else {
-            midcode_enter(_minus, ret, ret, ret1);
-        }
+        midcode_enter(op, ret, ret, ret1);
     }
     printf("line %d: 这是一个表达式\n", lcnt);
     *ptyp = typ;
@@ -339,6 +334,7 @@ void ifstatement()
 {
     int ret1, ret2;
     types typ1, typ2;
+    optyp op;
     int prlabelx = ++labelx;
 
     insymbol();
@@ -350,12 +346,13 @@ void ifstatement()
     }
     ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
+        op = (optyp)(sy - eql + _eql);
         insymbol();
         ret2 = expression(&typ2, ret1+1);
         if (typ2 != typ1) {
             error(27); //关系运算符左右类型不一致
         }
-        midcode_enter((optyp)(sy - eql + _eql), ret1, ret1, ret2);
+        midcode_enter(op, ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
@@ -370,7 +367,7 @@ void ifstatement()
         error(14);
     }
 
-    midcode_enter(_bz, prlabelx, -1, -1);
+    midcode_enter(_bz, prlabelx, ret1, -1);
     statement();
     midcode_enter(_label, prlabelx, -1, -1);
     printf("line %d: 这是一个条件语句\n", lcnt - 1);
@@ -383,6 +380,7 @@ void whilestatement()
     types typ1 = ints, typ2 = ints;
     int prlabelx1 = ++labelx;
     int prlabelx2 = ++labelx;
+    optyp op;
 
     midcode_enter(_label, prlabelx1, -1, -1);
     insymbol();
@@ -394,12 +392,13 @@ void whilestatement()
     }
     ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
+        op = (optyp)(sy - eql + _eql);
         insymbol();
         ret2 = expression(&typ2, ret1 + 1);
         if (typ2 != typ1) {
             error(27);
         }
-        midcode_enter((optyp)(sy - eql + _eql), ret1, ret1, ret2);
+        midcode_enter(op, ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
@@ -414,7 +413,7 @@ void whilestatement()
         error(14);
     }
 
-    midcode_enter(_bz, prlabelx2, -1, -1);
+    midcode_enter(_bz, prlabelx2, ret1, -1);
     statement();
     midcode_enter(_goto, prlabelx1, -1, -1);
     midcode_enter(_label, prlabelx2, -1, -1);
@@ -457,8 +456,8 @@ void onecase(types typ, int tmp, int labelxend)
     else {
         error(21);
     }
-    midcode_enter(_eql, tmp, tmp, tmp + 1);
-    midcode_enter(_bz, labelx1, -1, -1);
+    midcode_enter(_eql, tmp+1, tmp, tmp + 1);
+    midcode_enter(_bz, labelx1, tmp+1, -1);
     statement();
     midcode_enter(_goto, labelxend, -1, -1);
     midcode_enter(_label, labelx1, -1, -1);
@@ -621,8 +620,7 @@ void stdfunccall()
                     else if (tab[i].obj != variable) {
                         error(33);
                     }
-                    midcode_enter(_varload, 0, i, -1);
-                    midcode_enter(_push, 0, -1, -1);
+                    midcode_enter(_push, i, SCANF, -1);
                     insymbol();
                 }
                 else {
@@ -646,17 +644,17 @@ void stdfunccall()
         }
         if (sy == stringcon) {
             midcode_enter(_conload, 0, strs, inum);
-            midcode_enter(_push, 0, -1, -1);
+            midcode_enter(_push, 0, PRINTF, strs);
             insymbol();
             if (sy == comma) {
                 insymbol();
                 ret = expression(&typ, 0);
-                midcode_enter(_push, ret, -1, -1);
+                midcode_enter(_push, ret, PRINTF, typ);
             }
         }
         else {
             ret = expression(&typ, 0);
-            midcode_enter(_push, ret, -1, -1);
+            midcode_enter(_push, ret, PRINTF, typ);
         }
         midcode_enter(_call, loc("printf"), -1, -1);
         printf("line %d: 这是一个写语句\n", lcnt);
@@ -859,7 +857,8 @@ int paralist()
             if (sy == ident) {
                 tab_enter(id, variable, typ, dx);
                 midcode_enter(_para, typ, t, -1);
-                dx += (typ == ints) ? 4 : 1;
+                //dx += (typ == ints) ? 4 : 1;
+                dx += 4;
                 paracnt++;
                 insymbol();
             }
@@ -879,7 +878,8 @@ int paralist()
                 if (sy == ident) {
                     tab_enter(id, variable, typ, dx);
                     midcode_enter(_para, typ, t, -1);
-                    dx += (typ == ints) ? 4 : 1;
+                    //dx += (typ == ints) ? 4 : 1;
+                    dx += 4;
                     paracnt++;
                     insymbol();
                 }
@@ -942,6 +942,7 @@ bool funcdef(types typ, string name)
         error(16);//缺复合语句的右大括号
     }
 
+    midcode_enter(_ret, -1, -1, -1);
     if (name == "main" && typ == voids && paracnt == 0) {
         printf("line %d: 这是一个主函数的定义\n", lcnt);
         return true;

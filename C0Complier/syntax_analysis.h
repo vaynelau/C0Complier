@@ -1,6 +1,6 @@
 #ifndef _SYNTAX_ANALYSIS_H_
 #define _SYNTAX_ANALYSIS_H_
-#define RET -5
+
 
 using namespace std;
 

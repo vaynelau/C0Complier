@@ -26,6 +26,7 @@ int main(void)
     tabs_init();
     lexcial_init();
     syntax_analysis();
-    print_midcode();
+    //print_midcode();
+    gen_mips();
     return 0;
 }

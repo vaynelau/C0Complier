@@ -5,6 +5,10 @@
 #include <set>
 #include <vector>
 
+#define RET -5
+#define SCANF 1
+#define PRINTF 2
+
 using namespace std;
 
 typedef enum symbol {
@@ -44,7 +48,7 @@ typedef struct btabitem {
       last指向函数最后一个标识符在tab表中的位置；
       lastpar指向函数的最后一个参数在tab表中的位置；
       psize为参数及内务信息区所占的存储单元数；
-      vsize局部常量、变量、参数及内务信息区所占的存储单元总数。
+      vsize局部变量、参数及内务信息区所占的存储单元总数。
     */
 } btabitem;
 
@@ -87,5 +91,6 @@ extern int mx;
 
 void midcode_enter(optyp op, int v1, int v2, int v3);
 void print_midcode();
+void gen_mips();
 
 #endif // !_TABS_H_

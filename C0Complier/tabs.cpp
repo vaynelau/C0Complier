@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <map>
 #include <vector>
@@ -181,8 +182,355 @@ void print_midcode()
                 printf("array char %s %d\n", tab[midcode[i].v2].name.c_str(), midcode[i].v3);
             }
             break;
+        case _func:
+            if (midcode[i].v1 == ints) {
+                printf("int %s()\n", tab[midcode[i].v2].name.c_str());
+            }
+            else if (midcode[i].v1 == chars) {
+                printf("char %s()\n", tab[midcode[i].v2].name.c_str());
+            }
+            else {
+                printf("void %s()\n", tab[midcode[i].v2].name.c_str());
+            }
+            break;
+        case _para:
+            if (midcode[i].v1 == ints) {
+                printf("para int %s\n", tab[midcode[i].v2].name.c_str());
+            }
+            else {
+                printf("para char %s\n", tab[midcode[i].v2].name.c_str());
+            }
+            break;
+        case _push:
+            printf("push $t%d\n", midcode[i].v1);
+            break;
+        case _call:
+            printf("call %s\n", tab[midcode[i].v1].name.c_str());
+            break;
+        case _ret:
+            if (midcode[i].v1 != -1) {
+                printf("ret $t%d\n", midcode[i].v1);
+            }
+            else {
+                printf("ret\n");
+            }
+            break;
+        case _assign:
+            if (midcode[i].v2 == RET) {
+                printf("$t%d = RET\n", midcode[i].v1);
+            }
+            else {
+                printf("%s = $t%d\n", tab[midcode[i].v1].name.c_str(), midcode[i].v2);
+            }
+            break;
+        case _arrassign:
+            printf("%s[$t%d] = $t%d\n", tab[midcode[i].v1].name.c_str(), midcode[i].v2, midcode[i].v3);
+            break;
+        case _conload:
+            if (midcode[i].v2 == ints) {
+                printf("$t%d = %d\n", midcode[i].v1, midcode[i].v3);
+            }
+            else if (midcode[i].v2 == chars) {
+                printf("$t%d = '%c'\n", midcode[i].v1, midcode[i].v3);
+            }
+            else {
+                printf("$t%d = \"%s\"\n", midcode[i].v1, stab[midcode[i].v3].c_str());
+            }
+            break;
+        case _varload:
+            printf("$t%d = %s\n", midcode[i].v1, tab[midcode[i].v2].name.c_str());
+            break;
+        case _arrload:
+            printf("$t%d = %s[$t%d]\n", midcode[i].v1, tab[midcode[i].v2].name.c_str(), midcode[i].v3);
+            break;
+        case _label:
+            printf("label_%d:\n", midcode[i].v1);
+            break;
+        case _goto:
+            printf("GOTO label_%d\n", midcode[i].v1);
+            break;
+        case _bz:
+            printf("BZ label_%d\n", midcode[i].v1);
+            break;
+        case _neg:
+            printf("$t%d = -$t%d\n", midcode[i].v1, midcode[i].v2);
+            break;
+        case _plus:
+            printf("$t%d = $t%d + $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _minus:
+            printf("$t%d = $t%d - $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _times:
+            printf("$t%d = $t%d * $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _idiv:
+            printf("$t%d = $t%d / $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _eql:
+            printf("$t%d == $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+        case _neq:
+            printf("$t%d != $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+        case _gtr:
+            printf("$t%d > $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+        case _geq:
+            printf("$t%d >= $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+        case _lss:
+            printf("$t%d < $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+        case _leq:
+            printf("$t%d <= $t%d\n", midcode[i].v2, midcode[i].v3);
+            break;
+
         default:
+            printf("mmmmmmmmmp%d\n", midcode[i].op);
             break;
         }
     }
+}
+
+FILE *out;
+
+void gen_mips()
+{
+    int dsp, dfp;
+    out = fopen("out.asm", "w");
+    fprintf(out, ".data\n");
+    fprintf(out, "global_var: .space %d\n", btab[0].vsize);
+    for (int i = 0; i <= sx; i++) {
+        fprintf(out, "str_%d: .asciiz \"%s\"\n", i, stab[i].c_str());
+    }
+
+    fprintf(out, "\n\n.text\n");
+    int mainref = tab[loc("main")].ref;
+    dsp = btab[mainref].vsize;
+    fprintf(out, "addiu $fp, $sp, -4\n");
+    fprintf(out, "addiu $sp, $sp, %d\n", -dsp);
+    fprintf(out, "jal func_%d\n", mainref);
+    fprintf(out, "li $v0, 10\n");
+    fprintf(out, "syscall\n");
+
+    for (int i = 0; i <= mx; i++) {
+        switch (midcode[i].op) {
+        case _const:
+        case _var:
+        case _array:
+            break;
+        case _func:
+            fprintf(out, "\n\nfunc_%d:\n", tab[midcode[i].v2].ref);
+            break;
+        case _para:
+            break;
+        case _push:
+            if (midcode[i].v2 == SCANF) {
+                if (tab[midcode[i].v1].lev == 0) {
+                    if (tab[midcode[i].v1].typ == ints) {
+                        fprintf(out, "li $v0, 5\n");
+                        fprintf(out, "syscall\n");
+                        fprintf(out, "sw $v0, global_var+%d\n", tab[midcode[i].v1].adr);
+                    }
+                    else {
+                        fprintf(out, "li $v0, 12\n");
+                        fprintf(out, "syscall\n");
+                        fprintf(out, "sb $v0, global_var+%d\n", tab[midcode[i].v1].adr);
+                    }
+                }
+                else {
+                    if (tab[midcode[i].v1].typ == ints) {
+                        fprintf(out, "li $v0, 5\n");
+                        fprintf(out, "syscall\n");
+                        fprintf(out, "sw $v0, -%d($fp)\n", tab[midcode[i].v1].adr);
+                    }
+                    else {
+                        fprintf(out, "li $v0, 12\n");
+                        fprintf(out, "syscall\n");
+                        fprintf(out, "sb $v0, -%d($fp)\n", tab[midcode[i].v1].adr);
+                    }
+                }
+            }
+            else if (midcode[i].v2 == PRINTF) {
+                fprintf(out, "move $a0, $t%d\n", midcode[i].v1);
+                if (midcode[i].v3 == strs) {
+                    fprintf(out, "li $v0, 4\n");
+                }
+                else if (midcode[i].v3 == ints) {
+                    fprintf(out, "li $v0, 1\n");
+                }
+                else {
+                    fprintf(out, "li $v0, 11\n");
+                }
+                fprintf(out, "syscall\n");
+            }
+            else {
+                fprintf(out, "addiu $sp, $sp, -4\n");
+                fprintf(out, "sw $t%d, 0($sp)\n", midcode[i].v1);
+            }
+            break;
+        case _call:
+            if (tab[midcode[i].v1].name != "scanf" && tab[midcode[i].v1].name != "printf") {
+                dsp = btab[tab[midcode[i].v1].ref].vsize - btab[tab[midcode[i].v1].ref].psize + 8;
+                dfp = btab[tab[midcode[i].v1].ref].vsize + 8 - 4;
+                fprintf(out, "addiu $sp, $sp, %d\n", -dsp);
+                fprintf(out, "sw $fp, 4($sp)\n");
+                fprintf(out, "sw $ra, 0($sp)\n");
+                fprintf(out, "addiu $fp, $sp, %d\n", dfp);
+                fprintf(out, "jal func_%d\n", tab[midcode[i].v1].ref);
+                fprintf(out, "lw $fp, 4($sp)\n");
+                fprintf(out, "lw $ra, 0($sp)\n");
+                dsp = btab[tab[midcode[i].v1].ref].vsize + 8;
+                fprintf(out, "addiu $sp, $sp, %d\n", dsp);
+            }
+            break;
+        case _ret:
+            if (midcode[i].v1 != -1) {
+                fprintf(out, "move $v0, $t%d\n", midcode[i].v1);
+            }
+            fprintf(out, "jr $ra\n");
+            break;
+        case _assign:
+            if (midcode[i].v2 == RET) {
+                fprintf(out, "move $t%d, $v0\n", midcode[i].v1);
+            }
+            else {
+                if (tab[midcode[i].v1].lev == 0) {
+                    if (tab[midcode[i].v1].typ == ints) {
+                        fprintf(out, "sw $t%d, global_var+%d\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                    }
+                    else {
+                        fprintf(out, "sb $t%d, global_var+%d\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                    }
+                }
+                else {
+                    if (tab[midcode[i].v1].typ == ints) {
+                        fprintf(out, "sw $t%d, -%d($fp)\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                    }
+                    else {
+                        fprintf(out, "sb $t%d, -%d($fp)\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                    }
+                }
+            }
+            break;
+        case _arrassign:
+            fprintf(out, "sll $t%d, $t%d, 2\n", midcode[i].v2, midcode[i].v2);
+            if (tab[midcode[i].v1].lev == 0) {
+                if (tab[midcode[i].v1].typ == ints) {
+                    fprintf(out, "sw $t%d, global_var+%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                }
+                else {
+                    fprintf(out, "sb $t%d, global_var+%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                }
+            }
+            else {
+                fprintf(out, "subu $t%d, $fp, $t%d\n", midcode[i].v2, midcode[i].v2);
+                if (tab[midcode[i].v1].typ == ints) {
+                    fprintf(out, "sw $t%d, -%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                }
+                else {
+                    fprintf(out, "sb $t%d, -%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                }
+            }
+            break;
+        case _conload:
+            if (midcode[i].v2 == ints || midcode[i].v2 == chars) {
+                fprintf(out, "li $t%d, %d\n", midcode[i].v1, midcode[i].v3);
+            }
+            else {
+                fprintf(out, "la $t%d,str_%d\n", midcode[i].v1, midcode[i].v3);
+            }
+            break;
+        case _varload:
+            if (tab[midcode[i].v2].obj == constant) {
+                fprintf(out, "li $t%d, %d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+            }
+            else if (tab[midcode[i].v2].lev == 0) {
+                if (tab[midcode[i].v2].typ == ints) {
+                    fprintf(out, "lw $t%d, global_var+%d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                }
+                else {
+                    fprintf(out, "lb $t%d, global_var+%d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                }
+            }
+            else {
+                if (tab[midcode[i].v2].typ == ints) {
+                    fprintf(out, "lw $t%d, -%d($fp)\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                }
+                else {
+                    fprintf(out, "lb $t%d, -%d($fp)\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                }
+            }
+            break;
+        case _arrload:
+            fprintf(out, "sll $t%d, $t%d, 2\n", midcode[i].v3, midcode[i].v3);
+            if (tab[midcode[i].v2].lev == 0) {
+                if (tab[midcode[i].v2].typ == ints) {
+                    fprintf(out, "lw $t%d, global_var+%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                }
+                else {
+                    fprintf(out, "lb $t%d, global_var+%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                }
+            }
+            else {
+                fprintf(out, "subu $t%d, $fp, $t%d\n", midcode[i].v3, midcode[i].v3);
+                if (tab[midcode[i].v2].typ == ints) {
+                    fprintf(out, "lw $t%d, -%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                }
+                else {
+                    fprintf(out, "lb $t%d, -%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                }
+            }
+            break;
+        case _label:
+            fprintf(out, "label_%d:\n", midcode[i].v1);
+            break;
+        case _goto:
+            fprintf(out, "j label_%d\n", midcode[i].v1);
+            break;
+        case _bz:
+            fprintf(out, "beq $t%d, $0, label_%d\n", midcode[i].v2, midcode[i].v1);
+            break;
+        case _neg:
+            fprintf(out, "neg $t%d, $t%d\n", midcode[i].v1, midcode[i].v2);
+            break;
+        case _plus:
+            fprintf(out, "addu $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _minus:
+            fprintf(out, "subu $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _times:
+            fprintf(out, "mul $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _idiv:
+            fprintf(out, "div $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _eql:
+            fprintf(out, "seq $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _neq:
+            fprintf(out, "sne $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _gtr:
+            fprintf(out, "sgt $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _geq:
+            fprintf(out, "sge $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _lss:
+            fprintf(out, "slt $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+        case _leq:
+            fprintf(out, "sle $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            break;
+
+        default:
+            fprintf(out, "mmmmmmmmmp%d\n", midcode[i].op);
+            break;
+        }
+    }
+
+    fclose(out);
 }
