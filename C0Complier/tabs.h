@@ -83,7 +83,7 @@ typedef enum optyp {
 typedef struct {
     optyp op;
     int v1, v2, v3;
-    //int lev;
+    int lev;
 } midcodeitem;
 
 extern vector<midcodeitem> midcode;

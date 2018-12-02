@@ -85,7 +85,7 @@ void constdef()
     else {
         error(13);
     }
-    printf("line %d: 这是一个常量定义\n", line);
+    //printf("line %d: 这是一个常量定义\n", line);
 }
 
 
@@ -172,7 +172,7 @@ void vardef(types typ, string name)
     else {
         error(13);
     }
-    printf("line %d: 这是一个变量定义\n", line);
+    //printf("line %d: 这是一个变量定义\n", line);
 }
 
 
@@ -274,7 +274,7 @@ int factor(types *ptyp, int tmp)
         break;
     }
     *ptyp = typ;
-    printf("line %d: 这是一个因子\n", lcnt);
+    //printf("line %d: 这是一个因子\n", lcnt);
     return ret;
 }
 
@@ -294,7 +294,7 @@ int term(types *ptyp, int tmp)
         midcode_enter(op, ret, ret, ret1);
     }
     *ptyp = typ;
-    printf("line %d: 这是一个项\n", lcnt);
+    //printf("line %d: 这是一个项\n", lcnt);
     return ret;
 }
 
@@ -325,7 +325,7 @@ int expression(types *ptyp, int tmp)
         ret1 = term(&typ1, ret + 1);
         midcode_enter(op, ret, ret, ret1);
     }
-    printf("line %d: 这是一个表达式\n", lcnt);
+    //printf("line %d: 这是一个表达式\n", lcnt);
     *ptyp = typ;
     return ret;
 }
@@ -360,7 +360,7 @@ void ifstatement()
             error(28); //表达式的值不为整数
         }
     }
-    printf("line %d: 这是一个条件\n", lcnt);
+    //printf("line %d: 这是一个条件\n", lcnt);
     if (sy == rparent) {
         insymbol();
     }
@@ -371,7 +371,7 @@ void ifstatement()
     midcode_enter(_bz, prlabelx, ret1, -1);
     statement();
     midcode_enter(_label, prlabelx, -1, -1);
-    printf("line %d: 这是一个条件语句\n", lcnt - 1);
+    //printf("line %d: 这是一个条件语句\n", lcnt - 1);
 }
 
 
@@ -406,7 +406,7 @@ void whilestatement()
             error(28);
         }
     }
-    printf("line %d: 这是一个条件\n", lcnt);
+    //printf("line %d: 这是一个条件\n", lcnt);
     if (sy == rparent) {
         insymbol();
     }
@@ -418,9 +418,10 @@ void whilestatement()
     statement();
     midcode_enter(_goto, prlabelx1, -1, -1);
     midcode_enter(_label, prlabelx2, -1, -1);
-    printf("line %d: 这是一个循环语句\n", lcnt - 1);
+    //printf("line %d: 这是一个循环语句\n", lcnt - 1);
 }
 
+set<int> casecon;
 
 void onecase(types typ, int tmp, int labelxend)
 {
@@ -430,10 +431,16 @@ void onecase(types typ, int tmp, int labelxend)
     insymbol();
     if (sy == charcon) {
         midcode_enter(_conload, tmp + 1, chars, inum);
-        insymbol();
         if (typ != chars) {
             error(29);
         }
+        else if (casecon.count(inum)) {
+            error(40);
+        }
+        else {
+            casecon.insert(inum);
+        }
+        insymbol();
     }
     else {
         if (sy == _plus_ || sy == _minus_) {
@@ -442,10 +449,16 @@ void onecase(types typ, int tmp, int labelxend)
         }
         if (sy == intcon) {
             midcode_enter(_conload, tmp + 1, ints, sign * inum);
-            insymbol();
             if (typ != ints) {
                 error(29);
             }
+            else if (casecon.count(sign * inum)) {
+                error(40);
+            }
+            else {
+                casecon.insert(sign * inum);
+            }
+            insymbol();
         }
         else {
             error(8);
@@ -462,7 +475,7 @@ void onecase(types typ, int tmp, int labelxend)
     statement();
     midcode_enter(_goto, labelxend, -1, -1);
     midcode_enter(_label, labelx1, -1, -1);
-    printf("line %d: 这是一个情况子语句\n", lcnt - 1);
+    //printf("line %d: 这是一个情况子语句\n", lcnt - 1);
 }
 
 
@@ -471,7 +484,7 @@ void switchstatement()
     int ret;
     types typ;
     int labelxend = ++labelx;
-
+    
     insymbol();
     if (sy == lparent) {
         insymbol();
@@ -494,6 +507,7 @@ void switchstatement()
         error(15);
     }
 
+    casecon.clear();
     if (sy == casesy) {
         do {
             onecase(typ, ret, labelxend);
@@ -511,7 +525,7 @@ void switchstatement()
             error(21);
         }
         statement();
-        printf("line %d: 这是一个缺省\n", lcnt - 1);
+        //printf("line %d: 这是一个缺省\n", lcnt - 1);
     }
     if (sy == rbrace) {
         insymbol();
@@ -520,7 +534,7 @@ void switchstatement()
         error(16);
     }
     midcode_enter(_label, labelxend, -1, -1);
-    printf("line %d: 这是一个情况语句\n", lcnt - 1);
+    //printf("line %d: 这是一个情况语句\n", lcnt - 1);
 }
 
 
@@ -547,7 +561,7 @@ void returnstatement()
     else {
         midcode_enter(_ret, -1, -1, -1);
     }
-    printf("line %d: 这是一个返回语句\n", lcnt);
+    //printf("line %d: 这是一个返回语句\n", lcnt);
 }
 
 
@@ -599,7 +613,7 @@ void assignment(int i)
         }
         midcode_enter(_assign, i, ret2, -1);
     }
-    printf("line %d: 这是一个赋值语句\n", lcnt);
+    //printf("line %d: 这是一个赋值语句\n", lcnt);
 }
 
 
@@ -633,7 +647,7 @@ void stdfunccall()
             error(26);
         }
         midcode_enter(_call, loc("scanf"), -1, -1);
-        printf("line %d: 这是一个读语句\n", lcnt);
+        //printf("line %d: 这是一个读语句\n", lcnt);
     }
     else {
         insymbol();
@@ -658,7 +672,7 @@ void stdfunccall()
             midcode_enter(_push, ret, PRINTF, typ);
         }
         midcode_enter(_call, loc("printf"), -1, -1);
-        printf("line %d: 这是一个写语句\n", lcnt);
+        //printf("line %d: 这是一个写语句\n", lcnt);
     }
 
     if (sy == rparent) {
@@ -714,7 +728,7 @@ int funccall(int i, int tmp)
             
         }
     }
-    printf("line %d: 这是一个值参数表\n", lcnt);
+    //printf("line %d: 这是一个值参数表\n", lcnt);
     
     if (cpos < lastp) {
         error(36); //实参过少
@@ -727,11 +741,11 @@ int funccall(int i, int tmp)
     }
     midcode_enter(_call, i, -1, -1);
     if (tab[i].typ == voids) {
-        printf("line %d: 这是一个无返回值的函数调用语句\n", lcnt);
+        //printf("line %d: 这是一个无返回值的函数调用语句\n", lcnt);
     }
     else {
         midcode_enter(_assign, tmp, RET, -1);
-        printf("line %d: 这是一个有返回值的函数调用语句\n", lcnt);
+        //printf("line %d: 这是一个有返回值的函数调用语句\n", lcnt);
     }
     return tmp;
 }
@@ -759,7 +773,10 @@ void statement()
             error(13);
         }
         break;
-    case semicolon: insymbol(); printf("line %d: 这是一个空语句\n", lcnt); break;
+    case semicolon: 
+        insymbol(); 
+        //printf("line %d: 这是一个空语句\n", lcnt); 
+        break;
     case lbrace: insymbol();
         while (statbegsys.count(sy)) {
             statement();//语句处理函数遇到分号读下一个字符
@@ -839,8 +856,8 @@ void compoundstatement()
     while (statbegsys.count(sy)) {
         statement();//语句处理函数遇到分号读下一个字符
     }
-    printf("line %d: 这是一个语句列\n", lcnt - 1);
-    printf("line %d: 这是一个复合语句\n", lcnt - 1);
+    //printf("line %d: 这是一个语句列\n", lcnt - 1);
+    //printf("line %d: 这是一个复合语句\n", lcnt - 1);
 }
 
 
@@ -901,7 +918,7 @@ int paralist()
     else {
         error(14);
     }
-    printf("line %d: 这是一个参数表\n", lcnt - 1);
+    //printf("line %d: 这是一个参数表\n", lcnt - 1);
     return paracnt;
 }
 
@@ -945,14 +962,14 @@ bool funcdef(types typ, string name)
 
     midcode_enter(_ret, -1, -1, -1);
     if (name == "main" && typ == voids && paracnt == 0) {
-        printf("line %d: 这是一个主函数的定义\n", lcnt);
+        //printf("line %d: 这是一个主函数的定义\n", lcnt);
         return true;
     }
     else if (typ == voids) {
-        printf("line %d: 这是一个无返回值函数的定义\n", lcnt - 1);
+        //printf("line %d: 这是一个无返回值函数的定义\n", lcnt - 1);
     }
     else {
-        printf("line %d: 这是一个有返回值函数的定义\n", lcnt - 1);
+        //printf("line %d: 这是一个有返回值函数的定义\n", lcnt - 1);
     }
     return false;
 }

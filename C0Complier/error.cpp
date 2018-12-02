@@ -129,6 +129,9 @@ void error(int n)
     case 39:
         puts("函数缺少返回语句");
         break;
+    case 40:
+        puts("case语句的常量出现重复");
+        break;
     default:
         puts("其他错误");
         break;

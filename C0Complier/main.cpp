@@ -17,7 +17,7 @@ FILE *src_file; //源代码文件指针
 
 int main(void)
 {
-    puts("Please input the source file name:");
+    puts("请输入源文件名称或路径（直接按回车则默认以16061175_test.txt为源文件）:");
     getline(cin, src_file_name);
     if (src_file_name.empty()) {
         //sourcefilename = "testcode.c";

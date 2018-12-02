@@ -150,6 +150,7 @@ void midcode_enter(optyp op, int v1, int v2, int v3)
     item.v1 = v1;
     item.v2 = v2;
     item.v3 = v3;
+    item.lev = b;
     midcode.push_back(item);
 }
 
@@ -287,7 +288,7 @@ void print_midcode()
             break;
 
         default:
-            printf("mmmmmmmmmp%d\n", midcode[i].op);
+            printf("unknown midcode op: %d\n", midcode[i].op);
             break;
         }
     }
@@ -543,4 +544,5 @@ void gen_mips()
     }
 
     fclose(out);
+    printf("生成的目标代码已输出到out.asm文件中。\n");
 }
