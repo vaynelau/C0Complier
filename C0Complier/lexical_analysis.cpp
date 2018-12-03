@@ -4,7 +4,7 @@
 #include <vector>
 #include "lexical_analysis.h"
 #include "error.h"
-#include "tabs.h"
+#include "table.h"
 
 using namespace std;
 

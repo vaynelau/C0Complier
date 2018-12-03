@@ -123,21 +123,16 @@ void main()
 
     printf("Test start:");
     printf("Test printf:");
-    printf("This is a string.");
+    printf("This is a String.");
+	printf("_\n\r\t_");
     printf('_');
-    printf('1');
-    printf(-1024);
     printf(_);
-    printf(__);
-    printf(_2);
-    printf(_PoS_3);
-    printf(neg5_);
-    printf(X);
     printf('x');
+	printf(x);
     printf('X');
-    printf(x);
     printf(X);
-    printf("X*2+x/3 ",X*2+x/3);
+	printf(-1024);
+    printf("X*2+x/3 = ",X*2+x/3);
     
     printf("Test scanf:");
     printf("Please input int a:");

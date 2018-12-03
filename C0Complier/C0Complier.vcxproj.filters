@@ -27,7 +27,13 @@
     <ClCompile Include="error.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="tabs.cpp">
+    <ClCompile Include="table.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="midcode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mips.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +44,16 @@
     <ClInclude Include="syntax_analysis.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="tabs.h">
+    <ClInclude Include="error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="error.h">
+    <ClInclude Include="table.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="midcode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mips.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

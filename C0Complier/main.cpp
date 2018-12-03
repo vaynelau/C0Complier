@@ -6,8 +6,10 @@
 #include <map>
 #include "lexical_analysis.h"
 #include "syntax_analysis.h"
-#include "tabs.h"
+#include "table.h"
 #include "error.h"
+#include "midcode.h"
+#include "mips.h"
 
 using namespace std;
 
@@ -28,7 +30,7 @@ int main(void)
     lexcial_init();
     syntax_analysis();
     if (noerror) {
-        //print_midcode();
+        print_midcode();
         gen_mips();
     }
     

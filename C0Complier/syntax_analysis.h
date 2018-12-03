@@ -5,7 +5,6 @@
 using namespace std;
 
 void syntax_analysis();
-
 int expression(types *ptyp, int tmp);
 int funccall(int i, int tmp);
 void statement();

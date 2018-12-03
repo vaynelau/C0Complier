@@ -1,0 +1,707 @@
+const int _ = 0
+const int __ = 0
+const int _2 = 2
+const int _PoS_3 = 3
+const int neg5_ = -5
+const char add = '+'
+const char sub = '-'
+const char mul = '*'
+const char _div = '/'
+const int MAX_FIBO = 100
+var int N
+var int n
+array int fibo 100
+array int num 100
+array char str 1000
+void init_fibo()
+var int i
+$t0 = 0
+i = $t0
+label_0:
+$t0 = i
+$t1 = MAX_FIBO
+$t2 = 2
+$t1 = $t1 / $t2
+$t2 = 1
+$t1 = $t1 + $t2
+$t0 < $t1
+BZ label_1
+$t0 = i
+$t1 = 0
+fibo[$t0] = $t1
+$t0 = MAX_FIBO
+$t1 = 1
+$t0 = $t0 - $t1
+$t1 = i
+$t0 = $t0 - $t1
+$t1 = 0
+fibo[$t0] = $t1
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_0
+label_1:
+ret
+int fibonacci()
+para int n
+$t0 = n
+$t1 = 0
+$t0 == $t1
+BZ label_3
+$t0 = 0
+ret $t0
+GOTO label_2
+label_3:
+$t1 = 1
+$t0 == $t1
+BZ label_4
+$t0 = 1
+ret $t0
+GOTO label_2
+label_4:
+$t0 = n
+$t0 = fibo[$t0]
+$t1 = 0
+$t0 == $t1
+BZ label_5
+$t0 = n
+$t1 = n
+$t2 = 1
+$t1 = $t1 - $t2
+push $t1
+call fibonacci
+$t1 = RET
+$t2 = n
+$t3 = 2
+$t2 = $t2 - $t3
+push $t2
+call fibonacci
+$t2 = RET
+$t1 = $t1 + $t2
+fibo[$t0] = $t1
+label_5:
+$t0 = n
+$t0 = fibo[$t0]
+ret $t0
+label_2:
+ret
+int factorial()
+para int n
+$t0 = n
+$t1 = 0
+$t0 == $t1
+BZ label_6
+$t0 = 1
+ret $t0
+label_6:
+$t0 = n
+$t1 = n
+$t2 = 1
+$t1 = $t1 - $t2
+push $t1
+call factorial
+$t1 = RET
+$t0 = $t0 * $t1
+ret $t0
+ret
+void swap()
+para int i
+para int j
+var int tmp
+$t0 = i
+$t0 = num[$t0]
+tmp = $t0
+$t0 = i
+$t1 = j
+$t1 = num[$t1]
+num[$t0] = $t1
+$t0 = j
+$t1 = tmp
+num[$t0] = $t1
+ret
+ret
+void sort()
+para int left
+para int right
+var int i
+var int j
+$t0 = left
+$t1 = right
+$t0 >= $t1
+BZ label_7
+ret
+label_7:
+$t0 = left
+i = $t0
+$t0 = left
+$t1 = 1
+$t0 = $t0 + $t1
+j = $t0
+label_8:
+$t0 = j
+$t1 = right
+$t0 <= $t1
+BZ label_9
+$t0 = j
+$t0 = num[$t0]
+$t1 = left
+$t1 = num[$t1]
+$t0 < $t1
+BZ label_10
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+$t0 = i
+push $t0
+$t0 = j
+push $t0
+call swap
+label_10:
+$t0 = j
+$t1 = 1
+$t0 = $t0 + $t1
+j = $t0
+GOTO label_8
+label_9:
+$t0 = left
+push $t0
+$t0 = i
+push $t0
+call swap
+$t0 = left
+push $t0
+$t0 = i
+$t1 = 1
+$t0 = $t0 - $t1
+push $t0
+call sort
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+push $t0
+$t0 = right
+push $t0
+call sort
+ret
+int calculate()
+para int a
+para int b
+para char op
+$t0 = op
+$t1 = '+'
+$t0 == $t1
+BZ label_12
+$t0 = a
+$t1 = b
+$t0 = $t0 + $t1
+ret $t0
+GOTO label_11
+label_12:
+$t1 = '-'
+$t0 == $t1
+BZ label_13
+$t0 = a
+$t1 = b
+$t0 = $t0 - $t1
+ret $t0
+GOTO label_11
+label_13:
+$t1 = '*'
+$t0 == $t1
+BZ label_14
+$t0 = a
+$t1 = b
+$t0 = $t0 * $t1
+ret $t0
+GOTO label_11
+label_14:
+$t1 = '/'
+$t0 == $t1
+BZ label_15
+$t0 = a
+$t1 = b
+$t0 = $t0 / $t1
+ret $t0
+GOTO label_11
+label_15:
+label_11:
+$t0 = 0
+ret $t0
+ret
+int charcomp()
+para char a
+para char b
+para int op
+const int _true = 1
+const int _false = 0
+var int ret
+$t0 = _false
+ret = $t0
+$t0 = op
+$t1 = 1
+$t0 == $t1
+BZ label_17
+$t0 = a
+$t1 = b
+$t0 < $t1
+BZ label_18
+$t0 = _true
+ret = $t0
+label_18:
+GOTO label_16
+label_17:
+$t1 = 2
+$t0 == $t1
+BZ label_19
+$t0 = a
+$t1 = b
+$t0 <= $t1
+BZ label_20
+$t0 = _true
+ret = $t0
+label_20:
+GOTO label_16
+label_19:
+$t1 = 3
+$t0 == $t1
+BZ label_21
+$t0 = a
+$t1 = b
+$t0 > $t1
+BZ label_22
+$t0 = _true
+ret = $t0
+label_22:
+GOTO label_16
+label_21:
+$t1 = 4
+$t0 == $t1
+BZ label_23
+$t0 = a
+$t1 = b
+$t0 >= $t1
+BZ label_24
+$t0 = _true
+ret = $t0
+label_24:
+GOTO label_16
+label_23:
+$t1 = 5
+$t0 == $t1
+BZ label_25
+$t0 = a
+$t1 = b
+$t0 != $t1
+BZ label_26
+$t0 = _true
+ret = $t0
+label_26:
+GOTO label_16
+label_25:
+$t1 = 6
+$t0 == $t1
+BZ label_27
+$t0 = a
+$t1 = b
+$t0 == $t1
+BZ label_28
+$t0 = _true
+ret = $t0
+label_28:
+GOTO label_16
+label_27:
+$t0 = _false
+ret = $t0
+label_16:
+$t0 = ret
+ret $t0
+ret
+void strrev()
+para int i
+para int j
+var char c
+label_29:
+$t0 = i
+$t1 = j
+$t0 < $t1
+BZ label_30
+$t0 = i
+$t0 = str[$t0]
+c = $t0
+$t0 = i
+$t1 = j
+$t1 = str[$t1]
+str[$t0] = $t1
+$t0 = j
+$t1 = c
+str[$t0] = $t1
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+$t0 = j
+$t1 = 1
+$t0 = $t0 - $t1
+j = $t0
+GOTO label_29
+label_30:
+ret
+void main()
+const char x = 'x'
+const char X = 'X'
+var int result
+var int a
+var int b
+var int nnn
+var int i
+var int tmp
+var char c
+$t0 = "Test start:"
+push $t0
+call printf
+$t0 = "Test printf:"
+push $t0
+call printf
+$t0 = "This is a String."
+push $t0
+call printf
+$t0 = "_\\n\\r\\t_"
+push $t0
+call printf
+$t0 = '_'
+push $t0
+call printf
+$t0 = _
+push $t0
+call printf
+$t0 = 'x'
+push $t0
+call printf
+$t0 = x
+push $t0
+call printf
+$t0 = 'X'
+push $t0
+call printf
+$t0 = X
+push $t0
+call printf
+$t0 = 1024
+$t0 = -$t0
+push $t0
+call printf
+$t0 = "X*2+x/3 = "
+push $t0
+$t0 = X
+$t1 = 2
+$t0 = $t0 * $t1
+$t1 = x
+$t2 = 3
+$t1 = $t1 / $t2
+$t0 = $t0 + $t1
+push $t0
+call printf
+$t0 = "Test scanf:"
+push $t0
+call printf
+$t0 = "Please input int a:"
+push $t0
+call printf
+push $t52
+call scanf
+$t0 = "int a is "
+push $t0
+$t0 = a
+push $t0
+call printf
+$t0 = "Please in\\tput char x:"
+push $t0
+call printf
+push $t57
+call scanf
+$t0 = "char x is "
+push $t0
+$t0 = c
+push $t0
+call printf
+$t0 = "Test charcomp:"
+push $t0
+call printf
+$t0 = 1
+i = $t0
+label_31:
+$t0 = i
+$t1 = 6
+$t0 <= $t1
+BZ label_32
+$t0 = 'A'
+push $t0
+$t0 = 'a'
+push $t0
+$t0 = i
+push $t0
+call charcomp
+$t0 = RET
+push $t0
+call printf
+$t0 = 'a'
+push $t0
+$t0 = 'a'
+push $t0
+$t0 = i
+push $t0
+call charcomp
+$t0 = RET
+push $t0
+call printf
+$t0 = 'a'
+push $t0
+$t0 = 'A'
+push $t0
+$t0 = i
+push $t0
+call charcomp
+$t0 = RET
+push $t0
+call printf
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_31
+label_32:
+$t0 = "Test calculate:"
+push $t0
+call printf
+$t0 = 123
+$t1 = 456
+$t0 = $t0 * $t1
+$t0 = -$t0
+$t1 = -987
+$t2 = 321
+$t1 = $t1 / $t2
+$t2 = 2
+$t3 = 1
+$t2 = $t2 - $t3
+$t1 = $t1 * $t2
+$t0 = $t0 + $t1
+a = $t0
+$t0 = a
+$t1 = 1
+$t0 = $t0 * $t1
+$t0 = -$t0
+$t1 = 0
+$t2 = 156
+$t1 = $t1 * $t2
+$t0 = $t0 + $t1
+$t1 = 123
+$t0 = $t0 / $t1
+b = $t0
+$t0 = 1
+$t1 = 2
+$t2 = 3
+$t3 = 4
+$t4 = 5
+$t5 = 6
+$t6 = 7
+$t7 = 8
+$t6 = $t6 + $t7
+$t5 = $t5 + $t6
+$t4 = $t4 + $t5
+$t3 = $t3 + $t4
+$t2 = $t2 + $t3
+$t1 = $t1 + $t2
+$t0 = $t0 + $t1
+nnn = $t0
+$t0 = "a: "
+push $t0
+$t0 = a
+push $t0
+call printf
+$t0 = "b: "
+push $t0
+$t0 = b
+push $t0
+call printf
+$t0 = a
+push $t0
+$t0 = b
+push $t0
+$t0 = add
+push $t0
+call calculate
+$t0 = RET
+result = $t0
+$t0 = "a b add: "
+push $t0
+$t0 = result
+push $t0
+call printf
+$t0 = a
+push $t0
+$t0 = b
+push $t0
+$t0 = sub
+push $t0
+call calculate
+$t0 = RET
+result = $t0
+$t0 = "a b sub: "
+push $t0
+$t0 = result
+push $t0
+call printf
+$t0 = a
+push $t0
+$t0 = b
+push $t0
+$t0 = mul
+push $t0
+call calculate
+$t0 = RET
+result = $t0
+$t0 = "a b mul: "
+push $t0
+$t0 = result
+push $t0
+call printf
+$t0 = "a b div: "
+push $t0
+$t0 = a
+push $t0
+$t0 = b
+push $t0
+$t0 = _div
+push $t0
+call calculate
+$t0 = RET
+push $t0
+call printf
+$t0 = "Test strrev:"
+push $t0
+call printf
+$t0 = 0
+$t1 = 'H'
+str[$t0] = $t1
+$t0 = 1
+$t1 = 'e'
+str[$t0] = $t1
+$t0 = 2
+$t1 = 'l'
+str[$t0] = $t1
+$t0 = 3
+$t1 = 'l'
+str[$t0] = $t1
+$t0 = 4
+$t1 = 'o'
+str[$t0] = $t1
+$t0 = 5
+$t1 = '_'
+str[$t0] = $t1
+$t0 = 6
+$t1 = '1'
+str[$t0] = $t1
+$t0 = 7
+$t1 = '2'
+str[$t0] = $t1
+$t0 = 8
+$t1 = '3'
+str[$t0] = $t1
+$t0 = 0
+push $t0
+$t0 = 8
+push $t0
+call strrev
+$t0 = 0
+i = $t0
+label_33:
+$t0 = i
+$t1 = 9
+$t0 < $t1
+BZ label_34
+$t0 = i
+$t0 = str[$t0]
+push $t0
+call printf
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_33
+label_34:
+$t0 = "Please input N, n:"
+push $t0
+call printf
+push $t13
+push $t14
+call scanf
+$t0 = "Test factorial N: "
+push $t0
+$t0 = N
+push $t0
+call factorial
+$t0 = RET
+push $t0
+call printf
+call init_fibo
+$t0 = "Test fibonacci n: "
+push $t0
+$t0 = n
+push $t0
+call fibonacci
+$t0 = RET
+push $t0
+call printf
+$t0 = "Please input 10 numbers:"
+push $t0
+call printf
+$t0 = 0
+i = $t0
+label_35:
+$t0 = i
+$t1 = 10
+$t0 < $t1
+BZ label_36
+push $t56
+call scanf
+$t0 = i
+$t1 = tmp
+num[$t0] = $t1
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_35
+label_36:
+$t0 = 0
+push $t0
+$t0 = 9
+push $t0
+call sort
+$t0 = "Test sort:"
+push $t0
+call printf
+$t0 = 0
+i = $t0
+label_37:
+$t0 = i
+$t1 = 10
+$t0 < $t1
+BZ label_38
+$t0 = i
+$t0 = num[$t0]
+push $t0
+call printf
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_37
+label_38:
+$t0 = "Test finished."
+push $t0
+call printf
+ret
+ret

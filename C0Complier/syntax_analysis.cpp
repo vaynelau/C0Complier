@@ -6,7 +6,8 @@
 #include "lexical_analysis.h"
 #include "syntax_analysis.h"
 #include "error.h"
-#include "tabs.h"
+#include "table.h"
+#include "midcode.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ int labelx;
 
 void constdef()
 {
-    int line = lcnt;
+    //int line = lcnt;
     int sign = 1;
     insymbol();
     if (sy == intsy) {
@@ -91,7 +92,7 @@ void constdef()
 
 void vardef(types typ, string name)
 {
-    int line = lcnt;
+    //int line = lcnt;
     if (sy == lbracket) {
         insymbol();
         if (sy == intcon) {
@@ -568,7 +569,7 @@ void returnstatement()
 void assignment(int i)
 {
     types typ1, typ2;
-    int ret1, ret2;
+    int ret1 = 0, ret2;
 
     insymbol();
     if (tab[i].obj == arrays) {

@@ -126,14 +126,18 @@
     <ClCompile Include="error.cpp" />
     <ClCompile Include="lexical_analysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="midcode.cpp" />
+    <ClCompile Include="mips.cpp" />
     <ClCompile Include="syntax_analysis.cpp" />
-    <ClCompile Include="tabs.cpp" />
+    <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error.h" />
     <ClInclude Include="lexical_analysis.h" />
+    <ClInclude Include="midcode.h" />
+    <ClInclude Include="mips.h" />
     <ClInclude Include="syntax_analysis.h" />
-    <ClInclude Include="tabs.h" />
+    <ClInclude Include="table.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
