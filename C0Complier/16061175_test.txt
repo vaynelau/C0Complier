@@ -96,7 +96,6 @@ int charcomp(char a, char b, int op)
         case 4: if(a>=b) ret = _true;
         case 5: if(a!=b) ret = _true;
         case 6: if(a==b) ret = _true;
-        default : ret = _false;
     }
     return (ret);
 }
@@ -123,24 +122,29 @@ void main()
 
     printf("Test start:");
     printf("Test printf:");
-    printf("This is a String.");
-	printf("_\n\r\t_");
+    printf("This is a String:");
+	printf(" !\n_\r_\t }~");
     printf('_');
     printf(_);
     printf('x');
-	printf(x);
+	printf((x));
     printf('X');
-    printf(X);
+    printf((X));
 	printf(-1024);
     printf("X*2+x/3 = ",X*2+x/3);
     
     printf("Test scanf:");
-    printf("Please input int a:");
-    scanf(a);
-    printf("int a is ", a);
-    printf("Please in\tput char x:");
+    printf("Please input an integer nnn:");
+    scanf(nnn);
+	printf("nnn is ", nnn);
+    printf("Please input a character x:");
     scanf(c);
-    printf("char x is ", c);
+    printf("x is ", c);
+	printf("Please input 2 integers a, b and a character x:");
+	scanf(a,b,c);
+    printf("a is ", a);
+	printf("b is ", b);
+	printf("x is ", c);
 
     printf("Test charcomp:");
     i=1;
@@ -154,8 +158,7 @@ void main()
     printf("Test calculate:");
     a = -123*456+-987/+321*(2-1);
     b = (-a*1 + -0 * 156) / 123;
-
-	nnn = 1+(2+(3+(4+(5+(6+(7+8))))));
+	nnn = 1+(2+(a+(4+(5+(6+(7+b))))));
 
     printf("a: ", a);
     printf("b: ", b);
@@ -177,21 +180,28 @@ void main()
     str[6] = '1';
     str[7] = '2';
     str[8] = '3';
+	printf("str before reverse:");
+	i = 0;
+	while (i < 9) {
+        printf(str[i]);
+        i = i + 1;
+    }
     strrev(0, 8);
+	printf("str after reverse:");
     i = 0;
     while (i < 9) {
         printf(str[i]);
         i = i + 1;
     }
 
-    printf("Please input N, n:");
+	printf("Test factorial and fibonacci:");
+    printf("Please input 2 integers N, n:");
     scanf(N, n);
-    printf("Test factorial N: ", factorial(N));
-
+    printf("factorial N is ", factorial(N));
     init_fibo();
-    printf("Test fibonacci n: ", fibonacci(n));
+    printf("fibonacci n is ", fibonacci(n));
 
-
+	printf("Test sort:");
     printf("Please input 10 numbers:");
     i = 0;
     while (i < 10) {
@@ -200,7 +210,7 @@ void main()
         i = i + 1;
     }
     sort(0, 9);
-    printf("Test sort:");
+	printf("sort result:");
     i = 0;
     while (i < 10) {
         printf(num[i]);

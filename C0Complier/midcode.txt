@@ -312,8 +312,6 @@ ret = $t0
 label_28:
 GOTO label_16
 label_27:
-$t0 = _false
-ret = $t0
 label_16:
 $t0 = ret
 ret $t0
@@ -364,10 +362,10 @@ call printf
 $t0 = "Test printf:"
 push $t0
 call printf
-$t0 = "This is a String."
+$t0 = "This is a String:"
 push $t0
 call printf
-$t0 = "_\\n\\r\\t_"
+$t0 = " !\\n_\\r_\\t }~"
 push $t0
 call printf
 $t0 = '_'
@@ -406,22 +404,44 @@ call printf
 $t0 = "Test scanf:"
 push $t0
 call printf
-$t0 = "Please input int a:"
+$t0 = "Please input an integer nnn:"
 push $t0
 call printf
-push $t52
+push $t54
 call scanf
-$t0 = "int a is "
+$t0 = "nnn is "
 push $t0
-$t0 = a
+$t0 = nnn
 push $t0
 call printf
-$t0 = "Please in\\tput char x:"
+$t0 = "Please input a character x:"
 push $t0
 call printf
 push $t57
 call scanf
-$t0 = "char x is "
+$t0 = "x is "
+push $t0
+$t0 = c
+push $t0
+call printf
+$t0 = "Please input 2 integers a, b and a character x:"
+push $t0
+call printf
+push $t52
+push $t53
+push $t57
+call scanf
+$t0 = "a is "
+push $t0
+$t0 = a
+push $t0
+call printf
+$t0 = "b is "
+push $t0
+$t0 = b
+push $t0
+call printf
+$t0 = "x is "
 push $t0
 $t0 = c
 push $t0
@@ -501,12 +521,12 @@ $t0 = $t0 / $t1
 b = $t0
 $t0 = 1
 $t1 = 2
-$t2 = 3
+$t2 = a
 $t3 = 4
 $t4 = 5
 $t5 = 6
 $t6 = 7
-$t7 = 8
+$t7 = b
 $t6 = $t6 + $t7
 $t5 = $t5 + $t6
 $t4 = $t4 + $t5
@@ -609,11 +629,9 @@ str[$t0] = $t1
 $t0 = 8
 $t1 = '3'
 str[$t0] = $t1
-$t0 = 0
+$t0 = "str before reverse:"
 push $t0
-$t0 = 8
-push $t0
-call strrev
+call printf
 $t0 = 0
 i = $t0
 label_33:
@@ -631,13 +649,41 @@ $t0 = $t0 + $t1
 i = $t0
 GOTO label_33
 label_34:
-$t0 = "Please input N, n:"
+$t0 = 0
+push $t0
+$t0 = 8
+push $t0
+call strrev
+$t0 = "str after reverse:"
+push $t0
+call printf
+$t0 = 0
+i = $t0
+label_35:
+$t0 = i
+$t1 = 9
+$t0 < $t1
+BZ label_36
+$t0 = i
+$t0 = str[$t0]
+push $t0
+call printf
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_35
+label_36:
+$t0 = "Test factorial and fibonacci:"
+push $t0
+call printf
+$t0 = "Please input 2 integers N, n:"
 push $t0
 call printf
 push $t13
 push $t14
 call scanf
-$t0 = "Test factorial N: "
+$t0 = "factorial N is "
 push $t0
 $t0 = N
 push $t0
@@ -646,7 +692,7 @@ $t0 = RET
 push $t0
 call printf
 call init_fibo
-$t0 = "Test fibonacci n: "
+$t0 = "fibonacci n is "
 push $t0
 $t0 = n
 push $t0
@@ -654,33 +700,10 @@ call fibonacci
 $t0 = RET
 push $t0
 call printf
-$t0 = "Please input 10 numbers:"
+$t0 = "Test sort:"
 push $t0
 call printf
-$t0 = 0
-i = $t0
-label_35:
-$t0 = i
-$t1 = 10
-$t0 < $t1
-BZ label_36
-push $t56
-call scanf
-$t0 = i
-$t1 = tmp
-num[$t0] = $t1
-$t0 = i
-$t1 = 1
-$t0 = $t0 + $t1
-i = $t0
-GOTO label_35
-label_36:
-$t0 = 0
-push $t0
-$t0 = 9
-push $t0
-call sort
-$t0 = "Test sort:"
+$t0 = "Please input 10 numbers:"
 push $t0
 call printf
 $t0 = 0
@@ -690,6 +713,32 @@ $t0 = i
 $t1 = 10
 $t0 < $t1
 BZ label_38
+push $t56
+call scanf
+$t0 = i
+$t1 = tmp
+num[$t0] = $t1
+$t0 = i
+$t1 = 1
+$t0 = $t0 + $t1
+i = $t0
+GOTO label_37
+label_38:
+$t0 = 0
+push $t0
+$t0 = 9
+push $t0
+call sort
+$t0 = "sort result:"
+push $t0
+call printf
+$t0 = 0
+i = $t0
+label_39:
+$t0 = i
+$t1 = 10
+$t0 < $t1
+BZ label_40
 $t0 = i
 $t0 = num[$t0]
 push $t0
@@ -698,8 +747,8 @@ $t0 = i
 $t1 = 1
 $t0 = $t0 + $t1
 i = $t0
-GOTO label_37
-label_38:
+GOTO label_39
+label_40:
 $t0 = "Test finished."
 push $t0
 call printf
