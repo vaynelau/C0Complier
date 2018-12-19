@@ -9,7 +9,7 @@ bool noerror = true;
 void error(int n)
 {
     noerror = false;
-    printf("%s:%d:%d: error: ", src_file_name.c_str(), lcnt, chcnt);
+    printf("%s:第%d行, 第%d列: 错误: ", src_file_name.c_str(), lcnt, chcnt);
     switch (n) {
     case 1:
         printf("不合法的字符常量'%c'\n", ch);
@@ -27,6 +27,7 @@ void error(int n)
         printf("无法识别的符号'%c'\n", ch);
         nextch();
         break;
+
     case 6:
         puts("缺少标识符");
         break;
@@ -40,7 +41,7 @@ void error(int n)
         puts("缺少类型标识符int或char");
         break;
     case 10:
-        puts("数组元素个数不大于0");
+        puts("数组元素个数不合法");
         break;
     case 11:
         puts("没有指定数组元素个数");
@@ -85,7 +86,7 @@ void error(int n)
         puts("不合法的表达式（因子）");
         break;
     case 25:
-        puts("返回值类型与函数不一致");
+        puts("返回值类型与函数定义不一致");
         break;
     case 26:
         puts("缺少左小括号");
@@ -121,16 +122,31 @@ void error(int n)
         puts("实参个数过少");
         break;
     case 37:
-        puts("程序结构错误");
+        puts("main函数后含有其他函数定义");
         break;
     case 38:
-        puts("没有合法的main函数");
+        puts("缺少合法的main函数");
         break;
     case 39:
         puts("函数缺少返回语句");
         break;
     case 40:
         puts("case语句的常量出现重复");
+        break;
+    case 41:
+        puts("数组越界");
+        break;
+    case 42:
+        puts("变量定义出现在函数定义之后");
+        break;
+    case 43:
+        puts("常量定义出现在变量或函数定义之后");
+        break;
+    case 44:
+        puts("void类型函数定义错误");
+        break;
+    case 45:
+        puts("无法识别的程序开始符号");
         break;
     default:
         puts("其他错误");

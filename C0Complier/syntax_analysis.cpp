@@ -14,6 +14,8 @@ using namespace std;
 int dx, prt, prmx;
 bool retflag;
 int labelx;
+int conindexflag;
+int arrindex;
 
 void constdef()
 {
@@ -28,25 +30,28 @@ void constdef()
                 insymbol();
                 if (sy == becomes) {
                     insymbol();
+                    if (sy == _plus_ || sy == _minus_) {
+                        sign = (sy == _minus_) ? -1 : 1;
+                        insymbol();
+                    }
+                    if (sy == intcon) {
+                        tab[t].adr = sign * inum;
+                        midcode_enter(_const, ints, t, sign * inum);
+                        insymbol();
+                    }
+                    else {
+                        error(8);
+                        test2(sepsys, procbegsys);
+                    }
                 }
                 else {
                     error(7);
-                }
-                if (sy == _plus_ || sy == _minus_) {
-                    sign = (sy == _minus_) ? -1 : 1;
-                    insymbol();
-                }
-                if (sy == intcon) {
-                    tab[t].adr = sign * inum;
-                    midcode_enter(_const, ints, t, sign * inum);
-                    insymbol();
-                }
-                else {
-                    error(8);
+                    test2(sepsys, procbegsys);
                 }
             }
             else {
                 error(6);
+                test2(sepsys, procbegsys);
             }
         } while (sy == comma);
     }
@@ -58,26 +63,31 @@ void constdef()
                 insymbol();
                 if (sy == becomes) {
                     insymbol();
+                    if (sy == charcon) {
+                        tab[t].adr = inum;
+                        midcode_enter(_const, chars, t, inum);
+                        insymbol();
+                    }
+                    else {
+                        error(8);
+                        test2(sepsys, procbegsys);
+                    }
                 }
                 else {
                     error(7);
-                }
-                if (sy == charcon) {
-                    tab[t].adr = inum;
-                    midcode_enter(_const, chars, t, inum);
-                    insymbol();
-                }
-                else {
-                    error(8);
+                    test2(sepsys, procbegsys);
                 }
             }
             else {
                 error(6);
+                test2(sepsys, procbegsys);
             }
         } while (sy == comma);
+
     }
     else {
         error(9);
+        test(procbegsys);
     }
 
     if (sy == semicolon) {
@@ -85,7 +95,9 @@ void constdef()
     }
     else {
         error(13);
+        test(procbegsys);
     }
+
     //printf("line %d: 这是一个常量定义\n", line);
 }
 
@@ -107,16 +119,19 @@ void vardef(types typ, string name)
                 error(10);//数组元素个数不大于0
             }
             insymbol();
+            if (sy == rbracket) {
+                insymbol();
+            }
+            else {
+                error(12);//缺少右中括号
+                test2(sepsys, procbegsys);
+            }
         }
         else {
             error(8);//没有指定数组元素
+            test2(sepsys, procbegsys);
         }
-        if (sy == rbracket) {
-            insymbol();
-        }
-        else {
-            error(12);//缺少右中括号
-        }
+        
     }
     else {
         tab_enter(name, variable, typ, dx);
@@ -144,16 +159,19 @@ void vardef(types typ, string name)
                         error(10);//数组元素个数不大于0
                     }
                     insymbol();
+                    if (sy == rbracket) {
+                        insymbol();
+                    }
+                    else {
+                        error(12);//缺少右中括号
+                        test2(sepsys, procbegsys);
+                    }
                 }
                 else {
                     error(11);//没有指定数组元素个数
+                    test2(sepsys, procbegsys);
                 }
-                if (sy == rbracket) {
-                    insymbol();
-                }
-                else {
-                    error(12);//缺少右中括号
-                }
+
             }
             else {
                 tab_enter(name, variable, typ, dx);
@@ -164,6 +182,7 @@ void vardef(types typ, string name)
         }
         else {
             error(9); //变量无标识符
+            test2(sepsys, procbegsys);
         }
     }
 
@@ -172,6 +191,7 @@ void vardef(types typ, string name)
     }
     else {
         error(13);
+        test(procbegsys);
     }
     //printf("line %d: 这是一个变量定义\n", line);
 }
@@ -179,7 +199,7 @@ void vardef(types typ, string name)
 
 int factor(types *ptyp, int tmp)
 {
-    types typ = ints, typ1;
+    types typ = voids, typ1;
     int sign = 1, ret = tmp;
     int i;
 
@@ -197,6 +217,10 @@ int factor(types *ptyp, int tmp)
         if (sy == intcon) {
             typ = ints;
             midcode_enter(_conload, tmp, ints, inum * sign);
+            if (conindexflag == 0) {
+                arrindex *= inum * sign;
+                conindexflag = 1;
+            }
             ret = tmp;
             insymbol();
         }
@@ -207,6 +231,10 @@ int factor(types *ptyp, int tmp)
     case intcon:
         typ = ints;
         midcode_enter(_conload, tmp, ints, inum);
+        if (conindexflag == 0) {
+            arrindex *= inum;
+            conindexflag = 1;
+        }
         ret = tmp;
         insymbol();
         break;
@@ -226,6 +254,10 @@ int factor(types *ptyp, int tmp)
         if (i != 0) {
             switch (tab[i].obj) {
             case constant:
+                if (conindexflag == 0) {
+                    arrindex *= tab[i].adr;
+                    conindexflag = 1;
+                }
             case variable:
                 typ = tab[i].typ;
                 midcode_enter(_varload, tmp, i, -1);
@@ -241,10 +273,15 @@ int factor(types *ptyp, int tmp)
                 else {
                     error(22);
                 }
+                conindexflag = 0;
                 ret = expression(&typ1, tmp);
                 if (typ1 != ints) {
                     error(31);
                 }
+                if (conindexflag == 1 && !(arrindex >= 0 && arrindex < tab[i].arrcnt)) {
+                    error(41);
+                }
+                conindexflag = -1;
                 midcode_enter(_arrload, ret, i, ret);
                 if (sy == rbracket) {
                     insymbol();
@@ -254,13 +291,11 @@ int factor(types *ptyp, int tmp)
                 }
                 break;
             case function:
-                if (tab[i].typ != voids) {
-                    typ = tab[i].typ;
-                    ret = funccall(i, tmp);
-                }
-                else {
+                if (tab[i].typ == voids) {
                     error(23);
                 }
+                typ = tab[i].typ;
+                ret = funccall(i, tmp);
                 break;
             default:
                 break;
@@ -268,10 +303,12 @@ int factor(types *ptyp, int tmp)
         }
         else {
             error(18);//未定义的标识符
+            insymbol();
         }
         break;
     default:
         error(24);
+        insymbol();
         break;
     }
     *ptyp = typ;
@@ -288,6 +325,7 @@ int term(types *ptyp, int tmp)
 
     ret = factor(&typ, tmp);
     while (sy == times || sy == idiv) {
+        conindexflag = -1;
         typ = ints;
         op = (sy == times) ? _times : _idiv;
         insymbol();
@@ -307,8 +345,10 @@ int expression(types *ptyp, int tmp)
     int ret, ret1;
     optyp op;
 
+    arrindex = 1;
     if (sy == _plus_ || sy == _minus_) {
         sign = (sy == _plus_) ? 1 : -1;
+        arrindex = sign;
         insymbol();
         typ = ints;
     }
@@ -318,8 +358,9 @@ int expression(types *ptyp, int tmp)
         midcode_enter(_neg, ret, ret, -1);
         //ret++;
     }
-    
+
     while (sy == _plus_ || sy == _minus_) {
+        conindexflag = -1;
         typ = ints;
         op = (sy == _plus_) ? _plus : _minus;
         insymbol();
@@ -350,7 +391,7 @@ void ifstatement()
     if (relationop.count(sy)) {
         op = (optyp)(sy - eql + _eql);
         insymbol();
-        ret2 = expression(&typ2, ret1+1);
+        ret2 = expression(&typ2, ret1 + 1);
         if (typ2 != typ1) {
             error(27); //关系运算符左右类型不一致
         }
@@ -426,9 +467,9 @@ set<int> casecon;
 
 void onecase(types typ, int tmp, int labelxend)
 {
-    int sign = 1; 
+    int sign = 1;
     int labelx1 = ++labelx;
-    
+
     insymbol();
     if (sy == charcon) {
         midcode_enter(_conload, tmp + 1, chars, inum);
@@ -471,8 +512,8 @@ void onecase(types typ, int tmp, int labelxend)
     else {
         error(21);
     }
-    midcode_enter(_eql, tmp+1, tmp, tmp + 1);
-    midcode_enter(_bz, labelx1, tmp+1, -1);
+    midcode_enter(_eql, tmp + 1, tmp, tmp + 1);
+    midcode_enter(_bz, labelx1, tmp + 1, -1);
     statement();
     midcode_enter(_goto, labelxend, -1, -1);
     midcode_enter(_label, labelx1, -1, -1);
@@ -485,7 +526,7 @@ void switchstatement()
     int ret;
     types typ;
     int labelxend = ++labelx;
-    
+
     insymbol();
     if (sy == lparent) {
         insymbol();
@@ -586,7 +627,7 @@ void assignment(int i)
         //else if(ptyp<0 || ptyp>tab[i].arrcnt-1) {
         //    error(0);//数组越界
         //}
-        
+
         if (sy == rbracket) {
             insymbol();
         }
@@ -622,7 +663,7 @@ void stdfunccall()
 {
     int ret;
     types typ = ints;
-    
+
     if (id == "scanf") {
         insymbol();
         if (sy == lparent) {
@@ -688,7 +729,7 @@ void stdfunccall()
 int funccall(int i, int tmp)
 {
     int lastp = btab[tab[i].ref].lastpar;
-    int cpos = i;
+    int curpos = i;
     int ret;
     types typ;
 
@@ -701,13 +742,13 @@ int funccall(int i, int tmp)
     }
 
     if (sy != rparent) {
-        cpos++;
+        curpos++;
         ret = expression(&typ, tmp);
-        if (cpos > lastp) {
+        if (curpos > lastp) {
             error(34); //实参过多
         }
         else {
-            if (typ != tab[cpos].typ) {
+            if (typ != tab[curpos].typ) {
                 error(35); //实参与形参类型不一致
             }
             midcode_enter(_push, ret, -1, -1);
@@ -715,23 +756,23 @@ int funccall(int i, int tmp)
 
         while (sy == comma) {
             insymbol();
-            cpos++;
+            curpos++;
             ret = expression(&typ, tmp);
-            if (cpos > lastp) {
+            if (curpos > lastp) {
                 error(34); //实参过多
             }
             else {
-                if (typ != tab[cpos].typ) {
+                if (typ != tab[curpos].typ) {
                     error(35); //实参与形参类型不一致
                 }
                 midcode_enter(_push, ret, -1, -1);
             }
-            
+
         }
     }
     //printf("line %d: 这是一个值参数表\n", lcnt);
-    
-    if (cpos < lastp) {
+
+    if (curpos < lastp) {
         error(36); //实参过少
     }
     if (sy == rparent) {
@@ -774,11 +815,12 @@ void statement()
             error(13);
         }
         break;
-    case semicolon: 
-        insymbol(); 
+    case semicolon:
+        insymbol();
         //printf("line %d: 这是一个空语句\n", lcnt); 
         break;
-    case lbrace: insymbol();
+    case lbrace: 
+        insymbol();
         while (statbegsys.count(sy)) {
             statement();//语句处理函数遇到分号读下一个字符
         }
@@ -793,7 +835,10 @@ void statement()
         i = loc(id);
         if (i != 0) {
             switch (tab[i].obj) {
-            case constant: error(17); break;
+            case constant: 
+                error(17); 
+                insymbol();
+                break;
             case variable:
             case arrays:
                 assignment(i);
@@ -824,10 +869,12 @@ void statement()
         }
         else {
             error(18);//未定义的标识符
+            insymbol();
         }
         break;
     default:
         error(20); //不合法语句
+        insymbol();
     }
 }
 
@@ -885,7 +932,7 @@ int paralist()
                 error(6); //缺少参数名标识符
             }
         }
-        else{
+        else {
             error(9); //缺少参数类型标识符
         }
 
@@ -927,7 +974,7 @@ int paralist()
 bool funcdef(types typ, string name)
 {
     int paracnt;
-    
+
     btab_enter();
     tab_enter(name, function, typ, 0);
     midcode_enter(_func, typ, t, 0);
@@ -940,7 +987,7 @@ bool funcdef(types typ, string name)
     midcode[prmx].v3 = paracnt;
     btab[b].lastpar = t;
     btab[b].psize = dx;
-    
+
     retflag = false;
     if (sy == lbrace) {
         insymbol();
@@ -993,8 +1040,12 @@ void syntax_analysis()
     while (sy == constsy) {
         constdef();
     }
-    while ((sy == intsy || sy == charsy || sy == voidsy) && !mainflag) {
-        if (sy == intsy || sy == charsy) {
+    while (sy != eofsy) {
+        if (sy == constsy) {
+            error(43);
+            constdef();
+        }
+        else if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
             insymbol();
             if (sy == ident) {
@@ -1004,21 +1055,25 @@ void syntax_analysis()
                     if (!funcflag) {
                         btab[0].vsize = dx;
                     }
+                    if (mainflag) {
+                        error(37); //main函数后含有其他函数定义
+                    }
                     funcflag = true;
                     funcdef(typ, name);
                 }
-                else if (!funcflag) {
-                    vardef(typ, name);
-                }
                 else {
-                    error(37); //程序结构错误
+                    if (funcflag) {
+                        error(42); //变量定义出现在函数定义之后
+                    }
+                    vardef(typ, name);
                 }
             }
             else {
-                error(6);
+                error(6); //缺少标识符
+                test(procbegsys);
             }
         }
-        else { //sy == voidsy
+        else if (sy == voidsy) {
             insymbol();
             if (sy == ident) {
                 name = id;
@@ -1027,23 +1082,47 @@ void syntax_analysis()
                     if (!funcflag) {
                         btab[0].vsize = dx;
                     }
+                    if (mainflag) {
+                        error(37); //main函数后含有其他函数定义
+                    }
                     funcflag = true;
                     mainflag = funcdef(voids, name);
                 }
                 else {
-                    error(37); //程序结构错误
+                    error(44); //void类型函数定义错误
+                    test(procbegsys);
                 }
             }
             else {
-                error(6);
+                error(6); //缺少标识符
+                test(procbegsys);
             }
+        }
+        else {
+            error(45); //无法识别的程序开始符号
+            test(procbegsys);
         }
     }
 
     if (!mainflag) {
-        error(38);
+        error(38); //缺少合法的main函数
     }
-    if (sy != eofsy) {
-        error(37);
+}
+
+void test(set<symbol> s)
+{
+    if (!s.count(sy)) {
+        while (!s.count(sy) && sy != eofsy) {
+            insymbol();
+        }
+    }
+}
+
+void test2(set<symbol> s1, set<symbol> s2)
+{
+    if (!s1.count(sy) && !s2.count(sy)) {
+        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
+            insymbol();
+        }
     }
 }

@@ -12,8 +12,9 @@ void gen_mips()
 {
     int dsp, dfp;
     FILE *out;
-
-    out = fopen("out.asm", "w");
+    //int v1;
+    int v2, v3;
+    out = fopen("a.asm", "w");
     fprintf(out, ".data\n");
     fprintf(out, "    global_var: .space %d\n", btab[0].vsize);
     for (int i = 0; i <= sx; i++) {
@@ -68,7 +69,11 @@ void gen_mips()
                 }
             }
             else if (midcode[i].v2 == PRINTF) {
-                fprintf(out, "    move $a0, $t%d\n", midcode[i].v1);
+                if (midcode[i].v1 >= 8) {
+                    fprintf(out, "    lw $t9, 0($sp)\n");
+                    fprintf(out, "    addiu $sp, $sp, 4\n");
+                }
+                fprintf(out, "    move $a0, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1));
                 if (midcode[i].v3 == strs) {
                     fprintf(out, "    li $v0, 4\n");
                 }
@@ -81,8 +86,12 @@ void gen_mips()
                 fprintf(out, "    syscall\n");
             }
             else {
+                if (midcode[i].v1 >= 8) {
+                    fprintf(out, "    lw $t9, 0($sp)\n");
+                    fprintf(out, "    addiu $sp, $sp, 4\n");
+                }
                 fprintf(out, "    addiu $sp, $sp, -4\n");
-                fprintf(out, "    sw $t%d, 0($sp)\n", midcode[i].v1);
+                fprintf(out, "    sw $t%d, 0($sp)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1));
             }
             break;
         case _call:
@@ -113,56 +122,85 @@ void gen_mips()
             break;
         case _ret:
             if (midcode[i].v1 != -1) {
-                fprintf(out, "    move $v0, $t%d\n", midcode[i].v1);
+                if (midcode[i].v1 >= 8) {
+                    fprintf(out, "    lw $t9, 0($sp)\n");
+                    fprintf(out, "    addiu $sp, $sp, 4\n");
+                }
+                fprintf(out, "    move $v0, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1));
             }
             fprintf(out, "    jr $ra\n");
             break;
         case _assign:
             if (midcode[i].v2 == RET) {
-                fprintf(out, "    move $t%d, $v0\n", midcode[i].v1);
+                fprintf(out, "    move $t%d, $v0\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1));
+                if (midcode[i].v1 >= 8) {
+                    fprintf(out, "    addiu $sp, $sp, -4\n");
+                    fprintf(out, "    sw $t9, 0($sp)\n");
+                }
             }
             else {
+                if (midcode[i].v2 >= 8) {
+                    fprintf(out, "    lw $t9, 0($sp)\n");
+                    fprintf(out, "    addiu $sp, $sp, 4\n");
+                }
                 if (tab[midcode[i].v1].lev == 0) {
                     if (tab[midcode[i].v1].typ == ints) {
-                        fprintf(out, "    sw $t%d, global_var+%d\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                        fprintf(out, "    sw $t%d, global_var+%d\n", (midcode[i].v2 >= 8 ? 9: midcode[i].v2), tab[midcode[i].v1].adr);
                     }
                     else {
-                        fprintf(out, "    sb $t%d, global_var+%d\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                        fprintf(out, "    sb $t%d, global_var+%d\n", (midcode[i].v2 >= 8 ? 9 : midcode[i].v2), tab[midcode[i].v1].adr);
                     }
                 }
                 else {
                     if (tab[midcode[i].v1].typ == ints) {
-                        fprintf(out, "    sw $t%d, -%d($fp)\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                        fprintf(out, "    sw $t%d, -%d($fp)\n", (midcode[i].v2 >= 8 ? 9 : midcode[i].v2), tab[midcode[i].v1].adr);
                     }
                     else {
-                        fprintf(out, "    sb $t%d, -%d($fp)\n", midcode[i].v2, tab[midcode[i].v1].adr);
+                        fprintf(out, "    sb $t%d, -%d($fp)\n", (midcode[i].v2 >= 8 ? 9 : midcode[i].v2), tab[midcode[i].v1].adr);
                     }
                 }
             }
             break;
         case _arrassign:
-            fprintf(out, "    sll $t%d, $t%d, 2\n", midcode[i].v2, midcode[i].v2);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            v3 = (midcode[i].v3 >= 8 ? 9 : midcode[i].v3);
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            v2 = (midcode[i].v2 >= 8 ? 8 : midcode[i].v2);
+            fprintf(out, "    sll $t%d, $t%d, 2\n", v2, v2);
             if (tab[midcode[i].v1].lev == 0) {
                 if (tab[midcode[i].v1].typ == ints) {
-                    fprintf(out, "    sw $t%d, global_var+%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                    fprintf(out, "    sw $t%d, global_var+%d($t%d)\n", v3, tab[midcode[i].v1].adr, v2);
                 }
                 else {
-                    fprintf(out, "    sb $t%d, global_var+%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                    fprintf(out, "    sb $t%d, global_var+%d($t%d)\n", v3, tab[midcode[i].v1].adr, v2);
                 }
             }
             else {
-                fprintf(out, "    subu $t%d, $fp, $t%d\n", midcode[i].v2, midcode[i].v2);
+                fprintf(out, "    subu $t%d, $fp, $t%d\n", v2, v2);
                 if (tab[midcode[i].v1].typ == ints) {
-                    fprintf(out, "    sw $t%d, -%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                    fprintf(out, "    sw $t%d, -%d($t%d)\n", v3, tab[midcode[i].v1].adr, v2);
                 }
                 else {
-                    fprintf(out, "    sb $t%d, -%d($t%d)\n", midcode[i].v3, tab[midcode[i].v1].adr, midcode[i].v2);
+                    fprintf(out, "    sb $t%d, -%d($t%d)\n", v3, tab[midcode[i].v1].adr, v2);
                 }
             }
             break;
-        case _conload:
+        case _conload: //tmp, ints, inum * sign
             if (midcode[i].v2 == ints || midcode[i].v2 == chars) {
-                fprintf(out, "    li $t%d, %d\n", midcode[i].v1, midcode[i].v3);
+                if (midcode[i].v1 < 8) {
+                    fprintf(out, "    li $t%d, %d\n", midcode[i].v1, midcode[i].v3);
+                }
+                else {
+                    fprintf(out, "    li $t9, %d\n", midcode[i].v3);
+                    fprintf(out, "    addiu $sp, $sp, -4\n");
+                    fprintf(out, "    sw $t9, 0($sp)\n");
+                }
             }
             else {
                 fprintf(out, "    la $t%d, str_%d\n", midcode[i].v1, midcode[i].v3);
@@ -170,43 +208,57 @@ void gen_mips()
             break;
         case _varload:
             if (tab[midcode[i].v2].obj == constant) {
-                fprintf(out, "    li $t%d, %d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                fprintf(out, "    li $t%d, %d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr);
             }
             else if (tab[midcode[i].v2].lev == 0) {
                 if (tab[midcode[i].v2].typ == ints) {
-                    fprintf(out, "    lw $t%d, global_var+%d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                    fprintf(out, "    lw $t%d, global_var+%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr);
                 }
                 else {
-                    fprintf(out, "    lb $t%d, global_var+%d\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                    fprintf(out, "    lb $t%d, global_var+%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr);
                 }
             }
             else {
                 if (tab[midcode[i].v2].typ == ints) {
-                    fprintf(out, "    lw $t%d, -%d($fp)\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                    fprintf(out, "    lw $t%d, -%d($fp)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr);
                 }
                 else {
-                    fprintf(out, "    lb $t%d, -%d($fp)\n", midcode[i].v1, tab[midcode[i].v2].adr);
+                    fprintf(out, "    lb $t%d, -%d($fp)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr);
                 }
+            }
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
             }
             break;
         case _arrload:
-            fprintf(out, "    sll $t%d, $t%d, 2\n", midcode[i].v3, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            v3 = (midcode[i].v3 >= 8 ? 9 : midcode[i].v3);
+            
+            fprintf(out, "    sll $t%d, $t%d, 2\n", v3, v3);
             if (tab[midcode[i].v2].lev == 0) {
                 if (tab[midcode[i].v2].typ == ints) {
-                    fprintf(out, "    lw $t%d, global_var+%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                    fprintf(out, "    lw $t%d, global_var+%d($t%d)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr, v3);
                 }
                 else {
-                    fprintf(out, "    lb $t%d, global_var+%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                    fprintf(out, "    lb $t%d, global_var+%d($t%d)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr, v3);
                 }
             }
             else {
-                fprintf(out, "    subu $t%d, $fp, $t%d\n", midcode[i].v3, midcode[i].v3);
+                fprintf(out, "    subu $t%d, $fp, $t%d\n", v3, v3);
                 if (tab[midcode[i].v2].typ == ints) {
-                    fprintf(out, "    lw $t%d, -%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                    fprintf(out, "    lw $t%d, -%d($t%d)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr, v3);
                 }
                 else {
-                    fprintf(out, "    lb $t%d, -%d($t%d)\n", midcode[i].v1, tab[midcode[i].v2].adr, midcode[i].v3);
+                    fprintf(out, "    lb $t%d, -%d($t%d)\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), tab[midcode[i].v2].adr, v3);
                 }
+            }
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
             }
             break;
         case _label:
@@ -216,44 +268,173 @@ void gen_mips()
             fprintf(out, "    j label_%d\n", midcode[i].v1);
             break;
         case _bz:
+            //
             fprintf(out, "    beq $t%d, $0, label_%d\n", midcode[i].v2, midcode[i].v1);
             break;
         case _neg:
-            fprintf(out, "    neg $t%d, $t%d\n", midcode[i].v1, midcode[i].v2);
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    neg $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 9 : midcode[i].v2));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _plus:
-            fprintf(out, "    addu $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    addu $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _minus:
-            fprintf(out, "    subu $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    subu $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _times:
-            fprintf(out, "    mul $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    mul $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _idiv:
-            fprintf(out, "    div $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    div $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _eql:
-            fprintf(out, "    seq $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    seq $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _neq:
-            fprintf(out, "    sne $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    sne $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _gtr:
-            fprintf(out, "    sgt $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    sgt $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _geq:
-            fprintf(out, "    sge $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    sge $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _lss:
-            fprintf(out, "    slt $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    slt $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         case _leq:
-            fprintf(out, "    sle $t%d, $t%d, $t%d\n", midcode[i].v1, midcode[i].v2, midcode[i].v3);
+            if (midcode[i].v3 >= 8) {
+                fprintf(out, "    lw $t9, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            if (midcode[i].v2 >= 8) {
+                fprintf(out, "    lw $t8, 0($sp)\n");
+                fprintf(out, "    addiu $sp, $sp, 4\n");
+            }
+            fprintf(out, "    sle $t%d, $t%d, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1), (midcode[i].v2 >= 8 ? 8 : midcode[i].v2), (midcode[i].v3 >= 8 ? 9 : midcode[i].v3));
+            if (midcode[i].v1 >= 8) {
+                fprintf(out, "    addiu $sp, $sp, -4\n");
+                fprintf(out, "    sw $t9, 0($sp)\n");
+            }
             break;
         default:
             fprintf(out, "unknown midcode op: %d\n", midcode[i].op);
-            printf("unknown midcode op: %d\n", midcode[i].op); 
+            printf("unknown midcode op: %d\n", midcode[i].op);
             break;
         }
     }

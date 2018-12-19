@@ -119,6 +119,9 @@ void main()
     int a, b, nnn;
     int i, tmp;
     char c;
+	int fibo;
+	fibo = 1+(2+(3+4+(5+(6+(7+(8+(9+(10+(factorial(5)+factorial(5))))))))));
+	printf("fibo: ", fibo);
 
     printf("Test start:");
     printf("Test printf:");
@@ -158,10 +161,12 @@ void main()
     printf("Test calculate:");
     a = -123*456+-987/+321*(2-1);
     b = (-a*1 + -0 * 156) / 123;
-	nnn = 1+(2+(a+(4+(5+(6+(7+b))))));
+
+	
 
     printf("a: ", a);
     printf("b: ", b);
+	
     result = calculate(a, b, add);
     printf("a b add: ", result);
     result = calculate(a, b, sub);

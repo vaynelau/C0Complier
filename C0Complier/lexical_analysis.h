@@ -2,6 +2,7 @@
 #define _LEXICAL_ANALYSIS_H_
 #include <cstdio>
 #include <string>
+#include <set>
 #include "table.h"
 
 using namespace std;

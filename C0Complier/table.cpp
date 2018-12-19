@@ -29,6 +29,16 @@ symbol s2[] = {
 };
 set<symbol> relationop(s2, s2 + sizeof(s2) / sizeof(s2[0]));
 
+symbol s3[] = {
+    constsy, intsy, charsy, voidsy
+};
+set<symbol> procbegsys(s3, s3 + sizeof(s3) / sizeof(s3[0]));
+
+symbol s4[] = {
+    comma, semicolon
+};
+set<symbol> sepsys(s4, s4 + sizeof(s4) / sizeof(s4[0]));
+
 void tabs_init()
 {
     t = -1;

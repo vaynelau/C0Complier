@@ -570,14 +570,12 @@ func_8:
     lw $t1, -4($fp)
     slt $t0, $t0, $t1
     beq $t0, $0, label_30
-    li $t0, 1
+    lw $t0, -0($fp)
     sll $t0, $t0, 2
     lb $t0, global_var+808($t0)
     sb $t0, -8($fp)
     lw $t0, -0($fp)
-    li $t1, -1
-    li $t2, 2
-    mul $t1, $t1, $t2
+    lw $t1, -4($fp)
     sll $t1, $t1, 2
     lb $t1, global_var+808($t1)
     sll $t0, $t0, 2
