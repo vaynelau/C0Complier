@@ -26,7 +26,7 @@ void print_midcode()
 {
     FILE *out;
     
-    out = fopen("midcode.txt", "w");
+    out = fopen("..\\midcode.txt", "w");
 
     for (int i = 0; i <= mx; i++) {
         switch (midcode[i].op) {

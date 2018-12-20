@@ -17,7 +17,7 @@ void gen_mips()
     int printf_para_cnt = 0;
 
 
-    out = fopen("a.asm", "w");
+    out = fopen("..\\a.asm", "w");
     fprintf(out, ".data\n");
     fprintf(out, "    global_var: .space %d\n", btab[0].vsize);
     for (int i = 0; i <= sx; i++) {

@@ -23,7 +23,7 @@ int main(void)
     getline(cin, src_file_name);
     if (src_file_name.empty()) {
         //sourcefilename = "testcode.c";
-        src_file_name = "16061175_test.txt";
+        src_file_name = "..\\Test\\16061175_test.txt";
     }
     src_file = fopen(src_file_name.c_str(), "r");
     tabs_init();

@@ -1,0 +1,85 @@
+const int const_global_int = 1;
+const char const_global_char = '+';
+
+int int_global_var,int_global_array[7];
+char char_global_var,char_global_array[700];
+
+int int_func(int int_para,char char_para,int return_int)
+{
+    if (return_int) return (int_para);
+}
+
+char char_func(int int_para,char char_para,int return_int)
+{
+    if (return_int) return(int_para);
+}
+
+
+void voidd(int int_para,char char_para)
+{
+    return;
+}
+
+void main()
+{    
+    const int const_local_int = 1;
+    const char const_local_char = '+';
+    int int_local_var,int_local_array[7];
+    char char_local_var,char_local_array[700];
+
+    printf(1);
+    printf('+');
+    printf(('+'));
+    
+    printf(const_local_int);
+    printf(const_local_char);
+    printf((const_local_char));
+
+    printf(const_global_int);
+    printf(const_global_char);
+    printf((const_global_char));
+
+    int_func(int_local_array[const_local_int],char_local_array[const_local_int],1);
+    int_func(int_local_array[const_local_int],char_local_array[const_local_int],0);
+
+    int_func(char_local_array[const_local_char],int_local_array[const_local_char],1);
+    int_func(char_local_array[const_local_char],int_local_array[const_local_char],0);
+
+    char_func(int_local_array[const_local_int],char_local_array[const_local_int],1);
+    char_func(int_local_array[const_local_int],char_local_array[const_local_int],0);
+
+    char_func(char_local_array[const_local_char],int_local_array[const_local_char],1);
+    char_func(char_local_array[const_local_char],int_local_array[const_local_char],0);
+
+    voidd(int_local_array[const_local_int],char_local_array[const_local_int]);
+    voidd(char_local_array[const_local_char],int_local_array[const_local_char]);
+
+    printf(char_func(int_local_array[const_local_int],char_local_array[const_local_int],1));
+    printf((char_func(char_local_array[(const_local_char)],int_local_array[const_local_char],0)));
+
+    if (int_global_array[const_global_int] == char_local_array[const_global_int]) 
+        char_func(char_local_array[const_local_char],int_local_array[const_local_char],1);
+
+    if (int_global_var == const_local_char) ;
+
+    if (int_global_var == const_local_int) ;
+
+    int_local_array[const_local_int] = const_local_int;
+
+    int_local_array[const_local_int] = const_local_char;
+
+    char_local_array[const_local_char] = const_local_char;
+
+    int_local_array[(const_local_char)] = const_local_char;
+}
+
+
+
+
+ 
+  
+   
+    
+
+     
+     
