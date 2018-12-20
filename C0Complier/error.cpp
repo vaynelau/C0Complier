@@ -9,10 +9,11 @@ bool noerror = true;
 void error(int n)
 {
     noerror = false;
-    printf("%s:第%d行, 第%d列: 错误: ", src_file_name.c_str(), lcnt, chcnt);
+    //printf("%s:第%d行, 第%d列: 错误: ", src_file_name.c_str(), lcnt, chcnt);
+    printf("%s:第%d行: 错误: ", src_file_name.c_str(), lcnt);
     switch (n) {
     case 1:
-        printf("不合法的字符常量'%c'\n", ch);
+        printf("不合法的字符常量\'%c\'\n", ch);
         break;
     case 2:
         puts("缺少单引号终结符");
@@ -24,8 +25,7 @@ void error(int n)
         puts("不合法的符号'!'");
         break;
     case 5:
-        printf("无法识别的符号'%c'\n", ch);
-        nextch();
+        printf("不合法的符号'%c'\n", ch);
         break;
 
     case 6:
@@ -62,7 +62,7 @@ void error(int n)
         puts("缺少右大括号");
         break;
     case 17:
-        puts("不应出现的常量标识符");
+        puts("常量标识符不能作为语句开始符号");
         break;
     case 18:
         puts("未定义的标识符");
@@ -91,14 +91,14 @@ void error(int n)
     case 26:
         puts("缺少左小括号");
         break;
-    case 27:
-        puts("关系运算符左右类型不一致");
-        break;
+    //case 27:
+    //    puts("关系运算符两侧表达式类型不一致");
+    //    break;
     case 28:
-        puts("表达式的值不为整数");
+        puts("条件表达式的类型不为整型");
         break;
     case 29:
-        puts("case语句的常量类型与switch表达式的值不一致");
+        puts("case语句的常量类型与switch表达式的类型不一致");
         break;
     case 30:
         puts("缺少case语句");
@@ -110,7 +110,7 @@ void error(int n)
         puts("赋值语句左右类型不一致");
         break;
     case 33:
-        puts("标识符类型不为变量");
+        puts("scanf函数中标识符类型不为变量");
         break;
     case 34:
         puts("实参个数过多");
@@ -137,16 +137,22 @@ void error(int n)
         puts("数组越界");
         break;
     case 42:
-        puts("变量定义出现在函数定义之后");
+        puts("变量定义出现的位置不当");
         break;
     case 43:
-        puts("常量定义出现在变量或函数定义之后");
+        puts("常量定义出现的位置不当");
         break;
     case 44:
         puts("void类型函数定义错误");
         break;
     case 45:
         puts("无法识别的程序开始符号");
+        break;
+    case 46:
+        puts("关系运算符左侧表达式类型不为整型");
+        break;
+    case 47:
+        puts("关系运算符右侧表达式类型不为整型");
         break;
     default:
         puts("其他错误");

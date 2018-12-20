@@ -131,7 +131,7 @@ void vardef(types typ, string name)
             error(8);//没有指定数组元素
             test2(sepsys, procbegsys);
         }
-        
+
     }
     else {
         tab_enter(name, variable, typ, dx);
@@ -254,7 +254,7 @@ int factor(types *ptyp, int tmp)
         if (i != 0) {
             switch (tab[i].obj) {
             case constant:
-                if (conindexflag == 0) {
+                if (conindexflag == 0 && tab[i].typ == ints) {
                     arrindex *= tab[i].adr;
                     conindexflag = 1;
                 }
@@ -389,17 +389,20 @@ void ifstatement()
     }
     ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
+        if (typ1 != ints) {
+            error(46); //关系运算符左侧表达式类型不为整型
+        }
         op = (optyp)(sy - eql + _eql);
         insymbol();
         ret2 = expression(&typ2, ret1 + 1);
-        if (typ2 != typ1) {
-            error(27); //关系运算符左右类型不一致
+        if (typ2 != ints) {
+            error(47); //关系运算符右侧表达式类型不为整型
         }
         midcode_enter(op, ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
-            error(28); //表达式的值不为整数
+            error(28); //条件表达式的类型不为整型
         }
     }
     //printf("line %d: 这是一个条件\n", lcnt);
@@ -435,17 +438,20 @@ void whilestatement()
     }
     ret1 = expression(&typ1, 0);
     if (relationop.count(sy)) {
+        if (typ1 != ints) {
+            error(46); //关系运算符左侧表达式类型不为整型
+        }
         op = (optyp)(sy - eql + _eql);
         insymbol();
         ret2 = expression(&typ2, ret1 + 1);
-        if (typ2 != typ1) {
-            error(27);
+        if (typ2 != ints) {
+            error(47); //关系运算符右侧表达式类型不为整型
         }
         midcode_enter(op, ret1, ret1, ret2);
     }
     else {
         if (typ1 != ints) {
-            error(28);
+            error(28); //条件表达式的类型不为整型
         }
     }
     //printf("line %d: 这是一个条件\n", lcnt);
@@ -620,14 +626,15 @@ void assignment(int i)
         else {
             error(22);
         }
+        conindexflag = 0;
         ret1 = expression(&typ1, 0);
         if (typ1 != ints) {
             error(31);  //数字下标只能为整型
         }
-        //else if(ptyp<0 || ptyp>tab[i].arrcnt-1) {
-        //    error(0);//数组越界
-        //}
-
+        if (conindexflag == 1 && !(arrindex >= 0 && arrindex < tab[i].arrcnt)) {
+            error(41);
+        }
+        conindexflag = -1;
         if (sy == rbracket) {
             insymbol();
         }
@@ -705,7 +712,7 @@ void stdfunccall()
             insymbol();
             if (sy == comma) {
                 insymbol();
-                ret = expression(&typ, 0);
+                ret = expression(&typ, 1);
                 midcode_enter(_push, ret, PRINTF, typ);
             }
         }
@@ -819,7 +826,7 @@ void statement()
         insymbol();
         //printf("line %d: 这是一个空语句\n", lcnt); 
         break;
-    case lbrace: 
+    case lbrace:
         insymbol();
         while (statbegsys.count(sy)) {
             statement();//语句处理函数遇到分号读下一个字符
@@ -835,8 +842,8 @@ void statement()
         i = loc(id);
         if (i != 0) {
             switch (tab[i].obj) {
-            case constant: 
-                error(17); 
+            case constant:
+                error(17);
                 insymbol();
                 break;
             case variable:

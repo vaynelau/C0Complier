@@ -14,6 +14,9 @@ void gen_mips()
     FILE *out;
     //int v1;
     int v2, v3;
+    int printf_para_cnt = 0;
+
+
     out = fopen("a.asm", "w");
     fprintf(out, ".data\n");
     fprintf(out, "    global_var: .space %d\n", btab[0].vsize);
@@ -69,21 +72,11 @@ void gen_mips()
                 }
             }
             else if (midcode[i].v2 == PRINTF) {
-                if (midcode[i].v1 >= 8) {
-                    fprintf(out, "    lw $t9, 0($sp)\n");
-                    fprintf(out, "    addiu $sp, $sp, 4\n");
-                }
-                fprintf(out, "    move $a0, $t%d\n", (midcode[i].v1 >= 8 ? 9 : midcode[i].v1));
-                if (midcode[i].v3 == strs) {
-                    fprintf(out, "    li $v0, 4\n");
-                }
-                else if (midcode[i].v3 == ints) {
-                    fprintf(out, "    li $v0, 1\n");
-                }
-                else {
-                    fprintf(out, "    li $v0, 11\n");
-                }
-                fprintf(out, "    syscall\n");
+                printf_para_cnt++;
+                //if (midcode[i].v1 >= 8) { //正常来说不会执行
+                //    fprintf(out, "    lw $t9, 0($sp)\n");
+                //    fprintf(out, "    addiu $sp, $sp, 4\n");
+                //}
             }
             else {
                 if (midcode[i].v1 >= 8) {
@@ -115,9 +108,44 @@ void gen_mips()
                 fprintf(out, "    addiu $sp, $sp, %d\n", dsp);
             }
             else if (tab[midcode[i].v1].name == "printf") {
+                if (printf_para_cnt == 1) {
+                    if (i>0 && midcode[i-1].v3 == strs) {
+                        fprintf(out, "    move $a0, $t0\n");
+                        fprintf(out, "    li $v0, 4\n");
+                        fprintf(out, "    syscall\n");
+                    }
+                    else if (i > 0 && midcode[i-1].v3 == ints) {
+                        fprintf(out, "    move $a0, $t0\n");
+                        fprintf(out, "    li $v0, 1\n");
+                        fprintf(out, "    syscall\n");
+                    }
+                    else if (i > 0 && midcode[i - 1].v3 == chars) {
+                        fprintf(out, "    move $a0, $t0\n");
+                        fprintf(out, "    li $v0, 11\n");
+                        fprintf(out, "    syscall\n");
+                    }
+                }
+                else if (printf_para_cnt == 2) {
+                    fprintf(out, "    move $a0, $t0\n");
+                    fprintf(out, "    li $v0, 4\n");
+                    fprintf(out, "    syscall\n");
+
+                    if (i > 0 && midcode[i - 1].v3 == ints) {
+                        fprintf(out, "    move $a0, $t1\n");
+                        fprintf(out, "    li $v0, 1\n");
+                        fprintf(out, "    syscall\n");
+                    }
+                    else if (i > 0 && midcode[i - 1].v3 == chars) {
+                        fprintf(out, "    move $a0, $t1\n");
+                        fprintf(out, "    li $v0, 11\n");
+                        fprintf(out, "    syscall\n");
+                    }
+                }
+                
                 fprintf(out, "    li $a0, %d\n", '\n');
                 fprintf(out, "    li $v0, 11\n");
                 fprintf(out, "    syscall\n");
+                printf_para_cnt = 0;
             }
             break;
         case _ret:
@@ -440,5 +468,5 @@ void gen_mips()
     }
 
     fclose(out);
-    printf("生成的mips目标代码已输出到out.asm文件中。\n");
+    printf("生成的mips目标代码已输出到a.asm文件中。\n");
 }

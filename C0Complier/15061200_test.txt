@@ -64,10 +64,10 @@ void AllValidCharInt(char min, char max, int a1, int a2, int a3, int a4, int x){
 
     c=min;
     printf("if & switch & condition is a relation expression & all valid string & valid char,num");
-    while(c<=max){
+    while((c)<=(max)){
         if (c+0!=34){
             if (c+0>=32){
-                switch(c-95+95){
+                switch(c){
                     case '_':
                         signal = 1;
                     case '+':
@@ -152,7 +152,7 @@ void main(){
             }             
         case -1:
             printf("Empty Default Case");
-        default:
+        default:;
     }
 
     return;                             

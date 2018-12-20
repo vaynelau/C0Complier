@@ -1,0 +1,56 @@
+主要特点
+1. 测试数组下标
+2. 全局寄存器分配和写回（如果你已经实现了的话）
+3. 函数调用中参数寄存器的保存和新参数计算正确性
+4. 全局量和局部量同名
+5. 特殊符号输出
+6. 默认在每一个单独的printf语句结尾带有换行
+7. 带有括号和乘除的超长表达式计算（跨越多行中间表达式的临时变量调用）
+
+
+
+
+Input two numbers to calculate GCD
+**** user input : 60
+**** user input : 12
+Two input for GCD 60
+12
+Greatest Common Division of 60
+12
+is 12
+
+
+
+
+
+Input two numbers to calculate GCD
+**** user input : 100
+**** user input : 36
+Two input for GCD 100
+36
+Greatest Common Division of 100
+36
+is 4
+100
+empty parameter list & condition is a single expression2
+empty parameter list & condition is a single expression1
+as plain as daylight 1\n
+as plain as daylight 2
+Print an expression alone & print string with expression & all the <zi fu>
+apples[0] is1
+4967
+ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+Some empty sentences
+Hello World
+sreg[count] is12
+sreg[count] is13
+sreg[count] is14
+sreg[count] is15
+sreg[count] is16
+sreg[count] is17
+sreg[count] is18
+sreg[count] is19
+sreg[count] is20
+sreg[count] is21
+if & switch & condition is a relation expression & all valid string & valid char,num
+A valid <zi fu>a

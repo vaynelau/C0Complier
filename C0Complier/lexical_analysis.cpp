@@ -8,7 +8,7 @@
 
 using namespace std;
 
-char ch; //记录从源程序中读取的上一个字符
+int ch; //记录从源程序中读取的上一个字符
 string id; //记录标识符的名字或特殊符号
 symbol sy; //记录当前单词符号的类型
 int inum; //记录整数常量或字符常量的值
@@ -51,7 +51,7 @@ void nextch()
         eolnflag = false;
     }
 
-    ch = (char)fgetc(src_file);
+    ch = fgetc(src_file);
     chcnt++;
     if (ch == EOF) {
         eofflag = true;
@@ -87,13 +87,14 @@ void insymbol()
     id.clear();
     errflag = false;
 
-    while (ch == ' ' || ch == '\t' || ch == '\n') {
+    //while (ch == ' ' || ch == '\t' || ch == '\n') {
+    while (isspace(ch)) {
         nextch();
     }
 
     if (isalpha(ch) || ch == '_') { //标识符或保留字
         do {
-            id += ch;
+            id += (char)ch;
             nextch();
         } while (isalnum(ch) || ch == '_');
 
@@ -118,12 +119,14 @@ void insymbol()
         }
     }
     else if (ch == '\'') { //字符常量
+        sy = charcon;
         nextch();
         if (isalnum(ch) || ch == '_' || ch == '+' || ch == '-' || ch == '*' || ch == '/') {
             inum = (int)ch;
-            sy = charcon;
+
         }
         else {
+            inum = 0;
             error(1);  //不合法的字符常量
         }
         nextch();
@@ -139,9 +142,9 @@ void insymbol()
         nextch();
         while (ch != '\"') {
             if (ch >= 32 && ch <= 126) {
-                id += ch;
+                id += (char)ch;
                 if (ch == '\\') {
-                    id += ch;
+                    id += (char)ch;
                 }
                 k++;
                 nextch();
@@ -151,11 +154,11 @@ void insymbol()
                 break;
             }
         }
+        sy = stringcon;
+        stab.push_back(id);
+        inum = ++sx;
+        sleng = k;
         if (!errflag) {
-            sy = stringcon;
-            stab.push_back(id);
-            inum = ++sx;
-            sleng = k;
             nextch();
         }
         else {
@@ -163,10 +166,10 @@ void insymbol()
         }
     }
     else if (ch == '>') { //大于号，大于等于号
-        id += ch;
+        id += (char)ch;
         nextch();
         if (ch == '=') {
-            id += ch;
+            id += (char)ch;
             sy = geq;
             nextch();
         }
@@ -175,10 +178,10 @@ void insymbol()
         }
     }
     else if (ch == '<') { //小于号，小于等于号
-        id += ch;
+        id += (char)ch;
         nextch();
         if (ch == '=') {
-            id += ch;
+            id += (char)ch;
             sy = leq;
             nextch();
         }
@@ -187,10 +190,10 @@ void insymbol()
         }
     }
     else if (ch == '=') { //赋值符号，等于号
-        id += ch;
+        id += (char)ch;
         nextch();
         if (ch == '=') {
-            id += ch;
+            id += (char)ch;
             sy = eql;
             nextch();
         }
@@ -199,20 +202,21 @@ void insymbol()
         }
     }
     else if (ch == '!') { //不等号
-        id += ch;
+        id += (char)ch;
         nextch();
         if (ch == '=') {
-            id += ch;
+            id += (char)ch;
             sy = neq;
             nextch();
         }
         else {
-            error(4); //不合法的特殊符号'!'
+            error(4); //不合法的符号'!'
+            insymbol();
         }
     }
-    else if (sps.count(ch)) { //其他合法的特殊符号
-        id += ch;
-        sy = sps[ch];
+    else if (sps.count((char)ch)) { //其他合法的特殊符号
+        id += (char)ch;
+        sy = sps[(char)ch];
         nextch();
     }
     else if (ch == EOF) {
@@ -220,6 +224,8 @@ void insymbol()
     }
     else {
         error(5); //不合法的特殊符号
+        nextch();
+        insymbol();
     }
     //print_symbol();
 }

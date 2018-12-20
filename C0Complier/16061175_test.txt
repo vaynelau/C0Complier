@@ -2,7 +2,6 @@ const int _ = -0;
 const int __=+0;
 const int _2 = 2, _PoS_3 = 3, neg5_ = -5;
 const char add = '+', sub = '-', mul = '*', _div = '/';
-
 const int MAX_FIBO = 100;
 
 int N, n;
@@ -90,12 +89,12 @@ int charcomp(char a, char b, int op)
         ret = _false;
     };
     switch (op) {
-        case 1: if(a<b) ret = _true;
-        case 2: if(a<=b) ret = _true;
-        case 3: if(a>b) ret = _true;
-        case 4: if(a>=b) ret = _true;
-        case 5: if(a!=b) ret = _true;
-        case 6: if(a==b) ret = _true;
+        case 1: if((a)<(b)) ret = _true;
+        case 2: if((a)<=(b)) ret = _true;
+        case 3: if((a)>(b)) ret = _true;
+        case 4: if((a)>=(b)) ret = _true;
+        case 5: if((a)!=(b)) ret = _true;
+        case 6: if((a)==(b)) ret = _true;
     }
     return (ret);
 }

@@ -9,7 +9,7 @@ using namespace std;
 
 extern string src_file_name;
 extern FILE *src_file;
-extern char ch;
+extern int ch;
 extern int lcnt, chcnt; // 记录当前字符所在的行数和列数
 extern string id; //记录标识符的名字或特殊符号
 extern symbol sy; //记录当前单词符号的类型

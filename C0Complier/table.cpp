@@ -132,7 +132,7 @@ void tab_enter(string name, objtyp obj, types typ, int adr)
         tab.push_back(item);
     }
     else {
-        error(19); //标识符重定义错误
+        error(19); //标识符出现重定义
     }
 }
 
