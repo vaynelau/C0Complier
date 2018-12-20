@@ -1,0 +1,5 @@
+foo1
+foo2
+foo
+bar
+Result = 3

@@ -1,0 +1,38 @@
+请输入源文件名称或路径（直接按回车则默认以16061175_test.txt为源文件）:
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第14行: 错误: 返回值类型与函数定义不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第45行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第45行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第45行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第45行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第46行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第46行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第46行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第46行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第51行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第51行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第51行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第51行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第52行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第52行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第52行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第52行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第55行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第55行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第55行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第55行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第58行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第58行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第58行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第60行: 错误: 关系运算符右侧表达式类型不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第61行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第61行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第61行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第61行: 错误: 实参与形参类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第63行: 错误: 关系运算符右侧表达式类型不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第69行: 错误: 赋值语句左右类型不一致
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第71行: 错误: 数组下标索引不为整型
+E:\Projects\VisualStudio2017\C0Complier\Test\type_error_test.txt:第73行: 错误: 赋值语句左右类型不一致
+
+E:\Projects\VisualStudio2017\C0Complier\x64\Debug\C0Complier.exe (进程 14708)已退出，返回代码为: 0。
+按任意键关闭此窗口...

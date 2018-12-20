@@ -1,0 +1,110 @@
+Input:
+-123
+0
+123
+-321
+x
+1
+2
+1
+2
+3
+2
+1
+-9
+-0
++0
+41313
+-243
+
+Output:
+fibo: 295
+Test start:
+Test printf:
+This is a String:
+ !\n_\r_\t }~
+_
+0
+x
+120
+X
+88
+-1024
+X*2+x/3 = 216
+Test scanf:
+Please input an integer nnn:
+nnn is -123
+Please input a character x:
+x is 0
+Please input 2 integers a, b and a character x:
+a is 123
+b is -321
+x is x
+Test charcomp:
+1
+0
+0
+1
+1
+0
+0
+0
+1
+0
+1
+1
+1
+0
+1
+0
+1
+0
+Test calculate:
+a: -56091
+b: 456
+a b add: -55635
+a b sub: -56547
+a b mul: -25577496
+a b div: -123
+Test strrev:
+str before reverse:
+H
+e
+l
+l
+o
+_
+1
+2
+3
+str after reverse:
+3
+2
+1
+_
+o
+l
+l
+e
+H
+Test factorial and fibonacci:
+Please input 2 integers N, n:
+factorial N is 1
+fibonacci n is 1
+Test sort:
+Please input 10 numbers:
+sort result:
+-243
+-9
+0
+0
+1
+1
+2
+2
+3
+41313
+Test finished.
+
+-- program is finished running --
+
