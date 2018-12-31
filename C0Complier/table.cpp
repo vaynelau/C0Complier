@@ -18,7 +18,6 @@ vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 
 
-
 symbol s1[] = {
     ifsy, whilesy, lbrace, ident, semicolon, switchsy, returnsy
 };
@@ -38,6 +37,11 @@ symbol s4[] = {
     comma, semicolon
 };
 set<symbol> sepsys(s4, s4 + sizeof(s4) / sizeof(s4[0]));
+
+symbol s5[] = {
+    comma, rparent, lbrace
+};
+set<symbol> sepsys2(s5, s5 + sizeof(s5) / sizeof(s5[0]));
 
 void tabs_init()
 {

@@ -10,7 +10,8 @@ char str[1000];
 
 void init_fibo()
 {
-    int i;
+    int i,f;
+    f = 1+(2+(3+4+(5+(6+(factorial(5)+(factorial(5)+(factorial(5)+(10+(factorial(5)+factorial(5))))))))));
     i = 0;
     while (i < MAX_FIBO/2+1) {
         fibo[i] = 0;
@@ -119,7 +120,7 @@ void main()
     int i, tmp;
     char c;
 	int fibo;
-	fibo = 1+(2+(3+4+(5+(6+(7+(8+(9+(10+(factorial(5)+factorial(5))))))))));
+	
 	printf("fibo: ", fibo);
 
     printf("Test start:");

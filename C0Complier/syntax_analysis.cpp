@@ -17,10 +17,14 @@ int labelx;
 int conindexflag;
 int arrindex;
 
-void constdef()
+void constdef(bool isglobal)
 {
-    //int line = lcnt;
     int sign = 1;
+
+    set<symbol> sys(procbegsys.begin(), procbegsys.end());
+    if (!isglobal) {
+        sys.insert(statbegsys.begin(), statbegsys.end());
+    }
     insymbol();
     if (sy == intsy) {
         do {
@@ -41,17 +45,17 @@ void constdef()
                     }
                     else {
                         error(8);
-                        test2(sepsys, procbegsys);
+                        skip2(sepsys, sys);
                     }
                 }
                 else {
                     error(7);
-                    test2(sepsys, procbegsys);
+                    skip2(sepsys, sys);
                 }
             }
             else {
                 error(6);
-                test2(sepsys, procbegsys);
+                skip2(sepsys, sys);
             }
         } while (sy == comma);
     }
@@ -70,24 +74,24 @@ void constdef()
                     }
                     else {
                         error(8);
-                        test2(sepsys, procbegsys);
+                        skip2(sepsys, sys);
                     }
                 }
                 else {
                     error(7);
-                    test2(sepsys, procbegsys);
+                    skip2(sepsys, sys);
                 }
             }
             else {
                 error(6);
-                test2(sepsys, procbegsys);
+                skip2(sepsys, sys);
             }
         } while (sy == comma);
 
     }
     else {
         error(9);
-        test(procbegsys);
+        skip(sys);
     }
 
     if (sy == semicolon) {
@@ -95,16 +99,19 @@ void constdef()
     }
     else {
         error(13);
-        test(procbegsys);
+        skip(sys);
     }
 
-    //printf("line %d: 这是一个常量定义\n", line);
 }
 
 
-void vardef(types typ, string name)
+void vardef(types typ, string name, bool isglobal)
 {
-    //int line = lcnt;
+    set<symbol> sys(procbegsys.begin(), procbegsys.end());
+    if (!isglobal) {
+        sys.insert(statbegsys.begin(), statbegsys.end());
+    }
+
     if (sy == lbracket) {
         insymbol();
         if (sy == intcon) {
@@ -124,12 +131,12 @@ void vardef(types typ, string name)
             }
             else {
                 error(12);//缺少右中括号
-                test2(sepsys, procbegsys);
+                skip2(sepsys, sys);
             }
         }
         else {
             error(8);//没有指定数组元素
-            test2(sepsys, procbegsys);
+            skip2(sepsys, sys);
         }
 
     }
@@ -164,12 +171,12 @@ void vardef(types typ, string name)
                     }
                     else {
                         error(12);//缺少右中括号
-                        test2(sepsys, procbegsys);
+                        skip2(sepsys, sys);
                     }
                 }
                 else {
                     error(11);//没有指定数组元素个数
-                    test2(sepsys, procbegsys);
+                    skip2(sepsys, sys);
                 }
 
             }
@@ -182,7 +189,7 @@ void vardef(types typ, string name)
         }
         else {
             error(9); //变量无标识符
-            test2(sepsys, procbegsys);
+            skip2(sepsys, sys);
         }
     }
 
@@ -191,9 +198,8 @@ void vardef(types typ, string name)
     }
     else {
         error(13);
-        test(procbegsys);
+        skip(sys);
     }
-    //printf("line %d: 这是一个变量定义\n", line);
 }
 
 
@@ -824,7 +830,6 @@ void statement()
         break;
     case semicolon:
         insymbol();
-        //printf("line %d: 这是一个空语句\n", lcnt); 
         break;
     case lbrace:
         insymbol();
@@ -890,29 +895,42 @@ void compoundstatement()
 {
     string name;
     types typ = ints;
+    bool varflag = false, statflag = false;
 
-    while (sy == constsy) {
-        constdef();
-    }
-    while (sy == intsy || sy == charsy) {
-        typ = (sy == intsy) ? ints : chars;
-        insymbol();
-        if (sy == ident) {
-            name = id;
+    while (sy == constsy || sy == intsy || sy == charsy || statbegsys.count(sy)) {
+        if (sy == constsy) {
+            if (varflag || statflag) {
+                error(43);
+            }
+            constdef(false);
+        }
+        else if (sy == intsy || sy == charsy) {
+            if (!varflag) {
+                varflag = true;
+            }
+            if (statflag) {
+                error(42);
+            }
+            typ = (sy == intsy) ? ints : chars;
             insymbol();
-            vardef(typ, name);
+            if (sy == ident) {
+                name = id;
+                insymbol();
+                vardef(typ, name, false);
+            }
+            else {
+                error(6); //缺变量名标识符
+                skip2(procbegsys, statbegsys);
+            }
         }
-        else {
-            error(6); //缺变量名标识符
+        else if (statbegsys.count(sy)) {
+            if (!statflag) {
+                statflag = true;
+            }
+            statement();//语句处理函数遇到分号读下一个字符
         }
-    }
-    btab[b].vsize = dx;
 
-    while (statbegsys.count(sy)) {
-        statement();//语句处理函数遇到分号读下一个字符
     }
-    //printf("line %d: 这是一个语句列\n", lcnt - 1);
-    //printf("line %d: 这是一个复合语句\n", lcnt - 1);
 }
 
 
@@ -922,6 +940,8 @@ int paralist()
     types typ;
 
     insymbol();
+    symbol s[] = { comma, rparent, lbrace };
+    set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
 
     if (sy != rparent) {
         if (sy == intsy || sy == charsy) {
@@ -930,17 +950,18 @@ int paralist()
             if (sy == ident) {
                 tab_enter(id, variable, typ, dx);
                 midcode_enter(_para, typ, t, -1);
-                //dx += (typ == ints) ? 4 : 1;
                 dx += 4;
                 paracnt++;
                 insymbol();
             }
             else {
                 error(6); //缺少参数名标识符
+                skip2(sys, procbegsys); // , )  {
             }
         }
         else {
             error(9); //缺少参数类型标识符
+            skip2(sys, procbegsys); // , )  { 
         }
 
         while (sy == comma) {
@@ -951,17 +972,18 @@ int paralist()
                 if (sy == ident) {
                     tab_enter(id, variable, typ, dx);
                     midcode_enter(_para, typ, t, -1);
-                    //dx += (typ == ints) ? 4 : 1;
                     dx += 4;
                     paracnt++;
                     insymbol();
                 }
                 else {
                     error(6); //缺少参数名标识符
+                    skip2(sys, procbegsys); // , )  { 
                 }
             }
             else if (sy != rparent) {
                 error(9); //缺少参数类型标识符
+                skip2(sys, procbegsys); // , )  { 
             }
         }
 
@@ -972,59 +994,58 @@ int paralist()
     }
     else {
         error(14);
+        symbol s[] = { lbrace };
+        set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
+        skip2(sys, procbegsys);
     }
-    //printf("line %d: 这是一个参数表\n", lcnt - 1);
     return paracnt;
 }
 
 
 bool funcdef(types typ, string name)
 {
-    int paracnt;
+    int n_paras;
 
     btab_enter();
     tab_enter(name, function, typ, 0);
-    midcode_enter(_func, typ, t, 0);
+    midcode_enter(_func, typ, t, -1);
     prmx = mx;
     tab[t].ref = b;
     prt = t;
 
     dx = 0;
-    paracnt = paralist();
-    midcode[prmx].v3 = paracnt;
+    n_paras = paralist();
+    midcode[prmx].v3 = n_paras; //无用
     btab[b].lastpar = t;
     btab[b].psize = dx;
+
+    if (name == "main" && (typ != voids || n_paras != 0)) {
+        error(48);  //main函数定义格式错误
+    }
 
     retflag = false;
     if (sy == lbrace) {
         insymbol();
         compoundstatement();
+        if (typ != voids && !retflag) {
+            error(39);//函数缺少返回语句
+        }
+        if (sy == rbrace) {
+            insymbol();
+        }
+        else {
+            error(16);//缺复合语句的右大括号
+            skip(procbegsys);
+        }
     }
     else {
         error(15);//缺复合语句的左大括号
-    }
-
-    if (typ != voids && !retflag) {
-        error(39);//缺返回语句
-    }
-
-    if (sy == rbrace) {
-        insymbol();
-    }
-    else {
-        error(16);//缺复合语句的右大括号
+        skip(procbegsys);
     }
 
     midcode_enter(_ret, -1, -1, -1);
-    if (name == "main" && typ == voids && paracnt == 0) {
-        //printf("line %d: 这是一个主函数的定义\n", lcnt);
+    if (name == "main") {
         return true;
-    }
-    else if (typ == voids) {
-        //printf("line %d: 这是一个无返回值函数的定义\n", lcnt - 1);
-    }
-    else {
-        //printf("line %d: 这是一个有返回值函数的定义\n", lcnt - 1);
     }
     return false;
 }
@@ -1032,8 +1053,7 @@ bool funcdef(types typ, string name)
 
 void syntax_analysis()
 {
-    bool funcflag = false;
-    bool mainflag = false;
+    bool varflag = false, funcflag = false, mainflag = false;
     string name;
     types typ = ints;
     labelx = -1;
@@ -1044,13 +1064,12 @@ void syntax_analysis()
 
     dx = 0;
     insymbol();
-    while (sy == constsy) {
-        constdef();
-    }
     while (sy != eofsy) {
         if (sy == constsy) {
-            error(43);
-            constdef();
+            if (varflag || funcflag) {
+                error(43);  //常量定义出现的位置不当
+            }
+            constdef(true);
         }
         else if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
@@ -1061,23 +1080,26 @@ void syntax_analysis()
                 if (sy == lparent) {
                     if (!funcflag) {
                         btab[0].vsize = dx;
+                        funcflag = true;
                     }
                     if (mainflag) {
                         error(37); //main函数后含有其他函数定义
                     }
-                    funcflag = true;
-                    funcdef(typ, name);
+                    mainflag = funcdef(typ, name);
                 }
                 else {
                     if (funcflag) {
-                        error(42); //变量定义出现在函数定义之后
+                        error(42); //变量定义出现的位置不当
                     }
-                    vardef(typ, name);
+                    if (!varflag) {
+                        varflag = true;
+                    }
+                    vardef(typ, name, true);
                 }
             }
             else {
                 error(6); //缺少标识符
-                test(procbegsys);
+                skip(procbegsys);
             }
         }
         else if (sy == voidsy) {
@@ -1088,48 +1110,30 @@ void syntax_analysis()
                 if (sy == lparent) {
                     if (!funcflag) {
                         btab[0].vsize = dx;
+                        funcflag = true;
                     }
                     if (mainflag) {
                         error(37); //main函数后含有其他函数定义
                     }
-                    funcflag = true;
                     mainflag = funcdef(voids, name);
                 }
                 else {
                     error(44); //void类型函数定义错误
-                    test(procbegsys);
+                    skip(procbegsys);
                 }
             }
             else {
                 error(6); //缺少标识符
-                test(procbegsys);
+                skip(procbegsys);
             }
         }
         else {
             error(45); //无法识别的程序开始符号
-            test(procbegsys);
+            skip(procbegsys);
         }
     }
 
     if (!mainflag) {
-        error(38); //缺少合法的main函数
-    }
-}
-
-void test(set<symbol> s)
-{
-    if (!s.count(sy)) {
-        while (!s.count(sy) && sy != eofsy) {
-            insymbol();
-        }
-    }
-}
-
-void test2(set<symbol> s1, set<symbol> s2)
-{
-    if (!s1.count(sy) && !s2.count(sy)) {
-        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
-            insymbol();
-        }
+        error(38); //程序缺少main函数
     }
 }

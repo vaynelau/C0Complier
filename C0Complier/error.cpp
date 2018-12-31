@@ -125,7 +125,7 @@ void error(int n)
         puts("main函数后含有其他函数定义");
         break;
     case 38:
-        puts("缺少合法的main函数");
+        puts("程序缺少main函数");
         break;
     case 39:
         puts("函数缺少返回语句");
@@ -154,8 +154,30 @@ void error(int n)
     case 47:
         puts("关系运算符右侧表达式类型不为整型");
         break;
+    case 48:
+        puts("main函数定义格式错误");
+        break;
     default:
         puts("其他错误");
         break;
+    }
+}
+
+
+void skip(set<symbol> s)
+{
+    if (!s.count(sy)) {
+        while (!s.count(sy) && sy != eofsy) {
+            insymbol();
+        }
+    }
+}
+
+void skip2(set<symbol> s1, set<symbol> s2)
+{
+    if (!s1.count(sy) && !s2.count(sy)) {
+        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
+            insymbol();
+        }
     }
 }

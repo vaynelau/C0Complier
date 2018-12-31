@@ -40,6 +40,7 @@ typedef struct tabitem {//符号表元素
 
 typedef struct btabitem {
     int last, lastpar, psize, vsize;
+    int start_blk, end_blk;
     /*
       last指向函数最后一个标识符在tab表中的位置；
       lastpar指向函数的最后一个参数在tab表中的位置；
@@ -64,6 +65,7 @@ extern set<symbol> statbegsys;
 extern set<symbol> relationop;
 extern set<symbol> procbegsys;
 extern set<symbol> sepsys;
+extern set<symbol> sepsys2;
 
 void tabs_init();
 void tab_enter(string name, objtyp obj, types typ, int adr);

@@ -36,6 +36,9 @@
     <ClCompile Include="mips.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="optimization.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexical_analysis.h">
@@ -54,6 +57,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mips.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="optimization.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

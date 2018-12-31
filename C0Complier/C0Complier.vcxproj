@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="optimization.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="lexical_analysis.cpp" />
     <ClCompile Include="main.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="optimization.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="lexical_analysis.h" />
     <ClInclude Include="midcode.h" />

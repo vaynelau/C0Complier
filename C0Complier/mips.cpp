@@ -25,11 +25,11 @@ void gen_mips()
     }
 
     fprintf(out, "\n\n.text\n");
-    int mainref = tab[loc("main")].ref;
-    dsp = btab[mainref].vsize;
+    int main_ref = tab[loc("main")].ref;
+    dsp = btab[main_ref].vsize;
     fprintf(out, "    addiu $fp, $sp, -4\n");
     fprintf(out, "    addiu $sp, $sp, %d\n", -dsp);
-    fprintf(out, "    jal func_%d\n", mainref);
+    fprintf(out, "    jal func_%d\n", main_ref);
     fprintf(out, "    li $v0, 10\n");
     fprintf(out, "    syscall\n");
 
