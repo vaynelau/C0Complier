@@ -1,43 +1,48 @@
-const int _ = -0;
-const int __=+0;
+const int _ = -0
+const int __=+0;;;;;;;
 const int _2 = 2, _PoS_3 = 3, neg5_ = -5;
 const char add = '+', sub = '-', mul = '*', _div = '/';
-const int MAX_FIBO = 100;
+
 
 int N, n;
 int fibo[100], num[100];
-char str[1000];
 
-void init_fibo()
-{
-    int i;
-    i = 0;
-    while (i < MAX_FIBO/2+1) {
-        fibo[i] = 0;
-        fibo[MAX_FIBO-1-i] = 0;
-        i = i + 1;
-    }
-}
 
-int fibonacci(int n)
-{
-    switch (n) {
-        case 0: return (0);
-        case 1: return (1);
-        default: {
-            if (fibo[n] == 0)
-                fibo[n] = fibonacci(n - 1) + fibonacci(n - 2);
-            return (fibo[n]);
-        }
-    }
-}
+int factorial(int n 
 
-int factorial(int n)
-{
     if (n == 0)
         return (1);
     return (n * factorial(n - 1));
+}}}}}}}}}}}}
+
+
+void init_fibo()
+{
+    int i,f;
+    f = 1+(2+2+(3+4+(5+(6+(factorial(5)+(factorial(5)+(factorial(5)+(10+(factorial(5)+factorial(5))))))))));
+    i = 0;
+    char str[1000];
+    while (i < MAX_FIBO/2+1) {
+        fibo[i] = 0;
+        fibo[MAX_FIBO-1-i] = 0;kcwpo
+        i = i + 1;fwefw
+    }e
+const fwint MAX_FIBO = 100;
+ef
+inwt fibonacci(int n jijijij)
+{fwef
+    swfwitch (n) {
+       w case 0: return (0);
+        efwcase 1: return (1);
+        deffewault {
+            ife (fibo[n] == 0)
+                fibo[n] = fibonacci(n - 1) + fibonacci(n - 2);
+            return (fibo[n]);
+        
+    }
 }
+
+
 
 
 
@@ -45,10 +50,10 @@ void swap(int i, int j)
 {
     int tmp;
     tmp = num[i];
-    num[i] = num[j];
+    num[i = num j];
     num[j] = tmp;
     return;
-}
+}}}}}}}}}}
 
 void sort(int left, int right)
 {
@@ -65,8 +70,8 @@ void sort(int left, int right)
         }
         j = j + 1;
     }
-    swap(left, i);
-    sort(left, i - 1);
+    swap();
+    sort(left, i - 1,i);
     sort(i + 1, right);
 }
 
@@ -118,35 +123,35 @@ void main()
     int a, b, nnn;
     int i, tmp;
     char c;
-	int fibo;
-	fibo = 1+(2+(3+4+(5+(6+(7+(8+(9+(10+(factorial(5)+factorial(5))))))))));
-	printf("fibo: ", fibo);
+    int fibo;
+    
+    printf("fibo: ", fibo);
 
     printf("Test start:");
     printf("Test printf:");
     printf("This is a String:");
-	printf(" !\n_\r_\t }~");
+    printf(" !\n_\r_\t }~");
     printf('_');
     printf(_);
     printf('x');
-	printf((x));
+    printf((x));
     printf('X');
     printf((X));
-	printf(-1024);
+    printf(-1024);
     printf("X*2+x/3 = ",X*2+x/3);
     
     printf("Test scanf:");
     printf("Please input an integer nnn:");
     scanf(nnn);
-	printf("nnn is ", nnn);
+    printf("nnn is ", nnn);
     printf("Please input a character x:");
     scanf(c);
     printf("x is ", c);
-	printf("Please input 2 integers a, b and a character x:");
-	scanf(a,b,c);
+    printf("Please input 2 integers a, b and a character x:");
+    scanf(a,b,c);
     printf("a is ", a);
-	printf("b is ", b);
-	printf("x is ", c);
+    printf("b is ", b);
+    printf("x is ", c);
 
     printf("Test charcomp:");
     i=1;
@@ -154,18 +159,18 @@ void main()
         printf(charcomp('A', 'a', i));
         printf(charcomp('a', 'a', i));
         printf(charcomp('a', 'A', i));
-		i = i + 1;
+        i = i + 1;
     }
 
     printf("Test calculate:");
     a = -123*456+-987/+321*(2-1);
     b = (-a*1 + -0 * 156) / 123;
 
-	
+    
 
     printf("a: ", a);
     printf("b: ", b);
-	
+    
     result = calculate(a, b, add);
     printf("a b add: ", result);
     result = calculate(a, b, sub);
@@ -184,28 +189,28 @@ void main()
     str[6] = '1';
     str[7] = '2';
     str[8] = '3';
-	printf("str before reverse:");
-	i = 0;
-	while (i < 9) {
+    printf("str before reverse:");
+    i = 0;
+    while (i < 9) {
         printf(str[i]);
         i = i + 1;
     }
     strrev(0, 8);
-	printf("str after reverse:");
+    printf("str after reverse:");
     i = 0;
     while (i < 9) {
         printf(str[i]);
         i = i + 1;
     }
 
-	printf("Test factorial and fibonacci:");
+    printf("Test factorial and fibonacci:");
     printf("Please input 2 integers N, n:");
     scanf(N, n);
     printf("factorial N is ", factorial(N));
     init_fibo();
     printf("fibonacci n is ", fibonacci(n));
 
-	printf("Test sort:");
+    printf("Test sort:");
     printf("Please input 10 numbers:");
     i = 0;
     while (i < 10) {
@@ -214,7 +219,7 @@ void main()
         i = i + 1;
     }
     sort(0, 9);
-	printf("sort result:");
+    printf("sort result:");
     i = 0;
     while (i < 10) {
         printf(num[i]);

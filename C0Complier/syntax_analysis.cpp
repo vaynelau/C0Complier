@@ -28,8 +28,9 @@ void constdef(bool isglobal)
     set<symbol> sys(procbegsys.begin(), procbegsys.end());
     if (!isglobal) {
         sys.insert(statbegsys.begin(), statbegsys.end());
+        sys.insert(rbrace);
         sys.erase(ident);
-        sys.erase(semicolon);
+        //sys.erase(semicolon);
     }
 
     insymbol();
@@ -49,7 +50,7 @@ void constdef(bool isglobal)
                         tab[t].adr = sign * inum;
                         midcode_enter(_condef, ints, t, sign * inum);
                         insymbol();
-                        if (!sepsys.count(sy)) {
+                        if (!sepsys.count(sy) && !sys.count(sy)) {
                             error(49);
                             skip2(sepsys, sys);
                         }
@@ -82,7 +83,7 @@ void constdef(bool isglobal)
                         tab[t].adr = inum;
                         midcode_enter(_condef, chars, t, inum);
                         insymbol();
-                        if (!sepsys.count(sy)) {
+                        if (!sepsys.count(sy) && !sys.count(sy)) {
                             error(49);
                             skip2(sepsys, sys);
                         }
@@ -106,12 +107,15 @@ void constdef(bool isglobal)
     }
     else {
         error(9);
-        sepsys.erase(semicolon);
+        sepsys.erase(comma);
         skip2(sepsys, sys);
     }
 
     if (sy == semicolon) {
         insymbol();
+    }
+    else {
+        error(13);
     }
 }
 
@@ -124,8 +128,9 @@ void vardef(datatyp typ, string name, bool isglobal)
     set<symbol> sys(procbegsys.begin(), procbegsys.end());
     if (!isglobal) {
         sys.insert(statbegsys.begin(), statbegsys.end());
+        sys.insert(rbrace);
         sys.erase(ident);
-        sys.erase(semicolon);
+        //sys.erase(semicolon);
     }
 
     if (!name.empty() && sy == lbracket) {
@@ -144,7 +149,7 @@ void vardef(datatyp typ, string name, bool isglobal)
             insymbol();
             if (sy == rbracket) {
                 insymbol();
-                if (!sepsys.count(sy)) {
+                if (!sepsys.count(sy) && !sys.count(sy)) {
                     error(49);
                     skip2(sepsys, sys);
                 }
@@ -165,7 +170,7 @@ void vardef(datatyp typ, string name, bool isglobal)
         midcode_enter(_vardef, typ, t, -1);
         //dx += (dtyp == ints) ? 4 : 1;
         dx += 4;
-        if (!sepsys.count(sy)) {
+        if (!sepsys.count(sy) && !sys.count(sy)) {
             error(49);
             skip2(sepsys, sys);
         }
@@ -196,7 +201,7 @@ void vardef(datatyp typ, string name, bool isglobal)
                     insymbol();
                     if (sy == rbracket) {
                         insymbol();
-                        if (!sepsys.count(sy)) {
+                        if (!sepsys.count(sy) && !sys.count(sy)) {
                             error(49);
                             skip2(sepsys, sys);
                         }
@@ -217,7 +222,7 @@ void vardef(datatyp typ, string name, bool isglobal)
                 midcode_enter(_vardef, typ, t, -1);
                 //dx += (dtyp == ints) ? 4 : 1;
                 dx += 4;
-                if (!sepsys.count(sy)) {
+                if (!sepsys.count(sy) && !sys.count(sy)) {
                     error(49);
                     skip2(sepsys, sys);
                 }
@@ -232,15 +237,18 @@ void vardef(datatyp typ, string name, bool isglobal)
     if (sy == semicolon) {
         insymbol();
     }
+    else {
+        error(13);
+    }
 }
 
 
 int factor(datatyp *pdtyp, operandtyp *potyp)
 {
-    datatyp dtyp, dtyp2;
-    operandtyp otyp, otyp2;
+    datatyp dtyp = ints, dtyp2;
+    operandtyp otyp = _reterr, otyp2;
 
-    int sign, ret, ret2;
+    int sign, ret = -1, ret2;
     int i;
 
     switch (sy) {
@@ -275,8 +283,8 @@ int factor(datatyp *pdtyp, operandtyp *potyp)
         break;
     case lparent:
         insymbol();
-        dtyp = ints;
         ret = expression(&dtyp, &otyp);
+        dtyp = ints;
         if (otyp == _reterr) {
             *potyp = _reterr;
             return -1;
@@ -347,7 +355,11 @@ int factor(datatyp *pdtyp, operandtyp *potyp)
                     error(23);
                     dtyp = ints;
                 }
-                ret = funccall(i, tmpindex);
+                ret = funccall(i);
+                if (ret == -1) {
+                    *potyp = _reterr;
+                    return -1;
+                }
                 break;
             default:
                 break;
@@ -431,8 +443,8 @@ int expression(datatyp *ptyp, operandtyp *potyp)
         *potyp = _reterr;
         return -1;
     }
-
     dtyp = (dtyp1 == ints) ? ints : dtyp;
+    
     if (sign == -1) {
         if (otyp == _const) {
             ret = -ret;
@@ -471,7 +483,7 @@ int expression(datatyp *ptyp, operandtyp *potyp)
 void assignment(int i)
 {
     datatyp dtyp1, dtyp2;
-    operandtyp otyp1, otyp2;
+    operandtyp otyp1 = _reterr, otyp2;
     int ret1 = 0, ret2;
 
     insymbol();
@@ -490,6 +502,21 @@ void assignment(int i)
             }
             if (sy == rbracket) {
                 insymbol();
+                if (sy == becomes) {
+                    insymbol();
+                    ret2 = expression(&dtyp2, &otyp2);
+                    if (otyp2 == _reterr) {
+                        return;
+                    }
+                    if (dtyp2 != tab[i].typ) {
+                        error(32); //赋值符号左右类型不一致
+                    }
+                    midcode_enter2(_arrassign, i, ret1, ret2, _arrvar, otyp1, otyp2);
+                }
+                else {
+                    error(7);
+                    skip(statskipsys);
+                }
             }
             else {
                 error(12);
@@ -501,26 +528,22 @@ void assignment(int i)
             skip(statskipsys);
         }
     }
-
-    if (sy == becomes) {
-        insymbol();
-        ret2 = expression(&dtyp2, &otyp2);
-        if (otyp2 == _reterr) {
-            return;
-        }
-        if (dtyp2 != tab[i].typ) {
-            error(32); //赋值符号左右类型不一致
-        }
-        if (tab[i].obj == arrays) {
-            midcode_enter2(_arrassign, i, ret1, ret2, _arrvar, otyp1, otyp2);
-        }
-        else {
+    else {
+        if (sy == becomes) {
+            insymbol();
+            ret2 = expression(&dtyp2, &otyp2);
+            if (otyp2 == _reterr) {
+                return;
+            }
+            if (dtyp2 != tab[i].typ) {
+                error(32); //赋值符号左右类型不一致
+            }
             midcode_enter2(_assign, i, ret2, -1, _arrvar, otyp2, -1);
         }
-    }
-    else {
-        error(7);
-        skip(statskipsys);
+        else {
+            error(7);
+            skip(statskipsys);
+        }
     }
 }
 
@@ -735,6 +758,8 @@ void onecase(datatyp dtyp, int ret, int otyp, int labelxend)
             error(21);
             skip(statskipsys);
         }
+        midcode_enter2(_eql, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
+        midcode_enter2(_bz, labelx1, tmpindex, -1, -1, _tmpvar, -1);
     }
     else {
         sign = 1;
@@ -762,6 +787,8 @@ void onecase(datatyp dtyp, int ret, int otyp, int labelxend)
                 error(21);
                 skip(statskipsys);
             }
+            midcode_enter2(_eql, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
+            midcode_enter2(_bz, labelx1, tmpindex, -1, -1, _tmpvar, -1);
         }
         else {
             error(8);
@@ -769,8 +796,6 @@ void onecase(datatyp dtyp, int ret, int otyp, int labelxend)
         }
     }
 
-    midcode_enter2(_eql, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
-    midcode_enter2(_bz, labelx1, tmpindex, -1, -1, _tmpvar, -1);
     statement();
     midcode_enter(_goto, labelxend, -1, -1);
     midcode_enter(_label, labelx1, -1, -1);
@@ -848,8 +873,10 @@ void switchstatement()
 void stdfunccall()
 {
     int ret;
-    datatyp typ = ints;
+    datatyp dtyp = ints;
     operandtyp otyp;
+    symbol s[] = { comma, rparent };
+    set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
 
     if (id == "scanf") {
         insymbol();
@@ -866,9 +893,14 @@ void stdfunccall()
                     }
                     midcode_enter(_push, i, SCANF, -1);
                     insymbol();
+                    if (!sys.count(sy) && !statskipsys.count(sy)) {
+                        error(49);
+                        skip2(sys, statskipsys);
+                    }
                 }
                 else {
                     error(6);
+                    skip2(sys, statskipsys);
                 }
             } while (sy == comma);
 
@@ -882,10 +914,11 @@ void stdfunccall()
         }
         else {
             error(26);
+            skip(statskipsys);
         }
 
     }
-    else {
+    else if (id == "printf") {
         insymbol();
         if (sy == lparent) {
             insymbol();
@@ -896,8 +929,11 @@ void stdfunccall()
                 insymbol();
                 if (sy == comma) {
                     insymbol();
-                    ret = expression(&typ, &otyp);
-                    midcode_enter2(_push, ret, PRINTF, typ, otyp, -1, -1);
+                    ret = expression(&dtyp, &otyp);
+                    if (otyp == _reterr) {
+                        return;
+                    }
+                    midcode_enter2(_push, ret, PRINTF, dtyp, otyp, -1, -1);
                     midcode_enter(_std_call, loc("printf"), 2, -1);
                 }
                 else {
@@ -908,22 +944,28 @@ void stdfunccall()
                 }
                 else {
                     error(14);
+                    skip(statskipsys);
                 }
             }
             else {
-                ret = expression(&typ, &otyp);
-                midcode_enter2(_push, ret, PRINTF, typ, otyp, -1, -1);
+                ret = expression(&dtyp, &otyp);
+                if (otyp == _reterr) {
+                    return;
+                }
+                midcode_enter2(_push, ret, PRINTF, dtyp, otyp, -1, -1);
                 if (sy == rparent) {
                     insymbol();
                 }
                 else {
                     error(14);
+                    skip(statskipsys);
                 }
                 midcode_enter(_std_call, loc("printf"), 1, -1);
             }
         }
         else {
             error(26);
+            skip(statskipsys);
         }
     }
 }
@@ -936,6 +978,8 @@ int funccall(int i)
     int ret;
     datatyp dtyp;
     operandtyp otyp;
+    symbol s[] = { comma, rparent };
+    set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
 
     insymbol();
     if (sy == lparent) {
@@ -943,6 +987,9 @@ int funccall(int i)
         if (sy != rparent) {
             curpos++;
             ret = expression(&dtyp, &otyp);
+            if (otyp == _reterr) {
+                return -1;
+            }
             if (curpos > lastp) {
                 error(34); //实参过多
             }
@@ -952,11 +999,18 @@ int funccall(int i)
                 }
                 midcode_enter2(_push, ret, -1, -1, otyp, -1, -1);
             }
+            if (!sys.count(sy) && !statskipsys.count(sy)) {
+                error(49);
+                skip2(sys, statskipsys);
+            }
 
             while (sy == comma) {
                 insymbol();
                 curpos++;
                 ret = expression(&dtyp, &otyp);
+                if (otyp == _reterr) {
+                    return -1;
+                }
                 if (curpos > lastp) {
                     error(34); //实参过多
                 }
@@ -966,24 +1020,31 @@ int funccall(int i)
                     }
                     midcode_enter2(_push, ret, -1, -1, otyp, -1, -1);
                 }
-
-            }
-
-            if (curpos < lastp) {
-                error(36); //实参过少
-            }
-            if (sy == rparent) {
-                insymbol();
-            }
-            else {
-                error(14);
-            }
-
-            midcode_enter(_call, i, -1, -1);
+                if (!sys.count(sy) && !statskipsys.count(sy)) {
+                    error(49);
+                    skip2(sys, statskipsys);
+                }
+            } 
         }
+
+        if (curpos < lastp) {
+            error(36); //实参过少
+        }
+
+        if (sy == rparent) {
+            insymbol();
+        }
+        else {
+            error(14);
+            skip(statskipsys);
+            return -1;
+        }
+        midcode_enter(_call, i, -1, -1);
     }
     else {
         error(26);
+        skip(statskipsys);
+        return -1;
     }
 
     return RET;
@@ -1053,7 +1114,7 @@ void statement()
                     stdfunccall();
                 }
                 else {
-                    funccall(i, 0);
+                    funccall(i);
                 }
                 if (sy == semicolon) {
                     insymbol();
@@ -1120,7 +1181,6 @@ int paralist()
 {
     int paracnt = 0;
     datatyp typ;
-    symbol tmp;
     symbol s[] = { comma, rparent, lbrace };
     set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
     bool first = true;
@@ -1143,8 +1203,8 @@ int paralist()
                 dx += 4;
                 paracnt++;
                 insymbol();
-                if (sy != comma && sy != rparent) {
-                    error(50);
+                if (!procbegsys.count(sy) && !sys.count(sy)) {
+                    error(49);
                     skip2(sys, procbegsys); // , )  {
                 }
             }
@@ -1161,6 +1221,9 @@ int paralist()
 
     if (sy == rparent) {
         insymbol();
+    }
+    else {
+        error(14);
     }
     return paracnt;
 }

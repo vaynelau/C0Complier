@@ -64,7 +64,6 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "var char %s\n", tab[item.v2].name.c_str());
         }
         break;
-
     case _arrdef:
         if (item.v1 == ints) {
             fprintf(out, "array int %s %d\n", tab[item.v2].name.c_str(), item.v3);
@@ -73,6 +72,7 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "array char %s %d\n", tab[item.v2].name.c_str(), item.v3);
         }
         break;
+
     case _funcdef:
         fprintf(out, "\n\n");
         if (item.v1 == ints) {
@@ -93,6 +93,7 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "para char %s\n", tab[item.v2].name.c_str());
         }
         break;
+
     case _push:
         fprintf(out, "push $t%d\n", item.v1);
         break;

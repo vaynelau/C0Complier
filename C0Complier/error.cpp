@@ -202,10 +202,7 @@ void error(int n)
         puts("main函数定义不规范");
         break;
     case 49:
-        puts("常量或变量定义中缺少逗号或分号");
-        break;
-    case 50:
-        puts("参数表中缺少逗号或右括号");
+        puts("缺少逗号分隔符");
         break;
     default:
         puts("其他错误");

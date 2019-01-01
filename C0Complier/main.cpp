@@ -29,9 +29,9 @@ int main(void)
     lexcial_init();
     syntax_analysis();
     if (noerror) {
-        print_midcodes();
-        code_opt();
-        gen_mips();
+        //print_midcodes();
+        //code_opt();
+        //gen_mips();
     }
     
     return 0;
