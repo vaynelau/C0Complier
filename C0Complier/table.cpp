@@ -18,23 +18,6 @@ vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 
 
-symbol s3[] = {
-    constsy, intsy, charsy, voidsy
-};
-set<symbol> procbegsys(s3, s3 + sizeof(s3) / sizeof(s3[0]));
-
-symbol s1[] = {
-    ifsy, whilesy, switchsy, returnsy, semicolon, lbrace, ident
-};
-set<symbol> statbegsys(s1, s1 + sizeof(s1) / sizeof(s1[0]));
-
-symbol s2[] = {
-    eql, neq, gtr, geq, lss, leq
-};
-set<symbol> relationop(s2, s2 + sizeof(s2) / sizeof(s2[0]));
-
-
-
 void tabs_init()
 {
     t = -1;
@@ -102,7 +85,7 @@ int loc(string name)
 }
 
 
-void tab_enter(string name, objtyp obj, types typ, int adr)
+void tab_enter(string name, objtyp obj, datatyp typ, int adr)
 {
     int i, prb;
 

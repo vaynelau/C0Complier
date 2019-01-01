@@ -17,6 +17,7 @@ bool retflag;
 int labelx;
 int conindexflag;
 int arrindex;
+int tmpindex;
 
 void constdef(bool isglobal)
 {
@@ -46,7 +47,7 @@ void constdef(bool isglobal)
                     }
                     if (sy == intcon) {
                         tab[t].adr = sign * inum;
-                        midcode_enter(_const, ints, t, sign * inum);
+                        midcode_enter(_condef, ints, t, sign * inum);
                         insymbol();
                         if (!sepsys.count(sy)) {
                             error(49);
@@ -79,7 +80,7 @@ void constdef(bool isglobal)
                     insymbol();
                     if (sy == charcon) {
                         tab[t].adr = inum;
-                        midcode_enter(_const, chars, t, inum);
+                        midcode_enter(_condef, chars, t, inum);
                         insymbol();
                         if (!sepsys.count(sy)) {
                             error(49);
@@ -115,7 +116,7 @@ void constdef(bool isglobal)
 }
 
 
-void vardef(types typ, string name, bool isglobal)
+void vardef(datatyp typ, string name, bool isglobal)
 {
 
     symbol s[] = { comma, semicolon };
@@ -133,8 +134,8 @@ void vardef(types typ, string name, bool isglobal)
             if (inum > 0) {
                 tab_enter(name, arrays, typ, dx);
                 tab[t].arrcnt = inum;
-                midcode_enter(_array, typ, t, inum);
-                //dx += (typ == ints) ? (inum * 4) : inum;
+                midcode_enter(_arrdef, typ, t, inum);
+                //dx += (dtyp == ints) ? (inum * 4) : inum;
                 dx += inum * 4;
             }
             else {
@@ -161,8 +162,8 @@ void vardef(types typ, string name, bool isglobal)
     }
     else if (!name.empty()) {
         tab_enter(name, variable, typ, dx);
-        midcode_enter(_var, typ, t, -1);
-        //dx += (typ == ints) ? 4 : 1;
+        midcode_enter(_vardef, typ, t, -1);
+        //dx += (dtyp == ints) ? 4 : 1;
         dx += 4;
         if (!sepsys.count(sy)) {
             error(49);
@@ -185,8 +186,8 @@ void vardef(types typ, string name, bool isglobal)
                     if (inum > 0) {
                         tab_enter(name, arrays, typ, dx);
                         tab[t].arrcnt = inum;
-                        midcode_enter(_array, typ, t, inum);
-                        //dx += (typ == ints) ? (inum * 4) : inum;
+                        midcode_enter(_arrdef, typ, t, inum);
+                        //dx += (dtyp == ints) ? (inum * 4) : inum;
                         dx += inum * 4;
                     }
                     else {
@@ -213,8 +214,8 @@ void vardef(types typ, string name, bool isglobal)
             }
             else {
                 tab_enter(name, variable, typ, dx);
-                midcode_enter(_var, typ, t, -1);
-                //dx += (typ == ints) ? 4 : 1;
+                midcode_enter(_vardef, typ, t, -1);
+                //dx += (dtyp == ints) ? 4 : 1;
                 dx += 4;
                 if (!sepsys.count(sy)) {
                     error(49);
@@ -234,17 +235,19 @@ void vardef(types typ, string name, bool isglobal)
 }
 
 
-int factor(types *ptyp, int tmp)
+int factor(datatyp *pdtyp, operandtyp *potyp)
 {
-    types typ = voids, typ1;
-    int sign = 1, ret = tmp;
+    datatyp dtyp, dtyp2;
+    operandtyp otyp, otyp2;
+
+    int sign, ret, ret2;
     int i;
 
     switch (sy) {
     case charcon:
-        typ = chars;
-        midcode_enter(_conload, tmp, chars, inum);
-        ret = tmp;
+        dtyp = chars;
+        otyp = _const;
+        ret = inum;
         insymbol();
         break;
     case _plus_:
@@ -252,38 +255,40 @@ int factor(types *ptyp, int tmp)
         sign = (sy == _plus_) ? 1 : -1;
         insymbol();
         if (sy == intcon) {
-            typ = ints;
-            midcode_enter(_conload, tmp, ints, inum * sign);
-            if (conindexflag == 0) {
-                arrindex *= inum * sign;
-                conindexflag = 1;
-            }
-            ret = tmp;
+            dtyp = ints;
+            otyp = _const;
+            ret = inum * sign;
             insymbol();
         }
         else {
             error(8);
+            skip(statskipsys);
+            *potyp = _reterr;
+            return -1;
         }
         break;
     case intcon:
-        typ = ints;
-        midcode_enter(_conload, tmp, ints, inum);
-        if (conindexflag == 0) {
-            arrindex *= inum;
-            conindexflag = 1;
-        }
-        ret = tmp;
+        dtyp = ints;
+        otyp = _const;
+        ret = inum;
         insymbol();
         break;
     case lparent:
         insymbol();
-        ret = expression(&typ, tmp);
-        typ = ints;
+        dtyp = ints;
+        ret = expression(&dtyp, &otyp);
+        if (otyp == _reterr) {
+            *potyp = _reterr;
+            return -1;
+        }
         if (sy == rparent) {
             insymbol();
         }
         else {
             error(14);
+            skip(statskipsys);
+            *potyp = _reterr;
+            return -1;
         }
         break;
     case ident:
@@ -291,48 +296,58 @@ int factor(types *ptyp, int tmp)
         if (i != 0) {
             switch (tab[i].obj) {
             case constant:
-                if (conindexflag == 0 && tab[i].typ == ints) {
-                    arrindex *= tab[i].adr;
-                    conindexflag = 1;
-                }
+                dtyp = tab[i].typ;
+                otyp = _const;
+                ret = tab[i].adr; //常量替换
+                insymbol();
+                break;
             case variable:
-                typ = tab[i].typ;
-                midcode_enter(_varload, tmp, i, -1);
-                ret = tmp;
+                dtyp = tab[i].typ;
+                otyp = (tab[i].lev == 0) ? _globalvar : _localvar;
+                ret = i;
                 insymbol();
                 break;
             case arrays:
-                typ = tab[i].typ;
                 insymbol();
                 if (sy == lbracket) {
                     insymbol();
+                    conindexflag = 0;
+                    ret2 = expression(&dtyp2, &otyp2);
+                    if (dtyp2 != ints) {
+                        error(31);
+                    }
+                    if (otyp2 == _const && !(ret2 >= 0 && ret2 < tab[i].arrcnt)) {
+                        error(41);  //数组下标越界
+                    }
+                    midcode_enter2(_arrload, ++tmpindex, i, ret2, _tmpvar, _arrvar, otyp2);
+                    dtyp = tab[i].typ;
+                    otyp = _tmpvar;
+                    ret = tmpindex;
+                    if (sy == rbracket) {
+                        insymbol();
+                    }
+                    else {
+                        error(12);
+                        skip(statskipsys);
+                        *potyp = _reterr;
+                        return -1;
+                    }
                 }
                 else {
                     error(22);
-                }
-                conindexflag = 0;
-                ret = expression(&typ1, tmp);
-                if (typ1 != ints) {
-                    error(31);
-                }
-                if (conindexflag == 1 && !(arrindex >= 0 && arrindex < tab[i].arrcnt)) {
-                    error(41);
-                }
-                conindexflag = -1;
-                midcode_enter(_arrload, ret, i, ret);
-                if (sy == rbracket) {
-                    insymbol();
-                }
-                else {
-                    error(12);
+                    skip(statskipsys);
+                    *potyp = _reterr;
+                    return -1;
                 }
                 break;
             case function:
+                dtyp = tab[i].typ;
+                otyp = _retval;
                 if (tab[i].typ == voids) {
                     error(23);
+                    dtyp = ints;
                 }
-                typ = tab[i].typ;
-                ret = funccall(i, tmp);
+                ret = funccall(i, tmpindex);
                 break;
             default:
                 break;
@@ -340,183 +355,370 @@ int factor(types *ptyp, int tmp)
         }
         else {
             error(18);//未定义的标识符
-            insymbol();
+            skip(statskipsys);
+            *potyp = _reterr;
+            return -1;
         }
         break;
     default:
         error(24);
-        insymbol();
+        skip(statskipsys);
+        *potyp = _reterr;
+        return -1;
         break;
     }
-    *ptyp = typ;
-    //printf("line %d: 这是一个因子\n", lcnt);
+
+    *pdtyp = dtyp;
+    *potyp = otyp;
     return ret;
 }
 
 
-int term(types *ptyp, int tmp)
+int term(datatyp *pdtyp, operandtyp *potyp)
 {
-    types typ, typ1;
-    int ret, ret1;
+    datatyp dtyp, dtyp2;
+    operandtyp otyp, otyp2;
+    int ret, ret2;
     optyp op;
 
-    ret = factor(&typ, tmp);
+    ret = factor(&dtyp, &otyp);
+    if (otyp == _reterr) {
+        *potyp = _reterr;
+        return -1;
+    }
+
     while (sy == times || sy == idiv) {
-        conindexflag = -1;
-        typ = ints;
+        dtyp = ints;
         op = (sy == times) ? _times : _idiv;
         insymbol();
-        ret1 = factor(&typ1, ret + 1);
-        midcode_enter(op, ret, ret, ret1);
+        ret2 = factor(&dtyp2, &otyp2);
+        if (otyp2 == _reterr) {
+            *potyp = _reterr;
+            return -1;
+        }
+        if (otyp == _const && otyp2 == _const) { //常数合并
+            ret = (sy == times) ? (ret * ret2) : (ret / ret2);
+        }
+        else {
+            midcode_enter2(op, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
+            otyp = _tmpvar;
+            ret = tmpindex;
+        }
     }
-    *ptyp = typ;
-    //printf("line %d: 这是一个项\n", lcnt);
+    *pdtyp = dtyp;
+    *potyp = otyp;
     return ret;
 }
 
 
-int expression(types *ptyp, int tmp)
+int expression(datatyp *ptyp, operandtyp *potyp)
 {
     int sign = 1;
-    types typ = chars, typ1;
-    int ret, ret1;
+    datatyp dtyp, dtyp1, dtyp2;
+    operandtyp otyp, otyp2;
+    int ret, ret2;
     optyp op;
 
-    arrindex = 1;
+    dtyp = chars;
     if (sy == _plus_ || sy == _minus_) {
         sign = (sy == _plus_) ? 1 : -1;
-        arrindex = sign;
         insymbol();
-        typ = ints;
+        dtyp = ints;
     }
-    ret = term(&typ1, tmp);
-    typ = (typ1 == ints) ? ints : typ;
+
+    ret = term(&dtyp1, &otyp);
+    if (otyp == _reterr) {
+        *potyp = _reterr;
+        return -1;
+    }
+
+    dtyp = (dtyp1 == ints) ? ints : dtyp;
     if (sign == -1) {
-        midcode_enter(_neg, ret, ret, -1);
-        //ret++;
+        if (otyp == _const) {
+            ret = -ret;
+        }
+        else {
+            midcode_enter2(_neg, ++tmpindex, ret, -1, _tmpvar, otyp, -1);
+            otyp = _tmpvar;
+            ret = tmpindex;
+        }
     }
 
     while (sy == _plus_ || sy == _minus_) {
-        conindexflag = -1;
-        typ = ints;
+        dtyp = ints;
         op = (sy == _plus_) ? _plus : _minus;
         insymbol();
-        ret1 = term(&typ1, ret + 1);
-        midcode_enter(op, ret, ret, ret1);
+        ret2 = term(&dtyp2, &otyp2);
+        if (otyp2 == _reterr) {
+            *potyp = _reterr;
+            return -1;
+        }
+        if (otyp == _const && otyp2 == _const) { //常数合并
+            ret = (sy == _plus_) ? (ret + ret2) : (ret - ret2);
+        }
+        else {
+            midcode_enter2(op, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
+            otyp = _tmpvar;
+            ret = tmpindex;
+        }
     }
-    //printf("line %d: 这是一个表达式\n", lcnt);
-    *ptyp = typ;
+    *ptyp = dtyp;
+    *potyp = otyp;
     return ret;
+}
+
+
+void assignment(int i)
+{
+    datatyp dtyp1, dtyp2;
+    operandtyp otyp1, otyp2;
+    int ret1 = 0, ret2;
+
+    insymbol();
+    if (tab[i].obj == arrays) {
+        if (sy == lbracket) {
+            insymbol();
+            ret1 = expression(&dtyp1, &otyp1);
+            if (otyp1 == _reterr) {
+                return;
+            }
+            if (dtyp1 != ints) {
+                error(31);  //数组下标只能为整型
+            }
+            if (otyp1 == _condef && !(ret1 >= 0 && ret1 < tab[i].arrcnt)) {
+                error(41);  //数组下标越界
+            }
+            if (sy == rbracket) {
+                insymbol();
+            }
+            else {
+                error(12);
+                skip(statskipsys);
+            }
+        }
+        else {
+            error(22);
+            skip(statskipsys);
+        }
+    }
+
+    if (sy == becomes) {
+        insymbol();
+        ret2 = expression(&dtyp2, &otyp2);
+        if (otyp2 == _reterr) {
+            return;
+        }
+        if (dtyp2 != tab[i].typ) {
+            error(32); //赋值符号左右类型不一致
+        }
+        if (tab[i].obj == arrays) {
+            midcode_enter2(_arrassign, i, ret1, ret2, _arrvar, otyp1, otyp2);
+        }
+        else {
+            midcode_enter2(_assign, i, ret2, -1, _arrvar, otyp2, -1);
+        }
+    }
+    else {
+        error(7);
+        skip(statskipsys);
+    }
+}
+
+
+void returnstatement()
+{
+    datatyp typ;
+    operandtyp otyp;
+    int ret;
+
+    retflag = true;
+    insymbol();
+    if (sy == lparent) {
+        insymbol();
+        ret = expression(&typ, &otyp);
+        if (otyp == _reterr) {
+            return;
+        }
+        if (typ != tab[prt].typ) {
+            error(25); //返回值类型不一致
+        }
+        midcode_enter2(_ret, ret, -1, -1, otyp, -1, -1);
+        if (sy == rparent) {
+            insymbol();
+        }
+        else {
+            error(14);
+            skip(statskipsys);
+        }
+    }
+    else {
+        midcode_enter(_ret, -1, -1, -1);
+    }
 }
 
 
 void ifstatement()
 {
     int ret1, ret2;
-    types typ1, typ2;
+    datatyp dtyp1, dtyp2;
+    operandtyp otyp1, otyp2;
     optyp op;
+
     int prlabelx = ++labelx;
 
     insymbol();
     if (sy == lparent) {
         insymbol();
+        ret1 = expression(&dtyp1, &otyp1);
+        if (otyp1 == _reterr) {
+            goto stat;
+        }
+        if (relationops.count(sy)) {
+            if (dtyp1 != ints) {
+                error(46); //关系运算符左侧表达式类型不为整型
+            }
+            op = (optyp)(sy - eql + _eql);
+            insymbol();
+            ret2 = expression(&dtyp2, &otyp2);
+            if (otyp2 == _reterr) {
+                goto stat;
+            }
+            if (dtyp2 != ints) {
+                error(47); //关系运算符右侧表达式类型不为整型
+            }
+            if (otyp1 == _const && otyp2 == _const) {
+                switch (op) {
+                case _eql:ret1 = (ret1 == ret2); break;
+                case _neq:ret1 = (ret1 != ret2); break;
+                case _gtr:ret1 = (ret1 > ret2); break;
+                case _geq:ret1 = (ret1 >= ret2); break;
+                case _lss:ret1 = (ret1 < ret2); break;
+                case _leq:ret1 = (ret1 <= ret2); break;
+                default:
+                    break;
+                }
+            }
+            else {
+                midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
+                otyp1 = _tmpvar;
+                ret1 = tmpindex;
+            }
+
+        }
+        else {
+            if (dtyp1 != ints) {
+                error(28); //条件表达式的类型不为整型
+            }
+        }
+
+        if (sy == rparent) {
+            insymbol();
+        }
+        else {
+            error(14);
+            skip(statskipsys);
+        }
+        midcode_enter2(_bz, prlabelx, ret1, -1, -1, otyp1, -1);
     }
     else {
         error(26);
-    }
-    ret1 = expression(&typ1, 0);
-    if (relationop.count(sy)) {
-        if (typ1 != ints) {
-            error(46); //关系运算符左侧表达式类型不为整型
-        }
-        op = (optyp)(sy - eql + _eql);
-        insymbol();
-        ret2 = expression(&typ2, ret1 + 1);
-        if (typ2 != ints) {
-            error(47); //关系运算符右侧表达式类型不为整型
-        }
-        midcode_enter(op, ret1, ret1, ret2);
-    }
-    else {
-        if (typ1 != ints) {
-            error(28); //条件表达式的类型不为整型
-        }
-    }
-    //printf("line %d: 这是一个条件\n", lcnt);
-    if (sy == rparent) {
-        insymbol();
-    }
-    else {
-        error(14);
+        skip(statskipsys);
     }
 
-    midcode_enter(_bz, prlabelx, ret1, -1);
+stat:
     statement();
     midcode_enter(_label, prlabelx, -1, -1);
-    //printf("line %d: 这是一个条件语句\n", lcnt - 1);
 }
 
 
 void whilestatement()
 {
     int ret1, ret2;
-    types typ1 = ints, typ2 = ints;
+    datatyp dtyp1 = ints, dtyp2 = ints;
+    operandtyp otyp1, otyp2;
     int prlabelx1 = ++labelx;
     int prlabelx2 = ++labelx;
     optyp op;
 
     midcode_enter(_label, prlabelx1, -1, -1);
+
     insymbol();
     if (sy == lparent) {
         insymbol();
+        ret1 = expression(&dtyp1, &otyp1);
+        if (otyp1 == _reterr) {
+            goto stat2;
+        }
+        if (relationops.count(sy)) {
+            if (dtyp1 != ints) {
+                error(46); //关系运算符左侧表达式类型不为整型
+            }
+            op = (optyp)(sy - eql + _eql);
+            insymbol();
+            ret2 = expression(&dtyp2, &otyp2);
+            if (otyp2 == _reterr) {
+                goto stat2;
+            }
+            if (dtyp2 != ints) {
+                error(47); //关系运算符右侧表达式类型不为整型
+            }
+            if (otyp1 == _const && otyp2 == _const) {
+                switch (op) {
+                case _eql:ret1 = (ret1 == ret2); break;
+                case _neq:ret1 = (ret1 != ret2); break;
+                case _gtr:ret1 = (ret1 > ret2); break;
+                case _geq:ret1 = (ret1 >= ret2); break;
+                case _lss:ret1 = (ret1 < ret2); break;
+                case _leq:ret1 = (ret1 <= ret2); break;
+                default:
+                    break;
+                }
+            }
+            else {
+                midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
+                otyp1 = _tmpvar;
+                ret1 = tmpindex;
+            }
+        }
+        else {
+            if (dtyp1 != ints) {
+                error(28); //条件表达式的类型不为整型
+            }
+        }
+        if (sy == rparent) {
+            insymbol();
+        }
+        else {
+            error(14);
+            skip(statskipsys);
+        }
+        midcode_enter2(_bz, prlabelx2, ret1, -1, -1, otyp1, -1);
     }
     else {
         error(26);
-    }
-    ret1 = expression(&typ1, 0);
-    if (relationop.count(sy)) {
-        if (typ1 != ints) {
-            error(46); //关系运算符左侧表达式类型不为整型
-        }
-        op = (optyp)(sy - eql + _eql);
-        insymbol();
-        ret2 = expression(&typ2, ret1 + 1);
-        if (typ2 != ints) {
-            error(47); //关系运算符右侧表达式类型不为整型
-        }
-        midcode_enter(op, ret1, ret1, ret2);
-    }
-    else {
-        if (typ1 != ints) {
-            error(28); //条件表达式的类型不为整型
-        }
-    }
-    //printf("line %d: 这是一个条件\n", lcnt);
-    if (sy == rparent) {
-        insymbol();
-    }
-    else {
-        error(14);
+        skip(statskipsys);
     }
 
-    midcode_enter(_bz, prlabelx2, ret1, -1);
+stat2:
     statement();
     midcode_enter(_goto, prlabelx1, -1, -1);
     midcode_enter(_label, prlabelx2, -1, -1);
-    //printf("line %d: 这是一个循环语句\n", lcnt - 1);
 }
 
 set<int> casecon;
 
-void onecase(types typ, int tmp, int labelxend)
+void onecase(datatyp dtyp, int ret, int otyp, int labelxend)
 {
-    int sign = 1;
+    int sign;
     int labelx1 = ++labelx;
+    int ret2;
+    operandtyp otyp2;
 
     insymbol();
     if (sy == charcon) {
-        midcode_enter(_conload, tmp + 1, chars, inum);
-        if (typ != chars) {
+        ret2 = inum;
+        otyp2 = _const;
+        if (dtyp != chars) {
             error(29);
         }
         else if (casecon.count(inum)) {
@@ -526,15 +728,24 @@ void onecase(types typ, int tmp, int labelxend)
             casecon.insert(inum);
         }
         insymbol();
+        if (sy == colon) {
+            insymbol();
+        }
+        else {
+            error(21);
+            skip(statskipsys);
+        }
     }
     else {
+        sign = 1;
         if (sy == _plus_ || sy == _minus_) {
             sign = (sy == _plus_) ? 1 : -1;
             insymbol();
         }
         if (sy == intcon) {
-            midcode_enter(_conload, tmp + 1, ints, sign * inum);
-            if (typ != ints) {
+            ret2 = sign * inum;
+            otyp2 = _const;
+            if (dtyp != ints) {
                 error(29);
             }
             else if (casecon.count(sign * inum)) {
@@ -544,169 +755,101 @@ void onecase(types typ, int tmp, int labelxend)
                 casecon.insert(sign * inum);
             }
             insymbol();
+            if (sy == colon) {
+                insymbol();
+            }
+            else {
+                error(21);
+                skip(statskipsys);
+            }
         }
         else {
             error(8);
+            skip(statskipsys);
         }
     }
-    if (sy == colon) {
-        insymbol();
-    }
-    else {
-        error(21);
-    }
-    midcode_enter(_eql, tmp + 1, tmp, tmp + 1);
-    midcode_enter(_bz, labelx1, tmp + 1, -1);
+
+    midcode_enter2(_eql, ++tmpindex, ret, ret2, _tmpvar, otyp, otyp2);
+    midcode_enter2(_bz, labelx1, tmpindex, -1, -1, _tmpvar, -1);
     statement();
     midcode_enter(_goto, labelxend, -1, -1);
     midcode_enter(_label, labelx1, -1, -1);
-    //printf("line %d: 这是一个情况子语句\n", lcnt - 1);
 }
 
 
 void switchstatement()
 {
-    int ret;
-    types typ;
+    datatyp dtyp = ints;
+    operandtyp otyp = _const;
+    int ret = 0;
     int labelxend = ++labelx;
 
     insymbol();
     if (sy == lparent) {
         insymbol();
+        ret = expression(&dtyp, &otyp);
+        if (otyp != _reterr) {
+            if (sy == rparent) {
+                insymbol();
+            }
+            else {
+                error(14);
+                skip(statskipsys);
+            }
+        }
     }
     else {
         error(26);
-    }
-    ret = expression(&typ, 0);
-    if (sy == rparent) {
-        insymbol();
-    }
-    else {
-        error(14);
+        skip(statskipsys);
     }
 
     if (sy == lbrace) {
         insymbol();
+        casecon.clear();
+        if (sy == casesy) {
+            do {
+                onecase(dtyp, ret, otyp, labelxend);
+            } while (sy == casesy);
+
+            if (sy == defaultsy) {
+                insymbol();
+                if (sy == colon) {
+                    insymbol();
+                }
+                else {
+                    error(21);
+                    skip(statskipsys);
+                }
+                statement();
+            }
+        }
+        else {
+            error(30);// 无case语句
+            skip(statskipsys);
+        }
+
+        if (sy == rbrace) {
+            insymbol();
+        }
+        else {
+            error(16);
+            skip(statskipsys);
+        }
     }
     else {
         error(15);
+        skip(statskipsys);
     }
 
-    casecon.clear();
-    if (sy == casesy) {
-        do {
-            onecase(typ, ret, labelxend);
-        } while (sy == casesy);
-    }
-    else {
-        error(30);// 无case语句
-    }
-    if (sy == defaultsy) {
-        insymbol();
-        if (sy == colon) {
-            insymbol();
-        }
-        else {
-            error(21);
-        }
-        statement();
-        //printf("line %d: 这是一个缺省\n", lcnt - 1);
-    }
-    if (sy == rbrace) {
-        insymbol();
-    }
-    else {
-        error(16);
-    }
     midcode_enter(_label, labelxend, -1, -1);
-    //printf("line %d: 这是一个情况语句\n", lcnt - 1);
-}
-
-
-void returnstatement()
-{
-    types typ = ints;
-    int ret;
-    retflag = true;
-    insymbol();
-    if (sy == lparent) {
-        insymbol();
-        ret = expression(&typ, 0);
-        if (typ != tab[prt].typ) {
-            error(25); //返回值类型不一致
-        }
-        midcode_enter(_ret, ret, -1, -1);
-        if (sy == rparent) {
-            insymbol();
-        }
-        else {
-            error(14);
-        }
-    }
-    else {
-        midcode_enter(_ret, -1, -1, -1);
-    }
-    //printf("line %d: 这是一个返回语句\n", lcnt);
-}
-
-
-void assignment(int i)
-{
-    types typ1, typ2;
-    int ret1 = 0, ret2;
-
-    insymbol();
-    if (tab[i].obj == arrays) {
-        if (sy == lbracket) {
-            insymbol();
-        }
-        else {
-            error(22);
-        }
-        conindexflag = 0;
-        ret1 = expression(&typ1, 0);
-        if (typ1 != ints) {
-            error(31);  //数字下标只能为整型
-        }
-        if (conindexflag == 1 && !(arrindex >= 0 && arrindex < tab[i].arrcnt)) {
-            error(41);
-        }
-        conindexflag = -1;
-        if (sy == rbracket) {
-            insymbol();
-        }
-        else {
-            error(12);
-        }
-    }
-    if (sy == becomes) {
-        insymbol();
-    }
-    else {
-        error(7);
-    }
-    if (tab[i].obj == arrays) {
-        ret2 = expression(&typ2, ret1 + 1);
-        if (typ2 != tab[i].typ) {
-            error(32); //赋值符号左右类型不一致
-        }
-        midcode_enter(_arrassign, i, ret1, ret2);
-    }
-    else {
-        ret2 = expression(&typ2, 0);
-        if (typ2 != tab[i].typ) {
-            error(32); //赋值符号左右类型不一致
-        }
-        midcode_enter(_assign, i, ret2, -1);
-    }
-    //printf("line %d: 这是一个赋值语句\n", lcnt);
 }
 
 
 void stdfunccall()
 {
     int ret;
-    types typ = ints;
+    datatyp typ = ints;
+    operandtyp otyp;
 
     if (id == "scanf") {
         insymbol();
@@ -728,112 +871,122 @@ void stdfunccall()
                     error(6);
                 }
             } while (sy == comma);
+
+            if (sy == rparent) {
+                insymbol();
+            }
+            else {
+                error(14);
+            }
+            midcode_enter(_std_call, loc("scanf"), -1, -1);
         }
         else {
             error(26);
         }
-        midcode_enter(_call, loc("scanf"), -1, -1);
-        //printf("line %d: 这是一个读语句\n", lcnt);
+
     }
     else {
         insymbol();
         if (sy == lparent) {
             insymbol();
+            if (sy == stringcon) {
+                ret = inum;
+                otyp = _strcon;
+                midcode_enter2(_push, ret, PRINTF, strs, otyp, -1, -1);
+                insymbol();
+                if (sy == comma) {
+                    insymbol();
+                    ret = expression(&typ, &otyp);
+                    midcode_enter2(_push, ret, PRINTF, typ, otyp, -1, -1);
+                    midcode_enter(_std_call, loc("printf"), 2, -1);
+                }
+                else {
+                    midcode_enter(_std_call, loc("printf"), 1, -1);
+                }
+                if (sy == rparent) {
+                    insymbol();
+                }
+                else {
+                    error(14);
+                }
+            }
+            else {
+                ret = expression(&typ, &otyp);
+                midcode_enter2(_push, ret, PRINTF, typ, otyp, -1, -1);
+                if (sy == rparent) {
+                    insymbol();
+                }
+                else {
+                    error(14);
+                }
+                midcode_enter(_std_call, loc("printf"), 1, -1);
+            }
         }
         else {
             error(26);
         }
-        if (sy == stringcon) {
-            midcode_enter(_conload, 0, strs, inum);
-            midcode_enter(_push, 0, PRINTF, strs);
-            insymbol();
-            if (sy == comma) {
-                insymbol();
-                ret = expression(&typ, 1);
-                midcode_enter(_push, ret, PRINTF, typ);
-            }
-        }
-        else {
-            ret = expression(&typ, 0);
-            midcode_enter(_push, ret, PRINTF, typ);
-        }
-        midcode_enter(_call, loc("printf"), -1, -1);
-        //printf("line %d: 这是一个写语句\n", lcnt);
-    }
-
-    if (sy == rparent) {
-        insymbol();
-    }
-    else {
-        error(14);
     }
 }
 
 
-int funccall(int i, int tmp)
+int funccall(int i)
 {
     int lastp = btab[tab[i].ref].lastpar;
     int curpos = i;
     int ret;
-    types typ;
+    datatyp dtyp;
+    operandtyp otyp;
 
     insymbol();
     if (sy == lparent) {
         insymbol();
+        if (sy != rparent) {
+            curpos++;
+            ret = expression(&dtyp, &otyp);
+            if (curpos > lastp) {
+                error(34); //实参过多
+            }
+            else {
+                if (dtyp != tab[curpos].typ) {
+                    error(35); //实参与形参类型不一致
+                }
+                midcode_enter2(_push, ret, -1, -1, otyp, -1, -1);
+            }
+
+            while (sy == comma) {
+                insymbol();
+                curpos++;
+                ret = expression(&dtyp, &otyp);
+                if (curpos > lastp) {
+                    error(34); //实参过多
+                }
+                else {
+                    if (dtyp != tab[curpos].typ) {
+                        error(35); //实参与形参类型不一致
+                    }
+                    midcode_enter2(_push, ret, -1, -1, otyp, -1, -1);
+                }
+
+            }
+
+            if (curpos < lastp) {
+                error(36); //实参过少
+            }
+            if (sy == rparent) {
+                insymbol();
+            }
+            else {
+                error(14);
+            }
+
+            midcode_enter(_call, i, -1, -1);
+        }
     }
     else {
         error(26);
     }
 
-    if (sy != rparent) {
-        curpos++;
-        ret = expression(&typ, tmp);
-        if (curpos > lastp) {
-            error(34); //实参过多
-        }
-        else {
-            if (typ != tab[curpos].typ) {
-                error(35); //实参与形参类型不一致
-            }
-            midcode_enter(_push, ret, -1, -1);
-        }
-
-        while (sy == comma) {
-            insymbol();
-            curpos++;
-            ret = expression(&typ, tmp);
-            if (curpos > lastp) {
-                error(34); //实参过多
-            }
-            else {
-                if (typ != tab[curpos].typ) {
-                    error(35); //实参与形参类型不一致
-                }
-                midcode_enter(_push, ret, -1, -1);
-            }
-
-        }
-    }
-    //printf("line %d: 这是一个值参数表\n", lcnt);
-
-    if (curpos < lastp) {
-        error(36); //实参过少
-    }
-    if (sy == rparent) {
-        insymbol();
-    }
-    else {
-        error(14);
-    }
-    midcode_enter(_call, i, -1, -1);
-    if (tab[i].typ == voids) {
-        //printf("line %d: 这是一个无返回值的函数调用语句\n", lcnt);
-    }
-    else {
-        midcode_enter(_assign, tmp, RET, -1);
-        //printf("line %d: 这是一个有返回值的函数调用语句\n", lcnt);
-    }
-    return tmp;
+    return RET;
 }
 
 
@@ -857,6 +1010,7 @@ void statement()
         }
         else {
             error(13);
+            skip(statskipsys);
         }
         break;
     case semicolon:
@@ -872,6 +1026,7 @@ void statement()
         }
         else {
             error(16);
+            skip(statskipsys);
         }
         break;
     case ident:
@@ -880,7 +1035,7 @@ void statement()
             switch (tab[i].obj) {
             case constant:
                 error(17);
-                insymbol();
+                skip(statskipsys);
                 break;
             case variable:
             case arrays:
@@ -890,6 +1045,7 @@ void statement()
                 }
                 else {
                     error(13);
+                    skip(statskipsys);
                 }
                 break;
             case function:
@@ -904,6 +1060,7 @@ void statement()
                 }
                 else {
                     error(13);
+                    skip(statskipsys);
                 }
                 break;
             default:
@@ -912,12 +1069,12 @@ void statement()
         }
         else {
             error(18);//未定义的标识符
-            insymbol();
+            skip(statskipsys);
         }
         break;
     default:
-        error(20); //不合法语句，不会执行
-        insymbol();
+        error(20); //不合法语句
+        skip(statskipsys);
     }
 }
 
@@ -925,12 +1082,12 @@ void statement()
 void compoundstatement()
 {
     string name;
-    types typ = ints;
-    bool varflag = false, statflag = false;
+    datatyp typ = ints;
+    bool varflag = false;
 
-    while (sy == constsy || sy == intsy || sy == charsy || statbegsys.count(sy)) {
+    while (sy == constsy || sy == intsy || sy == charsy) {
         if (sy == constsy) {
-            if (varflag || statflag) {
+            if (varflag) {
                 error(43);  //常量定义出现的位置不当
             }
             constdef(false);
@@ -938,9 +1095,6 @@ void compoundstatement()
         else if (sy == intsy || sy == charsy) {
             if (!varflag) {
                 varflag = true;
-            }
-            if (statflag) {
-                error(42);  //变量定义出现的位置不当
             }
             typ = (sy == intsy) ? ints : chars;
             insymbol();
@@ -954,14 +1108,10 @@ void compoundstatement()
                 vardef(typ, name, false);
             }
         }
-        else if (statbegsys.count(sy)) {
-            if (!statflag) {
-                btab[b].vsize = dx;
-                statflag = true;
-            }
-            statement();//语句处理函数遇到分号读下一个字符
-        }
-
+    }
+    btab[b].vsize = dx;
+    while (statbegsys.count(sy)) {
+        statement();//语句处理函数遇到分号读下一个字符
     }
 }
 
@@ -969,7 +1119,7 @@ void compoundstatement()
 int paralist()
 {
     int paracnt = 0;
-    types typ;
+    datatyp typ;
     symbol tmp;
     symbol s[] = { comma, rparent, lbrace };
     set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
@@ -989,11 +1139,11 @@ int paralist()
             insymbol();
             if (sy == ident) {
                 tab_enter(id, variable, typ, dx);
-                midcode_enter(_para, typ, t, -1);
+                midcode_enter(_paradef, typ, t, -1);
                 dx += 4;
                 paracnt++;
                 insymbol();
-                if (sy != comma && sy != rparent){
+                if (sy != comma && sy != rparent) {
                     error(50);
                     skip2(sys, procbegsys); // , )  {
                 }
@@ -1016,13 +1166,14 @@ int paralist()
 }
 
 
-bool funcdef(types typ, string name)
+bool funcdef(datatyp typ, string name)
 {
     int n_paras;
 
+    tmpindex = -1;
     btab_enter();
     tab_enter(name, function, typ, 0);
-    midcode_enter(_func, typ, t, -1);
+    midcode_enter(_funcdef, typ, t, -1);
     //prmx = mx;
     tab[t].ref = b;
     prt = t;
@@ -1069,7 +1220,7 @@ void syntax_analysis()
 {
     bool varflag = false, funcflag = false, mainflag = false;
     string name;
-    types typ = ints;
+    datatyp typ = ints;
     labelx = -1;
 
     btab_enter();

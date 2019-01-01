@@ -18,6 +18,25 @@ void midcode_enter(optyp op, int v1, int v2, int v3)
     item.v1 = v1;
     item.v2 = v2;
     item.v3 = v3;
+    item.t1 = -1;
+    item.t2 = -1;
+    item.t3 = -1;
+    item.lev = b;
+    midcode.push_back(item);
+}
+
+void midcode_enter2(optyp op, int v1, int v2, int v3, int t1, int t2, int t3)
+{
+    ++mx;
+    midcodeitem item;
+    item.op = op;
+    item.v1 = v1;
+    item.v2 = v2;
+    item.v3 = v3;
+    item.t1 = t1;
+    item.t2 = t2;
+    item.t3 = t3;
+
     item.lev = b;
     midcode.push_back(item);
 }
@@ -25,11 +44,11 @@ void midcode_enter(optyp op, int v1, int v2, int v3)
 
 void print_midcode(FILE *out, int index)
 {
-    midcodeitem item = midcode[index]; 
-    
+    midcodeitem item = midcode[index];
+
     fprintf(out, "    ");
     switch (item.op) {
-    case _const:
+    case _condef:
         if (item.v1 == ints) {
             fprintf(out, "const int %s = %d\n", tab[item.v2].name.c_str(), item.v3);
         }
@@ -37,7 +56,7 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "const char %s = '%c'\n", tab[item.v2].name.c_str(), item.v3);
         }
         break;
-    case _var:
+    case _vardef:
         if (item.v1 == ints) {
             fprintf(out, "var int %s\n", tab[item.v2].name.c_str());
         }
@@ -46,7 +65,7 @@ void print_midcode(FILE *out, int index)
         }
         break;
 
-    case _array:
+    case _arrdef:
         if (item.v1 == ints) {
             fprintf(out, "array int %s %d\n", tab[item.v2].name.c_str(), item.v3);
         }
@@ -54,7 +73,7 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "array char %s %d\n", tab[item.v2].name.c_str(), item.v3);
         }
         break;
-    case _func:
+    case _funcdef:
         fprintf(out, "\n\n");
         if (item.v1 == ints) {
             fprintf(out, "int %s()\n", tab[item.v2].name.c_str());
@@ -66,7 +85,7 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "void %s()\n", tab[item.v2].name.c_str());
         }
         break;
-    case _para:
+    case _paradef:
         if (item.v1 == ints) {
             fprintf(out, "para int %s\n", tab[item.v2].name.c_str());
         }

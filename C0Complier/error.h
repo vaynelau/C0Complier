@@ -8,6 +8,12 @@
 
 using namespace std;
 
+
+extern set<symbol> statbegsys;
+extern set<symbol> relationops;
+extern set<symbol> procbegsys;
+extern set<symbol> statskipsys;
+
 extern bool noerror;
 
 void error(int n);

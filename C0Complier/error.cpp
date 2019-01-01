@@ -6,6 +6,48 @@
 
 using namespace std;
 
+
+symbol s3[] = {
+    constsy, intsy, charsy, voidsy
+};
+set<symbol> procbegsys(s3, s3 + sizeof(s3) / sizeof(s3[0]));
+
+symbol s1[] = {
+    ifsy, whilesy, switchsy, returnsy, semicolon, lbrace, ident
+};
+set<symbol> statbegsys(s1, s1 + sizeof(s1) / sizeof(s1[0]));
+
+symbol s2[] = {
+    eql, neq, gtr, geq, lss, leq
+};
+set<symbol> relationops(s2, s2 + sizeof(s2) / sizeof(s2[0]));
+
+symbol s4[] = {
+    ifsy, whilesy, switchsy, returnsy, semicolon, lbrace, rbrace, constsy, intsy, charsy, voidsy
+};
+set<symbol> statskipsys(s4, s4 + sizeof(s4) / sizeof(s4[0]));
+
+
+void skip(set<symbol> s)
+{
+    if (!s.count(sy)) {
+        while (!s.count(sy) && sy != eofsy) {
+            insymbol();
+        }
+    }
+}
+
+void skip2(set<symbol> s1, set<symbol> s2)
+{
+    if (!s1.count(sy) && !s2.count(sy)) {
+        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
+            insymbol();
+        }
+    }
+}
+
+
+
 bool noerror = true;
 
 void error(int n)
@@ -136,7 +178,7 @@ void error(int n)
         puts("case语句的常量出现重复");
         break;
     case 41:
-        puts("数组越界");
+        puts("数组下标越界");
         break;
     case 42:
         puts("变量定义出现的位置不当");
@@ -168,24 +210,5 @@ void error(int n)
     default:
         puts("其他错误");
         break;
-    }
-}
-
-
-void skip(set<symbol> s)
-{
-    if (!s.count(sy)) {
-        while (!s.count(sy) && sy != eofsy) {
-            insymbol();
-        }
-    }
-}
-
-void skip2(set<symbol> s1, set<symbol> s2)
-{
-    if (!s1.count(sy) && !s2.count(sy)) {
-        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
-            insymbol();
-        }
     }
 }

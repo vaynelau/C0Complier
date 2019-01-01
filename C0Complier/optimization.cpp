@@ -14,13 +14,13 @@ void block_partition()
 {
     int i;
     int b_index = 0;
-    for (i = 0; i <= mx && midcode[i].op != _func; i++);
+    for (i = 0; i <= mx && midcode[i].op != _funcdef; i++);
     i++;
     for (; i <= mx; i++) {
         b_index++;
         bool isfirst = true;
-        for (; i <= mx && (midcode[i].op == _const || midcode[i].op == _var || midcode[i].op == _array || midcode[i].op == _para); i++);
-        for (; i <= mx && midcode[i].op != _func; i++) {
+        for (; i <= mx && (midcode[i].op == _condef || midcode[i].op == _vardef || midcode[i].op == _arrdef || midcode[i].op == _paradef); i++);
+        for (; i <= mx && midcode[i].op != _funcdef; i++) {
             if (isfirst || midcode[i].op == _label || midcode[i].op == _call || midcode[i - 1].op == _call || midcode[i - 1].op == _goto || midcode[i - 1].op == _bz || midcode[i - 1].op == _ret) {
                 ++block_index;
                 block_item block;
@@ -34,7 +34,7 @@ void block_partition()
                 }
             }
             block_tab[block_index].end = i;
-        } //循环结束时midcode[i].op == _func，经过外层循环的i++，正好抵消
+        } //循环结束时midcode[i].op == _funcdef，经过外层循环的i++，正好抵消
 
     }
 }

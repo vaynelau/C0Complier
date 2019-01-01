@@ -35,14 +35,14 @@ void gen_mips()
 
     for (int i = 0; i <= mx; i++) {
         switch (midcode[i].op) {
-        case _const:
-        case _var:
-        case _array:
+        case _condef:
+        case _vardef:
+        case _arrdef:
             break;
-        case _func:
+        case _funcdef:
             fprintf(out, "\n\nfunc_%d:\n", tab[midcode[i].v2].ref);
             break;
-        case _para:
+        case _paradef:
             break;
         case _push:
             if (midcode[i].v2 == SCANF) {
