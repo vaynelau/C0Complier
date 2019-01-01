@@ -64,8 +64,6 @@ extern int sx; //字符串常量表索引
 extern set<symbol> statbegsys;
 extern set<symbol> relationop;
 extern set<symbol> procbegsys;
-extern set<symbol> sepsys;
-extern set<symbol> sepsys2;
 
 void tabs_init();
 void tab_enter(string name, objtyp obj, types typ, int adr);

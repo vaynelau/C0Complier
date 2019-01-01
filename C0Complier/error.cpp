@@ -1,5 +1,7 @@
 #include <cstdio>
+#include <set>
 #include "error.h"
+#include "table.h"
 #include "lexical_analysis.h"
 
 using namespace std;
@@ -122,7 +124,7 @@ void error(int n)
         puts("实参个数过少");
         break;
     case 37:
-        puts("main函数后含有其他函数定义");
+        puts("main函数后含有其他语法成分");
         break;
     case 38:
         puts("程序缺少main函数");
@@ -155,7 +157,13 @@ void error(int n)
         puts("关系运算符右侧表达式类型不为整型");
         break;
     case 48:
-        puts("main函数定义格式错误");
+        puts("main函数定义不规范");
+        break;
+    case 49:
+        puts("常量或变量定义中缺少逗号或分号");
+        break;
+    case 50:
+        puts("参数表中缺少逗号或右括号");
         break;
     default:
         puts("其他错误");

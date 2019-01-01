@@ -11,7 +11,8 @@
 
 using namespace std;
 
-int dx, prt, prmx;
+int dx, prt;
+//int prmx;
 bool retflag;
 int labelx;
 int conindexflag;
@@ -21,10 +22,15 @@ void constdef(bool isglobal)
 {
     int sign = 1;
 
+    symbol s[] = { comma, semicolon };
+    set<symbol> sepsys(s, s + sizeof(s) / sizeof(s[0]));
     set<symbol> sys(procbegsys.begin(), procbegsys.end());
     if (!isglobal) {
         sys.insert(statbegsys.begin(), statbegsys.end());
+        sys.erase(ident);
+        sys.erase(semicolon);
     }
+
     insymbol();
     if (sy == intsy) {
         do {
@@ -42,6 +48,10 @@ void constdef(bool isglobal)
                         tab[t].adr = sign * inum;
                         midcode_enter(_const, ints, t, sign * inum);
                         insymbol();
+                        if (!sepsys.count(sy)) {
+                            error(49);
+                            skip2(sepsys, sys);
+                        }
                     }
                     else {
                         error(8);
@@ -71,6 +81,10 @@ void constdef(bool isglobal)
                         tab[t].adr = inum;
                         midcode_enter(_const, chars, t, inum);
                         insymbol();
+                        if (!sepsys.count(sy)) {
+                            error(49);
+                            skip2(sepsys, sys);
+                        }
                     }
                     else {
                         error(8);
@@ -91,28 +105,29 @@ void constdef(bool isglobal)
     }
     else {
         error(9);
-        skip(sys);
+        sepsys.erase(semicolon);
+        skip2(sepsys, sys);
     }
 
     if (sy == semicolon) {
         insymbol();
     }
-    else {
-        error(13);
-        skip(sys);
-    }
-
 }
 
 
 void vardef(types typ, string name, bool isglobal)
 {
+
+    symbol s[] = { comma, semicolon };
+    set<symbol> sepsys(s, s + sizeof(s) / sizeof(s[0]));
     set<symbol> sys(procbegsys.begin(), procbegsys.end());
     if (!isglobal) {
         sys.insert(statbegsys.begin(), statbegsys.end());
+        sys.erase(ident);
+        sys.erase(semicolon);
     }
 
-    if (sy == lbracket) {
+    if (!name.empty() && sy == lbracket) {
         insymbol();
         if (sy == intcon) {
             if (inum > 0) {
@@ -128,6 +143,10 @@ void vardef(types typ, string name, bool isglobal)
             insymbol();
             if (sy == rbracket) {
                 insymbol();
+                if (!sepsys.count(sy)) {
+                    error(49);
+                    skip2(sepsys, sys);
+                }
             }
             else {
                 error(12);//缺少右中括号
@@ -140,11 +159,19 @@ void vardef(types typ, string name, bool isglobal)
         }
 
     }
-    else {
+    else if (!name.empty()) {
         tab_enter(name, variable, typ, dx);
         midcode_enter(_var, typ, t, -1);
         //dx += (typ == ints) ? 4 : 1;
         dx += 4;
+        if (!sepsys.count(sy)) {
+            error(49);
+            skip2(sepsys, sys);
+        }
+    }
+    else {
+        error(6); //变量无标识符
+        skip2(sepsys, sys);
     }
 
     while (sy == comma) {
@@ -168,6 +195,10 @@ void vardef(types typ, string name, bool isglobal)
                     insymbol();
                     if (sy == rbracket) {
                         insymbol();
+                        if (!sepsys.count(sy)) {
+                            error(49);
+                            skip2(sepsys, sys);
+                        }
                     }
                     else {
                         error(12);//缺少右中括号
@@ -185,20 +216,20 @@ void vardef(types typ, string name, bool isglobal)
                 midcode_enter(_var, typ, t, -1);
                 //dx += (typ == ints) ? 4 : 1;
                 dx += 4;
+                if (!sepsys.count(sy)) {
+                    error(49);
+                    skip2(sepsys, sys);
+                }
             }
         }
         else {
-            error(9); //变量无标识符
+            error(6); //变量无标识符
             skip2(sepsys, sys);
         }
     }
 
     if (sy == semicolon) {
         insymbol();
-    }
-    else {
-        error(13);
-        skip(sys);
     }
 }
 
@@ -885,7 +916,7 @@ void statement()
         }
         break;
     default:
-        error(20); //不合法语句
+        error(20); //不合法语句，不会执行
         insymbol();
     }
 }
@@ -900,7 +931,7 @@ void compoundstatement()
     while (sy == constsy || sy == intsy || sy == charsy || statbegsys.count(sy)) {
         if (sy == constsy) {
             if (varflag || statflag) {
-                error(43);
+                error(43);  //常量定义出现的位置不当
             }
             constdef(false);
         }
@@ -909,7 +940,7 @@ void compoundstatement()
                 varflag = true;
             }
             if (statflag) {
-                error(42);
+                error(42);  //变量定义出现的位置不当
             }
             typ = (sy == intsy) ? ints : chars;
             insymbol();
@@ -919,12 +950,13 @@ void compoundstatement()
                 vardef(typ, name, false);
             }
             else {
-                error(6); //缺变量名标识符
-                skip2(procbegsys, statbegsys);
+                name = "";
+                vardef(typ, name, false);
             }
         }
         else if (statbegsys.count(sy)) {
             if (!statflag) {
+                btab[b].vsize = dx;
                 statflag = true;
             }
             statement();//语句处理函数遇到分号读下一个字符
@@ -938,12 +970,20 @@ int paralist()
 {
     int paracnt = 0;
     types typ;
-
-    insymbol();
+    symbol tmp;
     symbol s[] = { comma, rparent, lbrace };
     set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
+    bool first = true;
 
-    if (sy != rparent) {
+    do {
+        insymbol();
+        if (first) {
+            first = false;
+            if (sy == rparent) {
+                insymbol(); //参数表为空
+                return 0;
+            }
+        }
         if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
             insymbol();
@@ -953,6 +993,10 @@ int paralist()
                 dx += 4;
                 paracnt++;
                 insymbol();
+                if (sy != comma && sy != rparent){
+                    error(50);
+                    skip2(sys, procbegsys); // , )  {
+                }
             }
             else {
                 error(6); //缺少参数名标识符
@@ -963,40 +1007,10 @@ int paralist()
             error(9); //缺少参数类型标识符
             skip2(sys, procbegsys); // , )  { 
         }
-
-        while (sy == comma) {
-            insymbol();
-            if (sy == intsy || sy == charsy) {
-                typ = (sy == intsy) ? ints : chars;
-                insymbol();
-                if (sy == ident) {
-                    tab_enter(id, variable, typ, dx);
-                    midcode_enter(_para, typ, t, -1);
-                    dx += 4;
-                    paracnt++;
-                    insymbol();
-                }
-                else {
-                    error(6); //缺少参数名标识符
-                    skip2(sys, procbegsys); // , )  { 
-                }
-            }
-            else if (sy != rparent) {
-                error(9); //缺少参数类型标识符
-                skip2(sys, procbegsys); // , )  { 
-            }
-        }
-
-    }
+    } while (sy == comma);
 
     if (sy == rparent) {
         insymbol();
-    }
-    else {
-        error(14);
-        symbol s[] = { lbrace };
-        set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
-        skip2(sys, procbegsys);
     }
     return paracnt;
 }
@@ -1009,18 +1023,18 @@ bool funcdef(types typ, string name)
     btab_enter();
     tab_enter(name, function, typ, 0);
     midcode_enter(_func, typ, t, -1);
-    prmx = mx;
+    //prmx = mx;
     tab[t].ref = b;
     prt = t;
 
     dx = 0;
     n_paras = paralist();
-    midcode[prmx].v3 = n_paras; //无用
     btab[b].lastpar = t;
     btab[b].psize = dx;
+    //midcode[prmx].v3 = n_paras; //无用
 
     if (name == "main" && (typ != voids || n_paras != 0)) {
-        error(48);  //main函数定义格式错误
+        error(48);  //main函数定义不规范
     }
 
     retflag = false;

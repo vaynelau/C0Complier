@@ -1,13 +1,136 @@
 func_1:
 
   block_0:
-    $t0 = 0
-    i = $t0
+    $t0 = n
+    $t1 = 0
+    $t0 == $t1
+    BZ label_0
   前驱: 
-  后继: 1, 
+  后继: 2, 1, 
 
   block_1:
+    $t0 = 1
+    ret $t0
+  前驱: 0, 
+  后继: 
+
+  block_2:
     label_0:
+    $t0 = n
+    $t1 = n
+    $t2 = 1
+    $t1 = $t1 - $t2
+    push $t1
+  前驱: 0, 
+  后继: 3, 
+
+  block_3:
+    call factorial
+  前驱: 2, 
+  后继: 4, 
+
+  block_4:
+    $t1 = RET
+    $t0 = $t0 * $t1
+    ret $t0
+  前驱: 3, 
+  后继: 
+
+  block_5:
+    ret
+  前驱: 
+  后继: 
+
+
+func_2:
+
+  block_6:
+    $t0 = 1
+    $t1 = 2
+    $t2 = 3
+    $t3 = 4
+    $t2 = $t2 + $t3
+    $t3 = 5
+    $t4 = 6
+    $t5 = 5
+    push $t5
+  前驱: 
+  后继: 7, 
+
+  block_7:
+    call factorial
+  前驱: 6, 
+  后继: 8, 
+
+  block_8:
+    $t5 = RET
+    $t6 = 5
+    push $t6
+  前驱: 7, 
+  后继: 9, 
+
+  block_9:
+    call factorial
+  前驱: 8, 
+  后继: 10, 
+
+  block_10:
+    $t6 = RET
+    $t7 = 5
+    push $t7
+  前驱: 9, 
+  后继: 11, 
+
+  block_11:
+    call factorial
+  前驱: 10, 
+  后继: 12, 
+
+  block_12:
+    $t7 = RET
+    $t8 = 10
+    $t9 = 5
+    push $t9
+  前驱: 11, 
+  后继: 13, 
+
+  block_13:
+    call factorial
+  前驱: 12, 
+  后继: 14, 
+
+  block_14:
+    $t9 = RET
+    $t10 = 5
+    push $t10
+  前驱: 13, 
+  后继: 15, 
+
+  block_15:
+    call factorial
+  前驱: 14, 
+  后继: 16, 
+
+  block_16:
+    $t10 = RET
+    $t9 = $t9 + $t10
+    $t8 = $t8 + $t9
+    $t7 = $t7 + $t8
+    $t6 = $t6 + $t7
+    $t5 = $t5 + $t6
+    $t4 = $t4 + $t5
+    $t3 = $t3 + $t4
+    $t2 = $t2 + $t3
+    $t1 = $t1 + $t2
+    $t0 = $t0 + $t1
+    f = $t0
+    $t0 = 0
+    i = $t0
+  前驱: 15, 
+  后继: 17, 
+
+  block_17:
+    label_1:
     $t0 = i
     $t1 = MAX_FIBO
     $t2 = 2
@@ -15,11 +138,11 @@ func_1:
     $t2 = 1
     $t1 = $t1 + $t2
     $t0 < $t1
-    BZ label_1
-  前驱: 0, 2, 
-  后继: 3, 2, 
+    BZ label_2
+  前驱: 16, 18, 
+  后继: 19, 18, 
 
-  block_2:
+  block_18:
     $t0 = i
     $t1 = 0
     fibo[$t0] = $t1
@@ -34,164 +157,120 @@ func_1:
     $t1 = 1
     $t0 = $t0 + $t1
     i = $t0
-    GOTO label_0
-  前驱: 1, 
-  后继: 1, 
-
-  block_3:
-    label_1:
-    ret
-  前驱: 1, 
-  后继: 
-
-
-func_2:
-
-  block_4:
-    $t0 = n
-    $t1 = 0
-    $t0 == $t1
-    BZ label_3
-  前驱: 
-  后继: 7, 5, 
-
-  block_5:
-    $t0 = 0
-    ret $t0
-  前驱: 4, 
-  后继: 
-
-  block_6:
-    GOTO label_2
-  前驱: 
+    GOTO label_1
+  前驱: 17, 
   后继: 17, 
 
-  block_7:
-    label_3:
-    $t1 = 1
-    $t0 == $t1
-    BZ label_4
-  前驱: 4, 
-  后继: 10, 8, 
-
-  block_8:
-    $t0 = 1
-    ret $t0
-  前驱: 7, 
-  后继: 
-
-  block_9:
-    GOTO label_2
-  前驱: 
-  后继: 17, 
-
-  block_10:
-    label_4:
-    $t0 = n
-    $t0 = fibo[$t0]
-    $t1 = 0
-    $t0 == $t1
-    BZ label_5
-  前驱: 7, 
-  后继: 16, 11, 
-
-  block_11:
-    $t0 = n
-    $t1 = n
-    $t2 = 1
-    $t1 = $t1 - $t2
-    push $t1
-  前驱: 10, 
-  后继: 12, 
-
-  block_12:
-    call fibonacci
-  前驱: 11, 
-  后继: 13, 
-
-  block_13:
-    $t1 = RET
-    $t2 = n
-    $t3 = 2
-    $t2 = $t2 - $t3
-    push $t2
-  前驱: 12, 
-  后继: 14, 
-
-  block_14:
-    call fibonacci
-  前驱: 13, 
-  后继: 15, 
-
-  block_15:
-    $t2 = RET
-    $t1 = $t1 + $t2
-    fibo[$t0] = $t1
-  前驱: 14, 
-  后继: 16, 
-
-  block_16:
-    label_5:
-    $t0 = n
-    $t0 = fibo[$t0]
-    ret $t0
-  前驱: 10, 15, 
-  后继: 
-
-  block_17:
+  block_19:
     label_2:
     ret
-  前驱: 6, 9, 
+  前驱: 17, 
   后继: 
 
 
 func_3:
 
-  block_18:
+  block_20:
     $t0 = n
     $t1 = 0
     $t0 == $t1
-    BZ label_6
+    BZ label_4
   前驱: 
-  后继: 20, 19, 
+  后继: 23, 21, 
 
-  block_19:
-    $t0 = 1
+  block_21:
+    $t0 = 0
     ret $t0
-  前驱: 18, 
+  前驱: 20, 
   后继: 
 
-  block_20:
-    label_6:
+  block_22:
+    GOTO label_3
+  前驱: 
+  后继: 33, 
+
+  block_23:
+    label_4:
+    $t1 = 1
+    $t0 == $t1
+    BZ label_5
+  前驱: 20, 
+  后继: 26, 24, 
+
+  block_24:
+    $t0 = 1
+    ret $t0
+  前驱: 23, 
+  后继: 
+
+  block_25:
+    GOTO label_3
+  前驱: 
+  后继: 33, 
+
+  block_26:
+    label_5:
+    $t0 = n
+    $t0 = fibo[$t0]
+    $t1 = 0
+    $t0 == $t1
+    BZ label_6
+  前驱: 23, 
+  后继: 32, 27, 
+
+  block_27:
     $t0 = n
     $t1 = n
     $t2 = 1
     $t1 = $t1 - $t2
     push $t1
-  前驱: 18, 
-  后继: 21, 
+  前驱: 26, 
+  后继: 28, 
 
-  block_21:
-    call factorial
-  前驱: 20, 
-  后继: 22, 
+  block_28:
+    call fibonacci
+  前驱: 27, 
+  后继: 29, 
 
-  block_22:
+  block_29:
     $t1 = RET
-    $t0 = $t0 * $t1
+    $t2 = n
+    $t3 = 2
+    $t2 = $t2 - $t3
+    push $t2
+  前驱: 28, 
+  后继: 30, 
+
+  block_30:
+    call fibonacci
+  前驱: 29, 
+  后继: 31, 
+
+  block_31:
+    $t2 = RET
+    $t1 = $t1 + $t2
+    fibo[$t0] = $t1
+  前驱: 30, 
+  后继: 32, 
+
+  block_32:
+    label_6:
+    $t0 = n
+    $t0 = fibo[$t0]
     ret $t0
-  前驱: 21, 
+  前驱: 26, 31, 
   后继: 
 
-  block_23:
+  block_33:
+    label_3:
     ret
-  前驱: 
+  前驱: 22, 25, 
   后继: 
 
 
 func_4:
 
-  block_24:
+  block_34:
     $t0 = i
     $t0 = num[$t0]
     tmp = $t0
@@ -206,7 +285,7 @@ func_4:
   前驱: 
   后继: 
 
-  block_25:
+  block_35:
     ret
   前驱: 
   后继: 
@@ -214,20 +293,20 @@ func_4:
 
 func_5:
 
-  block_26:
+  block_36:
     $t0 = left
     $t1 = right
     $t0 >= $t1
     BZ label_7
   前驱: 
-  后继: 28, 27, 
+  后继: 38, 37, 
 
-  block_27:
+  block_37:
     ret
-  前驱: 26, 
+  前驱: 36, 
   后继: 
 
-  block_28:
+  block_38:
     label_7:
     $t0 = left
     i = $t0
@@ -235,29 +314,29 @@ func_5:
     $t1 = 1
     $t0 = $t0 + $t1
     j = $t0
-  前驱: 26, 
-  后继: 29, 
+  前驱: 36, 
+  后继: 39, 
 
-  block_29:
+  block_39:
     label_8:
     $t0 = j
     $t1 = right
     $t0 <= $t1
     BZ label_9
-  前驱: 28, 33, 
-  后继: 34, 30, 
+  前驱: 38, 43, 
+  后继: 44, 40, 
 
-  block_30:
+  block_40:
     $t0 = j
     $t0 = num[$t0]
     $t1 = left
     $t1 = num[$t1]
     $t0 < $t1
     BZ label_10
-  前驱: 29, 
-  后继: 33, 31, 
+  前驱: 39, 
+  后继: 43, 41, 
 
-  block_31:
+  block_41:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
@@ -266,173 +345,173 @@ func_5:
     push $t0
     $t0 = j
     push $t0
-  前驱: 30, 
-  后继: 32, 
+  前驱: 40, 
+  后继: 42, 
 
-  block_32:
+  block_42:
     call swap
-  前驱: 31, 
-  后继: 33, 
+  前驱: 41, 
+  后继: 43, 
 
-  block_33:
+  block_43:
     label_10:
     $t0 = j
     $t1 = 1
     $t0 = $t0 + $t1
     j = $t0
     GOTO label_8
-  前驱: 30, 32, 
-  后继: 29, 
+  前驱: 40, 42, 
+  后继: 39, 
 
-  block_34:
+  block_44:
     label_9:
     $t0 = left
     push $t0
     $t0 = i
     push $t0
-  前驱: 29, 
-  后继: 35, 
+  前驱: 39, 
+  后继: 45, 
 
-  block_35:
+  block_45:
     call swap
-  前驱: 34, 
-  后继: 36, 
+  前驱: 44, 
+  后继: 46, 
 
-  block_36:
+  block_46:
     $t0 = left
     push $t0
     $t0 = i
     $t1 = 1
     $t0 = $t0 - $t1
     push $t0
-  前驱: 35, 
-  后继: 37, 
+  前驱: 45, 
+  后继: 47, 
 
-  block_37:
+  block_47:
     call sort
-  前驱: 36, 
-  后继: 38, 
+  前驱: 46, 
+  后继: 48, 
 
-  block_38:
+  block_48:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
     push $t0
     $t0 = right
     push $t0
-  前驱: 37, 
-  后继: 39, 
+  前驱: 47, 
+  后继: 49, 
 
-  block_39:
+  block_49:
     call sort
-  前驱: 38, 
-  后继: 40, 
+  前驱: 48, 
+  后继: 50, 
 
-  block_40:
+  block_50:
     ret
-  前驱: 39, 
+  前驱: 49, 
   后继: 
 
 
 func_6:
 
-  block_41:
+  block_51:
     $t0 = op
     $t1 = '+'
     $t0 == $t1
     BZ label_12
   前驱: 
-  后继: 44, 42, 
+  后继: 54, 52, 
 
-  block_42:
+  block_52:
     $t0 = a
     $t1 = b
     $t0 = $t0 + $t1
     ret $t0
-  前驱: 41, 
+  前驱: 51, 
   后继: 
 
-  block_43:
+  block_53:
     GOTO label_11
   前驱: 
-  后继: 54, 
+  后继: 64, 
 
-  block_44:
+  block_54:
     label_12:
     $t1 = '-'
     $t0 == $t1
     BZ label_13
-  前驱: 41, 
-  后继: 47, 45, 
+  前驱: 51, 
+  后继: 57, 55, 
 
-  block_45:
+  block_55:
     $t0 = a
     $t1 = b
     $t0 = $t0 - $t1
     ret $t0
-  前驱: 44, 
+  前驱: 54, 
   后继: 
 
-  block_46:
+  block_56:
     GOTO label_11
   前驱: 
-  后继: 54, 
+  后继: 64, 
 
-  block_47:
+  block_57:
     label_13:
     $t1 = '*'
     $t0 == $t1
     BZ label_14
-  前驱: 44, 
-  后继: 50, 48, 
+  前驱: 54, 
+  后继: 60, 58, 
 
-  block_48:
+  block_58:
     $t0 = a
     $t1 = b
     $t0 = $t0 * $t1
     ret $t0
-  前驱: 47, 
+  前驱: 57, 
   后继: 
 
-  block_49:
+  block_59:
     GOTO label_11
   前驱: 
-  后继: 54, 
+  后继: 64, 
 
-  block_50:
+  block_60:
     label_14:
     $t1 = '/'
     $t0 == $t1
     BZ label_15
-  前驱: 47, 
-  后继: 53, 51, 
+  前驱: 57, 
+  后继: 63, 61, 
 
-  block_51:
+  block_61:
     $t0 = a
     $t1 = b
     $t0 = $t0 / $t1
     ret $t0
-  前驱: 50, 
+  前驱: 60, 
   后继: 
 
-  block_52:
+  block_62:
     GOTO label_11
   前驱: 
-  后继: 54, 
+  后继: 64, 
 
-  block_53:
+  block_63:
     label_15:
-  前驱: 50, 
-  后继: 54, 
+  前驱: 60, 
+  后继: 64, 
 
-  block_54:
+  block_64:
     label_11:
     $t0 = 0
     ret $t0
-  前驱: 43, 46, 49, 52, 53, 
+  前驱: 53, 56, 59, 62, 63, 
   后继: 
 
-  block_55:
+  block_65:
     ret
   前驱: 
   后继: 
@@ -440,7 +519,7 @@ func_6:
 
 func_7:
 
-  block_56:
+  block_66:
     $t0 = _false
     ret = $t0
     $t0 = op
@@ -448,181 +527,181 @@ func_7:
     $t0 == $t1
     BZ label_17
   前驱: 
-  后继: 60, 57, 
+  后继: 70, 67, 
 
-  block_57:
+  block_67:
     $t0 = a
     $t1 = b
     $t0 < $t1
     BZ label_18
-  前驱: 56, 
-  后继: 59, 58, 
+  前驱: 66, 
+  后继: 69, 68, 
 
-  block_58:
+  block_68:
     $t0 = _true
     ret = $t0
-  前驱: 57, 
-  后继: 59, 
+  前驱: 67, 
+  后继: 69, 
 
-  block_59:
+  block_69:
     label_18:
     GOTO label_16
-  前驱: 57, 58, 
-  后继: 81, 
+  前驱: 67, 68, 
+  后继: 91, 
 
-  block_60:
+  block_70:
     label_17:
     $t1 = 2
     $t0 == $t1
     BZ label_19
-  前驱: 56, 
-  后继: 64, 61, 
+  前驱: 66, 
+  后继: 74, 71, 
 
-  block_61:
+  block_71:
     $t0 = a
     $t1 = b
     $t0 <= $t1
     BZ label_20
-  前驱: 60, 
-  后继: 63, 62, 
+  前驱: 70, 
+  后继: 73, 72, 
 
-  block_62:
+  block_72:
     $t0 = _true
     ret = $t0
-  前驱: 61, 
-  后继: 63, 
+  前驱: 71, 
+  后继: 73, 
 
-  block_63:
+  block_73:
     label_20:
     GOTO label_16
-  前驱: 61, 62, 
-  后继: 81, 
+  前驱: 71, 72, 
+  后继: 91, 
 
-  block_64:
+  block_74:
     label_19:
     $t1 = 3
     $t0 == $t1
     BZ label_21
-  前驱: 60, 
-  后继: 68, 65, 
+  前驱: 70, 
+  后继: 78, 75, 
 
-  block_65:
+  block_75:
     $t0 = a
     $t1 = b
     $t0 > $t1
     BZ label_22
-  前驱: 64, 
-  后继: 67, 66, 
+  前驱: 74, 
+  后继: 77, 76, 
 
-  block_66:
+  block_76:
     $t0 = _true
     ret = $t0
-  前驱: 65, 
-  后继: 67, 
+  前驱: 75, 
+  后继: 77, 
 
-  block_67:
+  block_77:
     label_22:
     GOTO label_16
-  前驱: 65, 66, 
-  后继: 81, 
+  前驱: 75, 76, 
+  后继: 91, 
 
-  block_68:
+  block_78:
     label_21:
     $t1 = 4
     $t0 == $t1
     BZ label_23
-  前驱: 64, 
-  后继: 72, 69, 
+  前驱: 74, 
+  后继: 82, 79, 
 
-  block_69:
+  block_79:
     $t0 = a
     $t1 = b
     $t0 >= $t1
     BZ label_24
-  前驱: 68, 
-  后继: 71, 70, 
+  前驱: 78, 
+  后继: 81, 80, 
 
-  block_70:
+  block_80:
     $t0 = _true
     ret = $t0
-  前驱: 69, 
-  后继: 71, 
-
-  block_71:
-    label_24:
-    GOTO label_16
-  前驱: 69, 70, 
+  前驱: 79, 
   后继: 81, 
 
-  block_72:
+  block_81:
+    label_24:
+    GOTO label_16
+  前驱: 79, 80, 
+  后继: 91, 
+
+  block_82:
     label_23:
     $t1 = 5
     $t0 == $t1
     BZ label_25
-  前驱: 68, 
-  后继: 76, 73, 
+  前驱: 78, 
+  后继: 86, 83, 
 
-  block_73:
+  block_83:
     $t0 = a
     $t1 = b
     $t0 != $t1
     BZ label_26
-  前驱: 72, 
-  后继: 75, 74, 
+  前驱: 82, 
+  后继: 85, 84, 
 
-  block_74:
+  block_84:
     $t0 = _true
     ret = $t0
-  前驱: 73, 
-  后继: 75, 
+  前驱: 83, 
+  后继: 85, 
 
-  block_75:
+  block_85:
     label_26:
     GOTO label_16
-  前驱: 73, 74, 
-  后继: 81, 
+  前驱: 83, 84, 
+  后继: 91, 
 
-  block_76:
+  block_86:
     label_25:
     $t1 = 6
     $t0 == $t1
     BZ label_27
-  前驱: 72, 
-  后继: 80, 77, 
+  前驱: 82, 
+  后继: 90, 87, 
 
-  block_77:
+  block_87:
     $t0 = a
     $t1 = b
     $t0 == $t1
     BZ label_28
-  前驱: 76, 
-  后继: 79, 78, 
+  前驱: 86, 
+  后继: 89, 88, 
 
-  block_78:
+  block_88:
     $t0 = _true
     ret = $t0
-  前驱: 77, 
-  后继: 79, 
+  前驱: 87, 
+  后继: 89, 
 
-  block_79:
+  block_89:
     label_28:
     GOTO label_16
-  前驱: 77, 78, 
-  后继: 81, 
+  前驱: 87, 88, 
+  后继: 91, 
 
-  block_80:
+  block_90:
     label_27:
-  前驱: 76, 
-  后继: 81, 
+  前驱: 86, 
+  后继: 91, 
 
-  block_81:
+  block_91:
     label_16:
     $t0 = ret
     ret $t0
-  前驱: 59, 63, 67, 71, 75, 79, 80, 
+  前驱: 69, 73, 77, 81, 85, 89, 90, 
   后继: 
 
-  block_82:
+  block_92:
     ret
   前驱: 
   后继: 
@@ -630,16 +709,16 @@ func_7:
 
 func_8:
 
-  block_83:
+  block_93:
     label_29:
     $t0 = i
     $t1 = j
     $t0 < $t1
     BZ label_30
-  前驱: 84, 
-  后继: 85, 84, 
+  前驱: 94, 
+  后继: 95, 94, 
 
-  block_84:
+  block_94:
     $t0 = i
     $t0 = str[$t0]
     c = $t0
@@ -659,103 +738,24 @@ func_8:
     $t0 = $t0 - $t1
     j = $t0
     GOTO label_29
-  前驱: 83, 
-  后继: 83, 
+  前驱: 93, 
+  后继: 93, 
 
-  block_85:
+  block_95:
     label_30:
     ret
-  前驱: 83, 
+  前驱: 93, 
   后继: 
 
 
 func_9:
 
-  block_86:
-    $t0 = 1
-    $t1 = 2
-    $t2 = 3
-    $t3 = 4
-    $t2 = $t2 + $t3
-    $t3 = 5
-    $t4 = 6
-    $t5 = 7
-    $t6 = 8
-    $t7 = 9
-    $t8 = 10
-    $t9 = 5
-    push $t9
-  前驱: 
-  后继: 87, 
-
-  block_87:
-    call factorial
-  前驱: 86, 
-  后继: 88, 
-
-  block_88:
-    $t9 = RET
-    $t10 = 5
-    push $t10
-  前驱: 87, 
-  后继: 89, 
-
-  block_89:
-    call factorial
-  前驱: 88, 
-  后继: 90, 
-
-  block_90:
-    $t10 = RET
-    $t9 = $t9 + $t10
-    $t8 = $t8 + $t9
-    $t7 = $t7 + $t8
-    $t6 = $t6 + $t7
-    $t5 = $t5 + $t6
-    $t4 = $t4 + $t5
-    $t3 = $t3 + $t4
-    $t2 = $t2 + $t3
-    $t1 = $t1 + $t2
-    $t0 = $t0 + $t1
-    fibo = $t0
+  block_96:
     $t0 = "fibo: "
     push $t0
     $t1 = fibo
     push $t1
-  前驱: 89, 
-  后继: 91, 
-
-  block_91:
-    call printf
-  前驱: 90, 
-  后继: 92, 
-
-  block_92:
-    $t0 = "Test start:"
-    push $t0
-  前驱: 91, 
-  后继: 93, 
-
-  block_93:
-    call printf
-  前驱: 92, 
-  后继: 94, 
-
-  block_94:
-    $t0 = "Test printf:"
-    push $t0
-  前驱: 93, 
-  后继: 95, 
-
-  block_95:
-    call printf
-  前驱: 94, 
-  后继: 96, 
-
-  block_96:
-    $t0 = "This is a String:"
-    push $t0
-  前驱: 95, 
+  前驱: 
   后继: 97, 
 
   block_97:
@@ -764,7 +764,7 @@ func_9:
   后继: 98, 
 
   block_98:
-    $t0 = " !\\n_\\r_\\t }~"
+    $t0 = "Test start:"
     push $t0
   前驱: 97, 
   后继: 99, 
@@ -775,7 +775,7 @@ func_9:
   后继: 100, 
 
   block_100:
-    $t0 = '_'
+    $t0 = "Test printf:"
     push $t0
   前驱: 99, 
   后继: 101, 
@@ -786,7 +786,7 @@ func_9:
   后继: 102, 
 
   block_102:
-    $t0 = _
+    $t0 = "This is a String:"
     push $t0
   前驱: 101, 
   后继: 103, 
@@ -797,7 +797,7 @@ func_9:
   后继: 104, 
 
   block_104:
-    $t0 = 'x'
+    $t0 = " !\\n_\\r_\\t }~"
     push $t0
   前驱: 103, 
   后继: 105, 
@@ -808,7 +808,7 @@ func_9:
   后继: 106, 
 
   block_106:
-    $t0 = x
+    $t0 = '_'
     push $t0
   前驱: 105, 
   后继: 107, 
@@ -819,7 +819,7 @@ func_9:
   后继: 108, 
 
   block_108:
-    $t0 = 'X'
+    $t0 = _
     push $t0
   前驱: 107, 
   后继: 109, 
@@ -830,7 +830,7 @@ func_9:
   后继: 110, 
 
   block_110:
-    $t0 = X
+    $t0 = 'x'
     push $t0
   前驱: 109, 
   后继: 111, 
@@ -841,8 +841,7 @@ func_9:
   后继: 112, 
 
   block_112:
-    $t0 = 1024
-    $t0 = -$t0
+    $t0 = x
     push $t0
   前驱: 111, 
   后继: 113, 
@@ -853,16 +852,8 @@ func_9:
   后继: 114, 
 
   block_114:
-    $t0 = "X*2+x/3 = "
+    $t0 = 'X'
     push $t0
-    $t1 = X
-    $t2 = 2
-    $t1 = $t1 * $t2
-    $t2 = x
-    $t3 = 3
-    $t2 = $t2 / $t3
-    $t1 = $t1 + $t2
-    push $t1
   前驱: 113, 
   后继: 115, 
 
@@ -872,7 +863,7 @@ func_9:
   后继: 116, 
 
   block_116:
-    $t0 = "Test scanf:"
+    $t0 = X
     push $t0
   前驱: 115, 
   后继: 117, 
@@ -883,7 +874,8 @@ func_9:
   后继: 118, 
 
   block_118:
-    $t0 = "Please input an integer nnn:"
+    $t0 = 1024
+    $t0 = -$t0
     push $t0
   前驱: 117, 
   后继: 119, 
@@ -894,20 +886,27 @@ func_9:
   后继: 120, 
 
   block_120:
-    push $t54
+    $t0 = "X*2+x/3 = "
+    push $t0
+    $t1 = X
+    $t2 = 2
+    $t1 = $t1 * $t2
+    $t2 = x
+    $t3 = 3
+    $t2 = $t2 / $t3
+    $t1 = $t1 + $t2
+    push $t1
   前驱: 119, 
   后继: 121, 
 
   block_121:
-    call scanf
+    call printf
   前驱: 120, 
   后继: 122, 
 
   block_122:
-    $t0 = "nnn is "
+    $t0 = "Test scanf:"
     push $t0
-    $t1 = nnn
-    push $t1
   前驱: 121, 
   后继: 123, 
 
@@ -917,7 +916,7 @@ func_9:
   后继: 124, 
 
   block_124:
-    $t0 = "Please input a character x:"
+    $t0 = "Please input an integer nnn:"
     push $t0
   前驱: 123, 
   后继: 125, 
@@ -928,7 +927,7 @@ func_9:
   后继: 126, 
 
   block_126:
-    push $t57
+    push $t55
   前驱: 125, 
   后继: 127, 
 
@@ -938,9 +937,9 @@ func_9:
   后继: 128, 
 
   block_128:
-    $t0 = "x is "
+    $t0 = "nnn is "
     push $t0
-    $t1 = c
+    $t1 = nnn
     push $t1
   前驱: 127, 
   后继: 129, 
@@ -951,7 +950,7 @@ func_9:
   后继: 130, 
 
   block_130:
-    $t0 = "Please input 2 integers a, b and a character x:"
+    $t0 = "Please input a character x:"
     push $t0
   前驱: 129, 
   后继: 131, 
@@ -962,9 +961,7 @@ func_9:
   后继: 132, 
 
   block_132:
-    push $t52
-    push $t53
-    push $t57
+    push $t58
   前驱: 131, 
   后继: 133, 
 
@@ -974,9 +971,9 @@ func_9:
   后继: 134, 
 
   block_134:
-    $t0 = "a is "
+    $t0 = "x is "
     push $t0
-    $t1 = a
+    $t1 = c
     push $t1
   前驱: 133, 
   后继: 135, 
@@ -987,10 +984,8 @@ func_9:
   后继: 136, 
 
   block_136:
-    $t0 = "b is "
+    $t0 = "Please input 2 integers a, b and a character x:"
     push $t0
-    $t1 = b
-    push $t1
   前驱: 135, 
   后继: 137, 
 
@@ -1000,21 +995,22 @@ func_9:
   后继: 138, 
 
   block_138:
-    $t0 = "x is "
-    push $t0
-    $t1 = c
-    push $t1
+    push $t53
+    push $t54
+    push $t58
   前驱: 137, 
   后继: 139, 
 
   block_139:
-    call printf
+    call scanf
   前驱: 138, 
   后继: 140, 
 
   block_140:
-    $t0 = "Test charcomp:"
+    $t0 = "a is "
     push $t0
+    $t1 = a
+    push $t1
   前驱: 139, 
   后继: 141, 
 
@@ -1024,37 +1020,33 @@ func_9:
   后继: 142, 
 
   block_142:
-    $t0 = 1
-    i = $t0
+    $t0 = "b is "
+    push $t0
+    $t1 = b
+    push $t1
   前驱: 141, 
   后继: 143, 
 
   block_143:
-    label_31:
-    $t0 = i
-    $t1 = 6
-    $t0 <= $t1
-    BZ label_32
-  前驱: 142, 156, 
-  后继: 157, 144, 
+    call printf
+  前驱: 142, 
+  后继: 144, 
 
   block_144:
-    $t0 = 'A'
+    $t0 = "x is "
     push $t0
-    $t0 = 'a'
-    push $t0
-    $t0 = i
-    push $t0
+    $t1 = c
+    push $t1
   前驱: 143, 
   后继: 145, 
 
   block_145:
-    call charcomp
+    call printf
   前驱: 144, 
   后继: 146, 
 
   block_146:
-    $t0 = RET
+    $t0 = "Test charcomp:"
     push $t0
   前驱: 145, 
   后继: 147, 
@@ -1065,79 +1057,120 @@ func_9:
   后继: 148, 
 
   block_148:
+    $t0 = 1
+    i = $t0
+  前驱: 147, 
+  后继: 149, 
+
+  block_149:
+    label_31:
+    $t0 = i
+    $t1 = 6
+    $t0 <= $t1
+    BZ label_32
+  前驱: 148, 162, 
+  后继: 163, 150, 
+
+  block_150:
+    $t0 = 'A'
+    push $t0
+    $t0 = 'a'
+    push $t0
+    $t0 = i
+    push $t0
+  前驱: 149, 
+  后继: 151, 
+
+  block_151:
+    call charcomp
+  前驱: 150, 
+  后继: 152, 
+
+  block_152:
+    $t0 = RET
+    push $t0
+  前驱: 151, 
+  后继: 153, 
+
+  block_153:
+    call printf
+  前驱: 152, 
+  后继: 154, 
+
+  block_154:
     $t0 = 'a'
     push $t0
     $t0 = 'a'
     push $t0
     $t0 = i
     push $t0
-  前驱: 147, 
-  后继: 149, 
+  前驱: 153, 
+  后继: 155, 
 
-  block_149:
+  block_155:
     call charcomp
-  前驱: 148, 
-  后继: 150, 
+  前驱: 154, 
+  后继: 156, 
 
-  block_150:
+  block_156:
     $t0 = RET
     push $t0
-  前驱: 149, 
-  后继: 151, 
+  前驱: 155, 
+  后继: 157, 
 
-  block_151:
+  block_157:
     call printf
-  前驱: 150, 
-  后继: 152, 
+  前驱: 156, 
+  后继: 158, 
 
-  block_152:
+  block_158:
     $t0 = 'a'
     push $t0
     $t0 = 'A'
     push $t0
     $t0 = i
     push $t0
-  前驱: 151, 
-  后继: 153, 
+  前驱: 157, 
+  后继: 159, 
 
-  block_153:
+  block_159:
     call charcomp
-  前驱: 152, 
-  后继: 154, 
+  前驱: 158, 
+  后继: 160, 
 
-  block_154:
+  block_160:
     $t0 = RET
     push $t0
-  前驱: 153, 
-  后继: 155, 
+  前驱: 159, 
+  后继: 161, 
 
-  block_155:
+  block_161:
     call printf
-  前驱: 154, 
-  后继: 156, 
+  前驱: 160, 
+  后继: 162, 
 
-  block_156:
+  block_162:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
     i = $t0
     GOTO label_31
-  前驱: 155, 
-  后继: 143, 
+  前驱: 161, 
+  后继: 149, 
 
-  block_157:
+  block_163:
     label_32:
     $t0 = "Test calculate:"
     push $t0
-  前驱: 143, 
-  后继: 158, 
+  前驱: 149, 
+  后继: 164, 
 
-  block_158:
+  block_164:
     call printf
-  前驱: 157, 
-  后继: 159, 
+  前驱: 163, 
+  后继: 165, 
 
-  block_159:
+  block_165:
     $t0 = 123
     $t1 = 456
     $t0 = $t0 * $t1
@@ -1166,49 +1199,6 @@ func_9:
     push $t0
     $t1 = a
     push $t1
-  前驱: 158, 
-  后继: 160, 
-
-  block_160:
-    call printf
-  前驱: 159, 
-  后继: 161, 
-
-  block_161:
-    $t0 = "b: "
-    push $t0
-    $t1 = b
-    push $t1
-  前驱: 160, 
-  后继: 162, 
-
-  block_162:
-    call printf
-  前驱: 161, 
-  后继: 163, 
-
-  block_163:
-    $t0 = a
-    push $t0
-    $t0 = b
-    push $t0
-    $t0 = add
-    push $t0
-  前驱: 162, 
-  后继: 164, 
-
-  block_164:
-    call calculate
-  前驱: 163, 
-  后继: 165, 
-
-  block_165:
-    $t0 = RET
-    result = $t0
-    $t0 = "a b add: "
-    push $t0
-    $t1 = result
-    push $t1
   前驱: 164, 
   后继: 166, 
 
@@ -1218,96 +1208,100 @@ func_9:
   后继: 167, 
 
   block_167:
+    $t0 = "b: "
+    push $t0
+    $t1 = b
+    push $t1
+  前驱: 166, 
+  后继: 168, 
+
+  block_168:
+    call printf
+  前驱: 167, 
+  后继: 169, 
+
+  block_169:
+    $t0 = a
+    push $t0
+    $t0 = b
+    push $t0
+    $t0 = add
+    push $t0
+  前驱: 168, 
+  后继: 170, 
+
+  block_170:
+    call calculate
+  前驱: 169, 
+  后继: 171, 
+
+  block_171:
+    $t0 = RET
+    result = $t0
+    $t0 = "a b add: "
+    push $t0
+    $t1 = result
+    push $t1
+  前驱: 170, 
+  后继: 172, 
+
+  block_172:
+    call printf
+  前驱: 171, 
+  后继: 173, 
+
+  block_173:
     $t0 = a
     push $t0
     $t0 = b
     push $t0
     $t0 = sub
     push $t0
-  前驱: 166, 
-  后继: 168, 
+  前驱: 172, 
+  后继: 174, 
 
-  block_168:
+  block_174:
     call calculate
-  前驱: 167, 
-  后继: 169, 
+  前驱: 173, 
+  后继: 175, 
 
-  block_169:
+  block_175:
     $t0 = RET
     result = $t0
     $t0 = "a b sub: "
     push $t0
     $t1 = result
     push $t1
-  前驱: 168, 
-  后继: 170, 
+  前驱: 174, 
+  后继: 176, 
 
-  block_170:
+  block_176:
     call printf
-  前驱: 169, 
-  后继: 171, 
+  前驱: 175, 
+  后继: 177, 
 
-  block_171:
+  block_177:
     $t0 = a
     push $t0
     $t0 = b
     push $t0
     $t0 = mul
     push $t0
-  前驱: 170, 
-  后继: 172, 
+  前驱: 176, 
+  后继: 178, 
 
-  block_172:
+  block_178:
     call calculate
-  前驱: 171, 
-  后继: 173, 
+  前驱: 177, 
+  后继: 179, 
 
-  block_173:
+  block_179:
     $t0 = RET
     result = $t0
     $t0 = "a b mul: "
     push $t0
     $t1 = result
     push $t1
-  前驱: 172, 
-  后继: 174, 
-
-  block_174:
-    call printf
-  前驱: 173, 
-  后继: 175, 
-
-  block_175:
-    $t0 = "a b div: "
-    push $t0
-    $t1 = a
-    push $t1
-    $t1 = b
-    push $t1
-    $t1 = _div
-    push $t1
-  前驱: 174, 
-  后继: 176, 
-
-  block_176:
-    call calculate
-  前驱: 175, 
-  后继: 177, 
-
-  block_177:
-    $t1 = RET
-    push $t1
-  前驱: 176, 
-  后继: 178, 
-
-  block_178:
-    call printf
-  前驱: 177, 
-  后继: 179, 
-
-  block_179:
-    $t0 = "Test strrev:"
-    push $t0
   前驱: 178, 
   后继: 180, 
 
@@ -1317,6 +1311,45 @@ func_9:
   后继: 181, 
 
   block_181:
+    $t0 = "a b div: "
+    push $t0
+    $t1 = a
+    push $t1
+    $t1 = b
+    push $t1
+    $t1 = _div
+    push $t1
+  前驱: 180, 
+  后继: 182, 
+
+  block_182:
+    call calculate
+  前驱: 181, 
+  后继: 183, 
+
+  block_183:
+    $t1 = RET
+    push $t1
+  前驱: 182, 
+  后继: 184, 
+
+  block_184:
+    call printf
+  前驱: 183, 
+  后继: 185, 
+
+  block_185:
+    $t0 = "Test strrev:"
+    push $t0
+  前驱: 184, 
+  后继: 186, 
+
+  block_186:
+    call printf
+  前驱: 185, 
+  后继: 187, 
+
+  block_187:
     $t0 = 0
     $t1 = 'H'
     str[$t0] = $t1
@@ -1346,161 +1379,126 @@ func_9:
     str[$t0] = $t1
     $t0 = "str before reverse:"
     push $t0
-  前驱: 180, 
-  后继: 182, 
+  前驱: 186, 
+  后继: 188, 
 
-  block_182:
+  block_188:
     call printf
-  前驱: 181, 
-  后继: 183, 
+  前驱: 187, 
+  后继: 189, 
 
-  block_183:
+  block_189:
     $t0 = 0
     i = $t0
-  前驱: 182, 
-  后继: 184, 
+  前驱: 188, 
+  后继: 190, 
 
-  block_184:
+  block_190:
     label_33:
     $t0 = i
     $t1 = 9
     $t0 < $t1
     BZ label_34
-  前驱: 183, 187, 
-  后继: 188, 185, 
+  前驱: 189, 193, 
+  后继: 194, 191, 
 
-  block_185:
+  block_191:
     $t0 = i
     $t0 = str[$t0]
     push $t0
-  前驱: 184, 
-  后继: 186, 
+  前驱: 190, 
+  后继: 192, 
 
-  block_186:
+  block_192:
     call printf
-  前驱: 185, 
-  后继: 187, 
+  前驱: 191, 
+  后继: 193, 
 
-  block_187:
+  block_193:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
     i = $t0
     GOTO label_33
-  前驱: 186, 
-  后继: 184, 
+  前驱: 192, 
+  后继: 190, 
 
-  block_188:
+  block_194:
     label_34:
     $t0 = 0
     push $t0
     $t0 = 8
     push $t0
-  前驱: 184, 
-  后继: 189, 
+  前驱: 190, 
+  后继: 195, 
 
-  block_189:
+  block_195:
     call strrev
-  前驱: 188, 
-  后继: 190, 
+  前驱: 194, 
+  后继: 196, 
 
-  block_190:
+  block_196:
     $t0 = "str after reverse:"
     push $t0
-  前驱: 189, 
-  后继: 191, 
+  前驱: 195, 
+  后继: 197, 
 
-  block_191:
+  block_197:
     call printf
-  前驱: 190, 
-  后继: 192, 
+  前驱: 196, 
+  后继: 198, 
 
-  block_192:
+  block_198:
     $t0 = 0
     i = $t0
-  前驱: 191, 
-  后继: 193, 
+  前驱: 197, 
+  后继: 199, 
 
-  block_193:
+  block_199:
     label_35:
     $t0 = i
     $t1 = 9
     $t0 < $t1
     BZ label_36
-  前驱: 192, 196, 
-  后继: 197, 194, 
+  前驱: 198, 202, 
+  后继: 203, 200, 
 
-  block_194:
+  block_200:
     $t0 = i
     $t0 = str[$t0]
     push $t0
-  前驱: 193, 
-  后继: 195, 
+  前驱: 199, 
+  后继: 201, 
 
-  block_195:
+  block_201:
     call printf
-  前驱: 194, 
-  后继: 196, 
+  前驱: 200, 
+  后继: 202, 
 
-  block_196:
+  block_202:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
     i = $t0
     GOTO label_35
-  前驱: 195, 
-  后继: 193, 
+  前驱: 201, 
+  后继: 199, 
 
-  block_197:
+  block_203:
     label_36:
     $t0 = "Test factorial and fibonacci:"
     push $t0
-  前驱: 193, 
-  后继: 198, 
-
-  block_198:
-    call printf
-  前驱: 197, 
-  后继: 199, 
-
-  block_199:
-    $t0 = "Please input 2 integers N, n:"
-    push $t0
-  前驱: 198, 
-  后继: 200, 
-
-  block_200:
-    call printf
   前驱: 199, 
-  后继: 201, 
-
-  block_201:
-    push $t13
-    push $t14
-  前驱: 200, 
-  后继: 202, 
-
-  block_202:
-    call scanf
-  前驱: 201, 
-  后继: 203, 
-
-  block_203:
-    $t0 = "factorial N is "
-    push $t0
-    $t1 = N
-    push $t1
-  前驱: 202, 
   后继: 204, 
 
   block_204:
-    call factorial
+    call printf
   前驱: 203, 
   后继: 205, 
 
   block_205:
-    $t1 = RET
-    push $t1
+    $t0 = "Please input 2 integers N, n:"
+    push $t0
   前驱: 204, 
   后继: 206, 
 
@@ -1510,82 +1508,117 @@ func_9:
   后继: 207, 
 
   block_207:
-    call init_fibo
+    push $t13
+    push $t14
   前驱: 206, 
   后继: 208, 
 
   block_208:
-    $t0 = "fibonacci n is "
-    push $t0
-    $t1 = n
-    push $t1
+    call scanf
   前驱: 207, 
   后继: 209, 
 
   block_209:
-    call fibonacci
+    $t0 = "factorial N is "
+    push $t0
+    $t1 = N
+    push $t1
   前驱: 208, 
   后继: 210, 
 
   block_210:
-    $t1 = RET
-    push $t1
+    call factorial
   前驱: 209, 
   后继: 211, 
 
   block_211:
-    call printf
+    $t1 = RET
+    push $t1
   前驱: 210, 
   后继: 212, 
 
   block_212:
-    $t0 = "Test sort:"
-    push $t0
+    call printf
   前驱: 211, 
   后继: 213, 
 
   block_213:
-    call printf
+    call init_fibo
   前驱: 212, 
   后继: 214, 
 
   block_214:
-    $t0 = "Please input 10 numbers:"
+    $t0 = "fibonacci n is "
     push $t0
+    $t1 = n
+    push $t1
   前驱: 213, 
   后继: 215, 
 
   block_215:
-    call printf
+    call fibonacci
   前驱: 214, 
   后继: 216, 
 
   block_216:
-    $t0 = 0
-    i = $t0
+    $t1 = RET
+    push $t1
   前驱: 215, 
   后继: 217, 
 
   block_217:
+    call printf
+  前驱: 216, 
+  后继: 218, 
+
+  block_218:
+    $t0 = "Test sort:"
+    push $t0
+  前驱: 217, 
+  后继: 219, 
+
+  block_219:
+    call printf
+  前驱: 218, 
+  后继: 220, 
+
+  block_220:
+    $t0 = "Please input 10 numbers:"
+    push $t0
+  前驱: 219, 
+  后继: 221, 
+
+  block_221:
+    call printf
+  前驱: 220, 
+  后继: 222, 
+
+  block_222:
+    $t0 = 0
+    i = $t0
+  前驱: 221, 
+  后继: 223, 
+
+  block_223:
     label_37:
     $t0 = i
     $t1 = 10
     $t0 < $t1
     BZ label_38
-  前驱: 216, 220, 
-  后继: 221, 218, 
+  前驱: 222, 226, 
+  后继: 227, 224, 
 
-  block_218:
-    push $t56
-  前驱: 217, 
-  后继: 219, 
+  block_224:
+    push $t57
+  前驱: 223, 
+  后继: 225, 
 
-  block_219:
+  block_225:
     call scanf
-  前驱: 218, 
-  后继: 220, 
+  前驱: 224, 
+  后继: 226, 
 
-  block_220:
+  block_226:
     $t0 = i
     $t1 = tmp
     num[$t0] = $t1
@@ -1594,88 +1627,88 @@ func_9:
     $t0 = $t0 + $t1
     i = $t0
     GOTO label_37
-  前驱: 219, 
-  后继: 217, 
+  前驱: 225, 
+  后继: 223, 
 
-  block_221:
+  block_227:
     label_38:
     $t0 = 0
     push $t0
     $t0 = 9
     push $t0
-  前驱: 217, 
-  后继: 222, 
+  前驱: 223, 
+  后继: 228, 
 
-  block_222:
+  block_228:
     call sort
-  前驱: 221, 
-  后继: 223, 
+  前驱: 227, 
+  后继: 229, 
 
-  block_223:
+  block_229:
     $t0 = "sort result:"
     push $t0
-  前驱: 222, 
-  后继: 224, 
+  前驱: 228, 
+  后继: 230, 
 
-  block_224:
+  block_230:
     call printf
-  前驱: 223, 
-  后继: 225, 
+  前驱: 229, 
+  后继: 231, 
 
-  block_225:
+  block_231:
     $t0 = 0
     i = $t0
-  前驱: 224, 
-  后继: 226, 
+  前驱: 230, 
+  后继: 232, 
 
-  block_226:
+  block_232:
     label_39:
     $t0 = i
     $t1 = 10
     $t0 < $t1
     BZ label_40
-  前驱: 225, 229, 
-  后继: 230, 227, 
+  前驱: 231, 235, 
+  后继: 236, 233, 
 
-  block_227:
+  block_233:
     $t0 = i
     $t0 = num[$t0]
     push $t0
-  前驱: 226, 
-  后继: 228, 
+  前驱: 232, 
+  后继: 234, 
 
-  block_228:
+  block_234:
     call printf
-  前驱: 227, 
-  后继: 229, 
+  前驱: 233, 
+  后继: 235, 
 
-  block_229:
+  block_235:
     $t0 = i
     $t1 = 1
     $t0 = $t0 + $t1
     i = $t0
     GOTO label_39
-  前驱: 228, 
-  后继: 226, 
+  前驱: 234, 
+  后继: 232, 
 
-  block_230:
+  block_236:
     label_40:
     $t0 = "Test finished."
     push $t0
-  前驱: 226, 
-  后继: 231, 
+  前驱: 232, 
+  后继: 237, 
 
-  block_231:
+  block_237:
     call printf
-  前驱: 230, 
-  后继: 232, 
+  前驱: 236, 
+  后继: 238, 
 
-  block_232:
+  block_238:
     ret
-  前驱: 231, 
+  前驱: 237, 
   后继: 
 
-  block_233:
+  block_239:
     ret
   前驱: 
   后继: 

@@ -8,6 +8,14 @@ int N, n;
 int fibo[100], num[100];
 char str[1000];
 
+int factorial(int n,)
+{
+    if (n == 0)
+        return (1);
+    return (n * factorial(n - 1));
+}
+
+
 void init_fibo()
 {
     int i,f;
@@ -33,16 +41,11 @@ int fibonacci(int n)
     }
 }
 
-int factorial(int n)
-{
-    if (n == 0)
-        return (1);
-    return (n * factorial(n - 1));
-}
 
 
 
-void swap(int i, int j)
+
+void swap(int i, int j,)
 {
     int tmp;
     tmp = num[i];

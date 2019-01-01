@@ -18,8 +18,13 @@ vector<string> stab; //字符串常量表
 int sx; //字符串常量表索引
 
 
+symbol s3[] = {
+    constsy, intsy, charsy, voidsy
+};
+set<symbol> procbegsys(s3, s3 + sizeof(s3) / sizeof(s3[0]));
+
 symbol s1[] = {
-    ifsy, whilesy, lbrace, ident, semicolon, switchsy, returnsy
+    ifsy, whilesy, switchsy, returnsy, semicolon, lbrace, ident
 };
 set<symbol> statbegsys(s1, s1 + sizeof(s1) / sizeof(s1[0]));
 
@@ -28,20 +33,7 @@ symbol s2[] = {
 };
 set<symbol> relationop(s2, s2 + sizeof(s2) / sizeof(s2[0]));
 
-symbol s3[] = {
-    constsy, intsy, charsy, voidsy
-};
-set<symbol> procbegsys(s3, s3 + sizeof(s3) / sizeof(s3[0]));
 
-symbol s4[] = {
-    comma, semicolon
-};
-set<symbol> sepsys(s4, s4 + sizeof(s4) / sizeof(s4[0]));
-
-symbol s5[] = {
-    comma, rparent, lbrace
-};
-set<symbol> sepsys2(s5, s5 + sizeof(s5) / sizeof(s5[0]));
 
 void tabs_init()
 {
