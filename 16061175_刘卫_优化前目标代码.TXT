@@ -1,0 +1,1384 @@
+.data
+    global_var: .space 4808
+    str_0: .asciiz "fibo: "
+    str_1: .asciiz "Test start:"
+    str_2: .asciiz "Test printf:"
+    str_3: .asciiz "This is a String:"
+    str_4: .asciiz " !\\n_\\r_\\t }~"
+    str_5: .asciiz "X*2+x/3 = "
+    str_6: .asciiz "Test scanf:"
+    str_7: .asciiz "Please input an integer nnn:"
+    str_8: .asciiz "nnn is "
+    str_9: .asciiz "Please input a character x:"
+    str_10: .asciiz "x is "
+    str_11: .asciiz "Please input 2 integers a, b and a character x:"
+    str_12: .asciiz "a is "
+    str_13: .asciiz "b is "
+    str_14: .asciiz "x is "
+    str_15: .asciiz "Test charcomp:"
+    str_16: .asciiz "Test calculate:"
+    str_17: .asciiz "a: "
+    str_18: .asciiz "b: "
+    str_19: .asciiz "a b add: "
+    str_20: .asciiz "a b sub: "
+    str_21: .asciiz "a b mul: "
+    str_22: .asciiz "a b div: "
+    str_23: .asciiz "Test strrev:"
+    str_24: .asciiz "str before reverse:"
+    str_25: .asciiz "str after reverse:"
+    str_26: .asciiz "Test factorial and fibonacci:"
+    str_27: .asciiz "Please input 2 integers N, n:"
+    str_28: .asciiz "factorial N is "
+    str_29: .asciiz "fibonacci n is "
+    str_30: .asciiz "Test sort:"
+    str_31: .asciiz "Please input 10 numbers:"
+    str_32: .asciiz "sort result:"
+    str_33: .asciiz "Test finished."
+
+
+.text
+    addiu $fp, $sp, -4
+    addiu $sp, $sp, -192
+    jal func_9
+    li $v0, 10
+    syscall
+
+
+
+
+func_1:
+    li $24, 0
+    sw $24, -0($fp)
+    label_0:
+    lw $24, -0($fp)
+    li $25, 51
+    slt $24, $24, $25
+    sw $24, -4($fp)
+    lw $24, -4($fp)
+    beq $24, $0, label_1
+    lw $24, -0($fp)
+    li $25, 0
+    sll $24, $24, 2
+    sw $25, global_var+8($24)
+    li $24, 99
+    lw $25, -0($fp)
+    subu $24, $24, $25
+    sw $24, -8($fp)
+    lw $24, -8($fp)
+    li $25, 0
+    sll $24, $24, 2
+    sw $25, global_var+8($24)
+    lw $24, -0($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -12($fp)
+    lw $24, -12($fp)
+    sw $24, -0($fp)
+    j label_0
+    label_1:
+    jr $ra
+
+
+func_2:
+    lw $24, -0($fp)
+    li $25, 0
+    seq $24, $24, $25
+    sw $24, -4($fp)
+    lw $24, -4($fp)
+    beq $24, $0, label_3
+    li $24, 0
+    move $2, $24
+    jr $ra
+    j label_2
+    label_3:
+    lw $24, -0($fp)
+    li $25, 1
+    seq $24, $24, $25
+    sw $24, -8($fp)
+    lw $24, -8($fp)
+    beq $24, $0, label_4
+    li $24, 1
+    move $2, $24
+    jr $ra
+    j label_2
+    label_4:
+    lw $25, -0($fp)
+    sll $24, $25, 2
+    lw $24, global_var+8($24)
+    sw $24, -12($fp)
+    lw $24, -12($fp)
+    li $25, 0
+    seq $24, $24, $25
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    beq $24, $0, label_5
+    lw $24, -0($fp)
+    li $25, 1
+    subu $24, $24, $25
+    sw $24, -20($fp)
+    lw $24, -20($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -48
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_2
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -24($fp)
+    lw $24, -0($fp)
+    li $25, 2
+    subu $24, $24, $25
+    sw $24, -28($fp)
+    lw $24, -28($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -48
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_2
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -32($fp)
+    lw $24, -24($fp)
+    lw $25, -32($fp)
+    addu $24, $24, $25
+    sw $24, -36($fp)
+    lw $24, -0($fp)
+    lw $25, -36($fp)
+    sll $24, $24, 2
+    sw $25, global_var+8($24)
+    label_5:
+    lw $25, -0($fp)
+    sll $24, $25, 2
+    lw $24, global_var+8($24)
+    sw $24, -40($fp)
+    lw $24, -40($fp)
+    move $2, $24
+    jr $ra
+    label_2:
+    jr $ra
+
+
+func_3:
+    lw $24, -0($fp)
+    li $25, 0
+    seq $24, $24, $25
+    sw $24, -4($fp)
+    lw $24, -4($fp)
+    beq $24, $0, label_6
+    li $24, 1
+    move $2, $24
+    jr $ra
+    label_6:
+    lw $24, -0($fp)
+    li $25, 1
+    subu $24, $24, $25
+    sw $24, -8($fp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -24
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_3
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    move $24, $2
+    sw $24, -12($fp)
+    lw $24, -0($fp)
+    lw $25, -12($fp)
+    mul $24, $24, $25
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    move $2, $24
+    jr $ra
+    jr $ra
+
+
+func_4:
+    lw $25, -0($fp)
+    sll $24, $25, 2
+    lw $24, global_var+408($24)
+    sw $24, -12($fp)
+    lw $24, -12($fp)
+    sw $24, -8($fp)
+    lw $25, -4($fp)
+    sll $24, $25, 2
+    lw $24, global_var+408($24)
+    sw $24, -16($fp)
+    lw $24, -0($fp)
+    lw $25, -16($fp)
+    sll $24, $24, 2
+    sw $25, global_var+408($24)
+    lw $24, -4($fp)
+    lw $25, -8($fp)
+    sll $24, $24, 2
+    sw $25, global_var+408($24)
+    jr $ra
+    jr $ra
+
+
+func_5:
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    sge $24, $24, $25
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    beq $24, $0, label_7
+    jr $ra
+    label_7:
+    lw $24, -0($fp)
+    sw $24, -8($fp)
+    lw $24, -0($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -20($fp)
+    lw $24, -20($fp)
+    sw $24, -12($fp)
+    label_8:
+    lw $24, -12($fp)
+    lw $25, -4($fp)
+    sle $24, $24, $25
+    sw $24, -24($fp)
+    lw $24, -24($fp)
+    beq $24, $0, label_9
+    lw $25, -12($fp)
+    sll $24, $25, 2
+    lw $24, global_var+408($24)
+    sw $24, -28($fp)
+    lw $25, -0($fp)
+    sll $24, $25, 2
+    lw $24, global_var+408($24)
+    sw $24, -32($fp)
+    lw $24, -28($fp)
+    lw $25, -32($fp)
+    slt $24, $24, $25
+    sw $24, -36($fp)
+    lw $24, -36($fp)
+    beq $24, $0, label_10
+    lw $24, -8($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -40($fp)
+    lw $24, -40($fp)
+    sw $24, -8($fp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -12($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -20
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_4
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    label_10:
+    lw $24, -12($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -44($fp)
+    lw $24, -44($fp)
+    sw $24, -12($fp)
+    j label_8
+    label_9:
+    lw $24, -0($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -20
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_4
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    lw $24, -0($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    li $25, 1
+    subu $24, $24, $25
+    sw $24, -48($fp)
+    lw $24, -48($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -56
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 60
+    jal func_5
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 64
+    lw $24, -8($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -52($fp)
+    lw $24, -52($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -4($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -56
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 60
+    jal func_5
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 64
+    jr $ra
+
+
+func_6:
+    lw $24, -8($fp)
+    li $25, 43
+    seq $24, $24, $25
+    sw $24, -12($fp)
+    lw $24, -12($fp)
+    beq $24, $0, label_12
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    addu $24, $24, $25
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    move $2, $24
+    jr $ra
+    j label_11
+    label_12:
+    lw $24, -8($fp)
+    li $25, 45
+    seq $24, $24, $25
+    sw $24, -20($fp)
+    lw $24, -20($fp)
+    beq $24, $0, label_13
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    subu $24, $24, $25
+    sw $24, -24($fp)
+    lw $24, -24($fp)
+    move $2, $24
+    jr $ra
+    j label_11
+    label_13:
+    lw $24, -8($fp)
+    li $25, 42
+    seq $24, $24, $25
+    sw $24, -28($fp)
+    lw $24, -28($fp)
+    beq $24, $0, label_14
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    mul $24, $24, $25
+    sw $24, -32($fp)
+    lw $24, -32($fp)
+    move $2, $24
+    jr $ra
+    j label_11
+    label_14:
+    lw $24, -8($fp)
+    li $25, 47
+    seq $24, $24, $25
+    sw $24, -36($fp)
+    lw $24, -36($fp)
+    beq $24, $0, label_15
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    div $24, $24, $25
+    sw $24, -40($fp)
+    lw $24, -40($fp)
+    move $2, $24
+    jr $ra
+    j label_11
+    label_15:
+    label_11:
+    li $24, 0
+    move $2, $24
+    jr $ra
+    jr $ra
+
+
+func_7:
+    li $24, 0
+    sw $24, -12($fp)
+    lw $24, -8($fp)
+    li $25, 1
+    seq $24, $24, $25
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    beq $24, $0, label_17
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    slt $24, $24, $25
+    sw $24, -20($fp)
+    lw $24, -20($fp)
+    beq $24, $0, label_18
+    li $24, 1
+    sw $24, -12($fp)
+    label_18:
+    j label_16
+    label_17:
+    lw $24, -8($fp)
+    li $25, 2
+    seq $24, $24, $25
+    sw $24, -24($fp)
+    lw $24, -24($fp)
+    beq $24, $0, label_19
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    sle $24, $24, $25
+    sw $24, -28($fp)
+    lw $24, -28($fp)
+    beq $24, $0, label_20
+    li $24, 1
+    sw $24, -12($fp)
+    label_20:
+    j label_16
+    label_19:
+    lw $24, -8($fp)
+    li $25, 3
+    seq $24, $24, $25
+    sw $24, -32($fp)
+    lw $24, -32($fp)
+    beq $24, $0, label_21
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    sgt $24, $24, $25
+    sw $24, -36($fp)
+    lw $24, -36($fp)
+    beq $24, $0, label_22
+    li $24, 1
+    sw $24, -12($fp)
+    label_22:
+    j label_16
+    label_21:
+    lw $24, -8($fp)
+    li $25, 4
+    seq $24, $24, $25
+    sw $24, -40($fp)
+    lw $24, -40($fp)
+    beq $24, $0, label_23
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    sge $24, $24, $25
+    sw $24, -44($fp)
+    lw $24, -44($fp)
+    beq $24, $0, label_24
+    li $24, 1
+    sw $24, -12($fp)
+    label_24:
+    j label_16
+    label_23:
+    lw $24, -8($fp)
+    li $25, 5
+    seq $24, $24, $25
+    sw $24, -48($fp)
+    lw $24, -48($fp)
+    beq $24, $0, label_25
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    sne $24, $24, $25
+    sw $24, -52($fp)
+    lw $24, -52($fp)
+    beq $24, $0, label_26
+    li $24, 1
+    sw $24, -12($fp)
+    label_26:
+    j label_16
+    label_25:
+    lw $24, -8($fp)
+    li $25, 6
+    seq $24, $24, $25
+    sw $24, -56($fp)
+    lw $24, -56($fp)
+    beq $24, $0, label_27
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    seq $24, $24, $25
+    sw $24, -60($fp)
+    lw $24, -60($fp)
+    beq $24, $0, label_28
+    li $24, 1
+    sw $24, -12($fp)
+    label_28:
+    j label_16
+    label_27:
+    label_16:
+    lw $24, -12($fp)
+    move $2, $24
+    jr $ra
+    jr $ra
+
+
+func_8:
+    label_29:
+    lw $24, -0($fp)
+    lw $25, -4($fp)
+    slt $24, $24, $25
+    sw $24, -12($fp)
+    lw $24, -12($fp)
+    beq $24, $0, label_30
+    lw $25, -0($fp)
+    sll $24, $25, 2
+    lb $24, global_var+808($24)
+    sw $24, -16($fp)
+    lw $24, -16($fp)
+    sw $24, -8($fp)
+    lw $25, -4($fp)
+    sll $24, $25, 2
+    lb $24, global_var+808($24)
+    sw $24, -20($fp)
+    lw $24, -0($fp)
+    lw $25, -20($fp)
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    lw $24, -4($fp)
+    lw $25, -8($fp)
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    lw $24, -0($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -24($fp)
+    lw $24, -24($fp)
+    sw $24, -0($fp)
+    lw $24, -4($fp)
+    li $25, 1
+    subu $24, $24, $25
+    sw $24, -28($fp)
+    lw $24, -28($fp)
+    sw $24, -4($fp)
+    j label_29
+    label_30:
+    jr $ra
+
+
+func_9:
+    li $24, 5
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -24
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_3
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    move $24, $2
+    sw $24, -32($fp)
+    li $24, 5
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -24
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_3
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    move $24, $2
+    sw $24, -36($fp)
+    lw $24, -32($fp)
+    lw $25, -36($fp)
+    addu $24, $24, $25
+    sw $24, -40($fp)
+    li $24, 10
+    lw $25, -40($fp)
+    addu $24, $24, $25
+    sw $24, -44($fp)
+    li $24, 9
+    lw $25, -44($fp)
+    addu $24, $24, $25
+    sw $24, -48($fp)
+    li $24, 8
+    lw $25, -48($fp)
+    addu $24, $24, $25
+    sw $24, -52($fp)
+    li $24, 7
+    lw $25, -52($fp)
+    addu $24, $24, $25
+    sw $24, -56($fp)
+    li $24, 6
+    lw $25, -56($fp)
+    addu $24, $24, $25
+    sw $24, -60($fp)
+    li $24, 5
+    lw $25, -60($fp)
+    addu $24, $24, $25
+    sw $24, -64($fp)
+    li $24, 7
+    lw $25, -64($fp)
+    addu $24, $24, $25
+    sw $24, -68($fp)
+    li $24, 2
+    lw $25, -68($fp)
+    addu $24, $24, $25
+    sw $24, -72($fp)
+    li $24, 1
+    lw $25, -72($fp)
+    addu $24, $24, $25
+    sw $24, -76($fp)
+    lw $24, -76($fp)
+    sw $24, -28($fp)
+    la $a0, str_0
+    li $v0, 4
+    syscall
+    lw $24, -28($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_1
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_2
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_3
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_4
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 95
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 120
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 120
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 88
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 88
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, -1024
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_5
+    li $v0, 4
+    syscall
+    li $24, 216
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_6
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_7
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $v0, 5
+    syscall
+    sw $v0, -12($fp)
+    la $a0, str_8
+    li $v0, 4
+    syscall
+    lw $24, -12($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_9
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $v0, 12
+    syscall
+    sw $v0, -24($fp)
+    la $a0, str_10
+    li $v0, 4
+    syscall
+    lw $24, -24($fp)
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_11
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $v0, 5
+    syscall
+    sw $v0, -4($fp)
+    li $v0, 5
+    syscall
+    sw $v0, -8($fp)
+    li $v0, 12
+    syscall
+    sw $v0, -24($fp)
+    la $a0, str_12
+    li $v0, 4
+    syscall
+    lw $24, -4($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_13
+    li $v0, 4
+    syscall
+    lw $24, -8($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_14
+    li $v0, 4
+    syscall
+    lw $24, -24($fp)
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_15
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 1
+    sw $24, -16($fp)
+    label_31:
+    lw $24, -16($fp)
+    li $25, 6
+    sle $24, $24, $25
+    sw $24, -80($fp)
+    lw $24, -80($fp)
+    beq $24, $0, label_32
+    li $24, 65
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 97
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -16($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -60
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 68
+    jal func_7
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 72
+    move $24, $2
+    sw $24, -84($fp)
+    lw $24, -84($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 97
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 97
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -16($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -60
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 68
+    jal func_7
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 72
+    move $24, $2
+    sw $24, -88($fp)
+    lw $24, -88($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 97
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 65
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -16($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -60
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 68
+    jal func_7
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 72
+    move $24, $2
+    sw $24, -92($fp)
+    lw $24, -92($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -16($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -96($fp)
+    lw $24, -96($fp)
+    sw $24, -16($fp)
+    j label_31
+    label_32:
+    la $a0, str_16
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, -56091
+    sw $24, -4($fp)
+    lw $24, -4($fp)
+    li $25, 1
+    mul $24, $24, $25
+    sw $24, -100($fp)
+    lw $24, -100($fp)
+    lw $25, -28($fp)
+    negu $24, $24
+    sw $24, -104($fp)
+    lw $24, -104($fp)
+    li $25, 0
+    addu $24, $24, $25
+    sw $24, -108($fp)
+    lw $24, -108($fp)
+    li $25, 123
+    div $24, $24, $25
+    sw $24, -112($fp)
+    lw $24, -112($fp)
+    sw $24, -8($fp)
+    la $a0, str_17
+    li $v0, 4
+    syscall
+    lw $24, -4($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_18
+    li $v0, 4
+    syscall
+    lw $24, -8($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -4($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 43
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -40
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_6
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -116($fp)
+    lw $24, -116($fp)
+    sw $24, -0($fp)
+    la $a0, str_19
+    li $v0, 4
+    syscall
+    lw $24, -0($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -4($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 45
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -40
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_6
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -120($fp)
+    lw $24, -120($fp)
+    sw $24, -0($fp)
+    la $a0, str_20
+    li $v0, 4
+    syscall
+    lw $24, -0($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -4($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 42
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -40
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_6
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -124($fp)
+    lw $24, -124($fp)
+    sw $24, -0($fp)
+    la $a0, str_21
+    li $v0, 4
+    syscall
+    lw $24, -0($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -4($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    lw $24, -8($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 47
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -40
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_6
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -128($fp)
+    la $a0, str_22
+    li $v0, 4
+    syscall
+    lw $24, -128($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_23
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    li $25, 72
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 1
+    li $25, 101
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 2
+    li $25, 108
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 3
+    li $25, 108
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 4
+    li $25, 111
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 5
+    li $25, 95
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 6
+    li $25, 49
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 7
+    li $25, 50
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    li $24, 8
+    li $25, 51
+    sll $24, $24, 2
+    sb $25, global_var+808($24)
+    la $a0, str_24
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    sw $24, -16($fp)
+    label_33:
+    lw $24, -16($fp)
+    li $25, 9
+    slt $24, $24, $25
+    sw $24, -132($fp)
+    lw $24, -132($fp)
+    beq $24, $0, label_34
+    lw $25, -16($fp)
+    sll $24, $25, 2
+    lb $24, global_var+808($24)
+    sw $24, -136($fp)
+    lw $24, -136($fp)
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -16($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -140($fp)
+    lw $24, -140($fp)
+    sw $24, -16($fp)
+    j label_33
+    label_34:
+    li $24, 0
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 8
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -32
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 36
+    jal func_8
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 40
+    la $a0, str_25
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    sw $24, -16($fp)
+    label_35:
+    lw $24, -16($fp)
+    li $25, 9
+    slt $24, $24, $25
+    sw $24, -144($fp)
+    lw $24, -144($fp)
+    beq $24, $0, label_36
+    lw $25, -16($fp)
+    sll $24, $25, 2
+    lb $24, global_var+808($24)
+    sw $24, -148($fp)
+    lw $24, -148($fp)
+    move $a0, $24
+    li $v0, 11
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -16($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -152($fp)
+    lw $24, -152($fp)
+    sw $24, -16($fp)
+    j label_35
+    label_36:
+    la $a0, str_26
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_27
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $v0, 5
+    syscall
+    sw $v0, global_var+0
+    li $v0, 5
+    syscall
+    sw $v0, global_var+4
+    lw $24, global_var+0
+    sw $24, -156($fp)
+    lw $24, -156($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -24
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 24
+    jal func_3
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 28
+    move $24, $2
+    sw $24, -160($fp)
+    la $a0, str_28
+    li $v0, 4
+    syscall
+    lw $24, -160($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    addiu $sp, $sp, -24
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 20
+    jal func_1
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 24
+    lw $24, global_var+4
+    sw $24, -164($fp)
+    lw $24, -164($fp)
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -48
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 48
+    jal func_2
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 52
+    move $24, $2
+    sw $24, -168($fp)
+    la $a0, str_29
+    li $v0, 4
+    syscall
+    lw $24, -168($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_30
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    la $a0, str_31
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    sw $24, -16($fp)
+    label_37:
+    lw $24, -16($fp)
+    li $25, 10
+    slt $24, $24, $25
+    sw $24, -172($fp)
+    lw $24, -172($fp)
+    beq $24, $0, label_38
+    li $v0, 5
+    syscall
+    sw $v0, -20($fp)
+    lw $24, -16($fp)
+    lw $25, -20($fp)
+    sll $24, $24, 2
+    sw $25, global_var+408($24)
+    lw $24, -16($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -176($fp)
+    lw $24, -176($fp)
+    sw $24, -16($fp)
+    j label_37
+    label_38:
+    li $24, 0
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    li $24, 9
+    addiu $sp, $sp, -4
+    sw $24, 0($sp)
+    addiu $sp, $sp, -56
+    sw $fp, 4($sp)
+    sw $ra, 0($sp)
+    addiu $fp, $sp, 60
+    jal func_5
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
+    addiu $sp, $sp, 64
+    la $a0, str_32
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    li $24, 0
+    sw $24, -16($fp)
+    label_39:
+    lw $24, -16($fp)
+    li $25, 10
+    slt $24, $24, $25
+    sw $24, -180($fp)
+    lw $24, -180($fp)
+    beq $24, $0, label_40
+    lw $25, -16($fp)
+    sll $24, $25, 2
+    lw $24, global_var+408($24)
+    sw $24, -184($fp)
+    lw $24, -184($fp)
+    move $a0, $24
+    li $v0, 1
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    lw $24, -16($fp)
+    li $25, 1
+    addu $24, $24, $25
+    sw $24, -188($fp)
+    lw $24, -188($fp)
+    sw $24, -16($fp)
+    j label_39
+    label_40:
+    la $a0, str_33
+    li $v0, 4
+    syscall
+    li $a0, 10
+    li $v0, 11
+    syscall
+    jr $ra
+    jr $ra

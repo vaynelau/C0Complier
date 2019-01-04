@@ -4,12 +4,13 @@
 #include <map>
 #include <set>
 #include <vector>
+#include "optimization.h"
 
 using namespace std;
 
 typedef enum {
     intcon, charcon, stringcon, //整数  字符  字符串
-    _plus_, _minus_, times, idiv, //+  -  *  /
+    plus_sy, minus_sy, times_sy, idiv_sy, //+  -  *  /
     eql, neq, gtr, geq, lss, leq, //==  !=  >  >=  <  <=
     lparent, rparent, lbracket, rbracket, lbrace, rbrace, //( ) [ ] { } 
     comma, semicolon, colon, becomes, //, ; : =  
@@ -36,11 +37,15 @@ typedef struct {//符号表元素
     int ref; //函数名：指向其在btab表中的指针值  
     int arrcnt; //数组元素个数
     int adr; // 变量、形参：在全局变量区或运行栈s中的相对地址；函数名：相应目标代码的入口地址；整型常量：对应数值；
+    int pos;
 } tabitem;
 
 typedef struct {
     int last, lastpar, psize, vsize;
     int start_blk, end_blk;
+    int n_tmpvar, n_localvar;
+    vector<vector<bool>> conflict_graph;
+    vector<reg> regs;
     /*
       last指向函数最后一个标识符在tab表中的位置；
       lastpar指向函数的最后一个参数在tab表中的位置；

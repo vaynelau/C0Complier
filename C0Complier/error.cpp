@@ -37,10 +37,10 @@ void skip(set<symbol> s)
     }
 }
 
-void skip2(set<symbol> s1, set<symbol> s2)
+void skip2(set<symbol> set1, set<symbol> set2)
 {
-    if (!s1.count(sy) && !s2.count(sy)) {
-        while (!s1.count(sy) && !s2.count(sy) && sy != eofsy) {
+    if (!set1.count(sy) && !set2.count(sy)) {
+        while (!set1.count(sy) && !set2.count(sy) && sy != eofsy) {
             insymbol();
         }
     }

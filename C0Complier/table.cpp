@@ -50,10 +50,10 @@ void tabs_init()
     //ksy["scanf"] = scanfsy;
     //ksy["printf"] = printfsy;
 
-    sps['+'] = _plus_;
-    sps['-'] = _minus_;
-    sps['*'] = times;
-    sps['/'] = idiv;
+    sps['+'] = plus_sy;
+    sps['-'] = minus_sy;
+    sps['*'] = times_sy;
+    sps['/'] = idiv_sy;
     sps['('] = lparent;
     sps[')'] = rparent;
     sps['['] = lbracket;

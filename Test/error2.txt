@@ -1,10 +1,10 @@
 const int _ = -0;
-const int __;
-const int _2 = 2, _2 = '3', neg5_ = -5;
-int N, n;
-const char add = '+', sub = '-', mul = '*', _div = '/'
+const int __=+0;
+const int _2 = 002, _PoS_3 = 3, neg5_ = -5;
+const char add = '%', sub = '-, mul = '*', _div = '/';
 const int MAX_FIBO = 100;
 
+int N, n;
 int fibo[100], num[100];
 
 void init_fibo()
@@ -48,7 +48,7 @@ void swap(int i, int j)
     return;
 }
 
-void sort(int left, int right
+void sort(int left, int right)
 {
     int i, j;
     if (left >= right) {
@@ -80,7 +80,7 @@ void main()
     printf("fibonacci 5 is ", fibonacci(5));
 
     printf("Test sort:");
-    printf("Please input 10 numbers:");
+    printf("Please input 10 numbers:);
     i = 0;
     while (i < 10) {
         num[i] = 5-i;

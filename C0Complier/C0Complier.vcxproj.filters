@@ -33,10 +33,13 @@
     <ClCompile Include="midcode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="mips.cpp">
+    <ClCompile Include="optimization.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="optimization.cpp">
+    <ClCompile Include="object_code_opt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="object_code.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,10 +59,10 @@
     <ClInclude Include="midcode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="mips.h">
+    <ClInclude Include="optimization.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="optimization.h">
+    <ClInclude Include="object_code.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

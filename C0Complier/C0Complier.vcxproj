@@ -123,12 +123,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="object_code.cpp" />
     <ClCompile Include="optimization.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="lexical_analysis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midcode.cpp" />
-    <ClCompile Include="mips.cpp" />
+    <ClCompile Include="object_code_opt.cpp" />
     <ClCompile Include="syntax_analysis.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>
@@ -137,7 +138,7 @@
     <ClInclude Include="error.h" />
     <ClInclude Include="lexical_analysis.h" />
     <ClInclude Include="midcode.h" />
-    <ClInclude Include="mips.h" />
+    <ClInclude Include="object_code.h" />
     <ClInclude Include="syntax_analysis.h" />
     <ClInclude Include="table.h" />
   </ItemGroup>

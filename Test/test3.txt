@@ -1,0 +1,47 @@
+char str[1000];
+
+void strrev(int i, int j)
+{
+    char c;
+    while (i < j) {
+        c = str[i];
+        str[i] = str[j];
+        str[j] = c;
+        i = i + 1;
+        j = j - 1;
+    }
+}
+
+
+void main()
+{
+    int
+    i;
+    
+    printf("Test strrev:");
+    str[0] = 'H';
+    str[1] = 'e';
+    str[2] = 'l';
+    str[3] = 'l';
+    str[4] = 'o';
+    str[5] = '_';
+    str[6] = '1';
+    str[7] = '2';
+    str[8] = '3';
+    printf("str before reverse:");
+    i = 0;
+    while (i < 9) {
+        printf(str[i]);
+        i = i + 1;
+    }
+    strrev(0, 8);
+    printf("str after reverse:");
+    i = 0;
+    while (i < 9) {
+        printf(str[i]);
+        i = i + 1;
+    }
+
+   
+    return;
+}

@@ -1,0 +1,66 @@
+const char add = '+', sub = '-', mul = '*', _div = '/';
+int a,b;
+
+int calculate(int a, int b, char op)
+{
+    switch (op) {
+        case '+': return (a + b);
+        case '-': return (a - b);
+        case '*': return (a * b);
+        case '/': return (a / b);
+    }
+    return (0);
+}
+
+
+int charcomp(char a, char b, int op)
+{
+    const int _true = 1, _false = 0;
+    int ret;
+    {
+        ret = _false;
+    };
+    switch (op) {
+        case 1: if((a)<(b)) ret = _true;
+        case 2: if((a)<=(b)) ret = _true;
+        case 3: if((a)>(b)) ret = _true;
+        case 4: if((a)>=(b)) ret = _true;
+        case 5: if((a)!=(b)) ret = _true;
+        case 6: if((a)==(b)) ret = _true;
+    }
+    return (ret);
+}
+
+
+void main()
+{   
+    int i;
+    int result;
+
+    printf("Test charcomp:");
+    i=1;
+    while(i<=6){
+        printf(charcomp('A', 'a', i));
+        printf(charcomp('a', 'a', i));
+        printf(charcomp('a', 'A', i));
+        i = i + 1;
+    }
+
+
+    printf("Test calculate:");
+    a = -123*456+-987/+321*(2-1);
+    b = (-a*1 + -0 * 156) / 123;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    printf("a: ", a);
+    printf("b: ", b);
+    
+    result = calculate(a, b, add);
+    printf("a b add: ", result);
+    result = calculate(a, b, sub);
+    printf("a b sub: ", result);
+    result = calculate(a, b, mul);
+    printf("a b mul: ", result);
+    printf("a b div: ", calculate(a, b, _div));
+    return;
+}

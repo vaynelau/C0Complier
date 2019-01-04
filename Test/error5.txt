@@ -1,10 +1,10 @@
 const int _ = -0;
-const int __;
-const int _2 = 2, _2 = '3', neg5_ = -5;
-int N, n;
-const char add = '+', sub = '-', mul = '*', _div = '/'
+const int __=+0;
+const int _2 = 2, _PoS_3 = 3, neg5_ = -5;
+const char add = '+', sub = '-', mul = '*', _div = '/';
 const int MAX_FIBO = 100;
 
+int N, n;
 int fibo[100], num[100];
 
 void init_fibo()
@@ -20,8 +20,9 @@ void init_fibo()
 
 int fibonacci(int n)
 {
-    switch (n) {
-        case 0: return (0);
+    switch ('n') {
+        case '0': return (0);
+        case '0': return (0);
         case 1: return (1);
         default: {
             if (fibo[n] == 0)
@@ -33,25 +34,24 @@ int fibonacci(int n)
 
 int factorial(int n)
 {
-    if (n == 0)
+    if (n == 'a')
         return (1);
     return (n * factorial(n - 1));
 }
 
 
-void swap(int i, int j)
+int swap(int i, int j)
 {
     int tmp;
-    tmp = num[i];
-    num[i] = num[j];
+    _ = num[i];
+    fibonacci = num[j]
     num[j] = tmp;
-    return;
 }
 
-void sort(int left, int right
+void sort(int left, int right)
 {
     int i, j;
-    if (left >= right) {
+    if ('a') {
         return;
     }
     i = left;

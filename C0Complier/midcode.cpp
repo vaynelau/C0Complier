@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <sstream>
 #include "midcode.h"
 #include "table.h"
 
@@ -41,6 +42,49 @@ void midcode_enter2(optyp op, int v1, int v2, int v3, int t1, int t2, int t3)
     midcode.push_back(item);
 }
 
+string int_to_str(int n)
+{
+    ostringstream stream;
+    stream << n;
+    return stream.str();
+}
+
+
+string to_str(int val, int typ)
+{
+    string str;
+    switch (typ) {
+    case _intcon:
+        str = int_to_str(val);
+        break;
+    case _charcon:
+        str = "'c'";
+        str[1] = (char)val;
+        break;
+    case _strcon:
+        str = "\"";
+        str += stab[val];
+        str += "\"";
+        break;
+    case _localvar:
+    case _globalvar:
+    case _arrvar:
+        str = tab[val].name;
+        break;
+    case _tmpvar:
+        str = "$t";
+        str += int_to_str(val);
+        break;
+    case _retval:
+        str = "RET";
+        break;
+    default:
+        str = "ERROR";
+        break;
+    }
+    return str;
+}
+
 
 void print_midcode(FILE *out, int index)
 {
@@ -72,7 +116,6 @@ void print_midcode(FILE *out, int index)
             fprintf(out, "array char %s %d\n", tab[item.v2].name.c_str(), item.v3);
         }
         break;
-
     case _funcdef:
         fprintf(out, "\n\n");
         if (item.v1 == ints) {
@@ -95,47 +138,51 @@ void print_midcode(FILE *out, int index)
         break;
 
     case _push:
-        fprintf(out, "push $t%d\n", item.v1);
+        fprintf(out, "push %s\n", to_str(item.v2, item.t2).c_str());
+        break;
+    case _push_scanf:
+        fprintf(out, "push %s\n", to_str(item.v1, item.t1).c_str());
         break;
     case _call:
+    case _std_call:
         fprintf(out, "call %s\n", tab[item.v1].name.c_str());
         break;
+
     case _ret:
-        if (item.v1 != -1) {
-            fprintf(out, "ret $t%d\n", item.v1);
+        if (item.t1 != -1) {
+            fprintf(out, "ret %s\n", to_str(item.v2, item.t2).c_str());
         }
         else {
             fprintf(out, "ret\n");
         }
         break;
+
     case _assign:
-        if (item.v2 == RET) {
-            fprintf(out, "$t%d = RET\n", item.v1);
-        }
-        else {
-            fprintf(out, "%s = $t%d\n", tab[item.v1].name.c_str(), item.v2);
-        }
+        fprintf(out, "%s = %s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str());
         break;
     case _arrassign:
-        fprintf(out, "%s[$t%d] = $t%d\n", tab[item.v1].name.c_str(), item.v2, item.v3);
+        fprintf(out, "%s[%s] = %s\n", tab[item.v1].name.c_str(), to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
-    case _conload:
-        if (item.v2 == ints) {
-            fprintf(out, "$t%d = %d\n", item.v1, item.v3);
-        }
-        else if (item.v2 == chars) {
-            fprintf(out, "$t%d = '%c'\n", item.v1, item.v3);
-        }
-        else {
-            fprintf(out, "$t%d = \"%s\"\n", item.v1, stab[item.v3].c_str());
-        }
-        break;
-    case _varload:
-        fprintf(out, "$t%d = %s\n", item.v1, tab[item.v2].name.c_str());
-        break;
+        /*
+        case _conload:
+            if (item.v2 == ints) {
+                fprintf(out, "$t%d = %d\n", item.v1, item.v3);
+            }
+            else if (item.v2 == chars) {
+                fprintf(out, "$t%d = '%c'\n", item.v1, item.v3);
+            }
+            else {
+                fprintf(out, "$t%d = \"%s\"\n", item.v1, stab[item.v3].c_str());
+            }
+            break;
+        case _varload:
+            fprintf(out, "$t%d = %s\n", item.v1, tab[item.v2].name.c_str());
+            break;
+        */
     case _arrload:
-        fprintf(out, "$t%d = %s[$t%d]\n", item.v1, tab[item.v2].name.c_str(), item.v3);
+        fprintf(out, "%s = %s[%s]\n", to_str(item.v1, item.t1).c_str(), tab[item.v2].name.c_str(), to_str(item.v3, item.t3).c_str());
         break;
+
     case _label:
         fprintf(out, "label_%d:\n", item.v1);
         break;
@@ -145,43 +192,44 @@ void print_midcode(FILE *out, int index)
     case _bz:
         fprintf(out, "BZ label_%d\n", item.v1);
         break;
+
     case _neg:
-        fprintf(out, "$t%d = -$t%d\n", item.v1, item.v2);
+        fprintf(out, "%s = -%s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str());
         break;
     case _plus:
-        fprintf(out, "$t%d = $t%d + $t%d\n", item.v1, item.v2, item.v3);
+        fprintf(out, "%s = %s + %s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _minus:
-        fprintf(out, "$t%d = $t%d - $t%d\n", item.v1, item.v2, item.v3);
+        fprintf(out, "%s = %s - %s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _times:
-        fprintf(out, "$t%d = $t%d * $t%d\n", item.v1, item.v2, item.v3);
+        fprintf(out, "%s = %s * %s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _idiv:
-        fprintf(out, "$t%d = $t%d / $t%d\n", item.v1, item.v2, item.v3);
+        fprintf(out, "%s = %s / %s\n", to_str(item.v1, item.t1).c_str(), to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _eql:
-        fprintf(out, "$t%d == $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s == %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _neq:
-        fprintf(out, "$t%d != $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s != %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _gtr:
-        fprintf(out, "$t%d > $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s > %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _geq:
-        fprintf(out, "$t%d >= $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s >= %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _lss:
-        fprintf(out, "$t%d < $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s < %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
     case _leq:
-        fprintf(out, "$t%d <= $t%d\n", item.v2, item.v3);
+        fprintf(out, "%s <= %s\n", to_str(item.v2, item.t2).c_str(), to_str(item.v3, item.t3).c_str());
         break;
 
     default:
-        fprintf(out, "unknown midcode op: %d\n", item.op);
-        printf("unknown midcode op: %d\n", item.op);
+        fprintf(out, "ERROR: unknown midcode op: %d!\n", item.op);
+        printf("ERROR: unknown midcode op: %d\n!", item.op);
         break;
     }
 }
@@ -191,10 +239,22 @@ void print_midcodes()
 {
     FILE *out;
 
-    out = fopen("..\\midcode.txt", "w");
+    out = fopen("..\\16061175_刘卫_优化前中间代码.TXT", "w");
     for (int i = 0; i <= mx; i++) {
         print_midcode(out, i);
     }
     fclose(out);
-    printf("生成的中间代码已输出到midcode.txt文件中。\n");
+    printf("优化前的中间代码已输出到文件中。\n");
+}
+
+void print_midcodes_opt()
+{
+    FILE *out;
+
+    out = fopen("..\\16061175_刘卫_优化后中间代码.TXT", "w");
+    for (int i = 0; i <= mx; i++) {
+        print_midcode(out, i);
+    }
+    fclose(out);
+    printf("优化后的中间代码已输出到文件中。\n");
 }

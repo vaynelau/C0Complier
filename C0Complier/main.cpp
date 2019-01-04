@@ -9,7 +9,7 @@
 #include "table.h"
 #include "error.h"
 #include "midcode.h"
-#include "mips.h"
+#include "object_code.h"
 #include "optimization.h"
 using namespace std;
 
@@ -29,9 +29,11 @@ int main(void)
     lexcial_init();
     syntax_analysis();
     if (noerror) {
-        //print_midcodes();
-        //code_opt();
-        //gen_mips();
+        print_midcodes();
+        print_midcodes_opt();
+        code_opt();
+        gen_obj_code();
+        gen_obj_code_opt();
     }
     
     return 0;

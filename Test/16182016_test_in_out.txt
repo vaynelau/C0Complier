@@ -1,0 +1,28 @@
+输入：1
+输出： test_expression c=0 test_expression c=49 test_expression c=98
+输入：2
+输出： test_if output the less one output 2 test_while output a[0] a[1] a[2]:0  0  6 test_switch input one char:a or b 
+    输入：a  
+    输出：a 162
+
+    输入：b 
+    输出： b 164 
+
+输入：3
+输出： enter:
+    输入：ab 
+    输出： 65  66
+
+    输入：mg 
+    输出： 77  71
+
+输入：4
+输出： test_switch input one char:a or b     
+    输入：a 
+    输出： a 162  F
+
+     输入：b 
+    输出：  b 164  F
+
+输入：5
+输出：error input!@#$%%^&/|{[('')]}~

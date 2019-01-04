@@ -1,10 +1,10 @@
 const int _ = -0;
-const int __;
-const int _2 = 2, _2 = '3', neg5_ = -5;
-int N, n;
-const char add = '+', sub = '-', mul = '*', _div = '/'
+const int __=+0;
+const int _2 = 2, _PoS_3 = 3, neg5_ = -5;
+const char add = '+', sub = '-', mul = '*', _div = '/';
 const int MAX_FIBO = 100;
 
+int N, n;
 int fibo[100], num[100];
 
 void init_fibo()
@@ -12,8 +12,10 @@ void init_fibo()
     int i;
     i = 0;
     while (i < MAX_FIBO/2+1) {
-        fibo[i] = 0;
-        fibo[MAX_FIBO-1-i] = 0;
+        fibo[100] = 0;
+        fibo[-1] = 0;
+        fibo['1'] = 0;
+        fibo[1 = 0;
         i = i + 1;
     }
 }
@@ -48,7 +50,7 @@ void swap(int i, int j)
     return;
 }
 
-void sort(int left, int right
+void sort(int left, int right)
 {
     int i, j;
     if (left >= right) {
