@@ -23,6 +23,7 @@ void midcode_enter(optyp op, int v1, int v2, int v3)
     item.t2 = -1;
     item.t3 = -1;
     item.lev = b;
+    item.is_valid = true;
     midcode.push_back(item);
 }
 
@@ -39,6 +40,7 @@ void midcode_enter2(optyp op, int v1, int v2, int v3, int t1, int t2, int t3)
     item.t3 = t3;
 
     item.lev = b;
+    item.is_valid = true;
     midcode.push_back(item);
 }
 
@@ -253,7 +255,9 @@ void print_midcodes_opt()
 
     out = fopen("..\\16061175_刘卫_优化后中间代码.TXT", "w");
     for (int i = 0; i <= mx; i++) {
-        print_midcode(out, i);
+        if (midcode[i].is_valid) {
+            print_midcode(out, i);
+        }
     }
     fclose(out);
     printf("优化后的中间代码已输出到文件中。\n");

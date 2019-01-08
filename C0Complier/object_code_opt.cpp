@@ -11,13 +11,13 @@ using namespace std;
 
 
 optyp s6[] = {
-    _neg, _plus, _minus, _times, _idiv, //运算四元式
-    _eql, _neq, _gtr, _geq, _lss, _leq
+    _neg, _plus, _minus, _times, _idiv //运算四元式
 };
 set<optyp> opset6(s6, s6 + sizeof(s6) / sizeof(s6[0]));
-
-
-
+optyp s7[] = {
+    _eql, _neq, _gtr, _geq, _lss, _leq
+};
+set<optyp> opset7(s7, s7 + sizeof(s7) / sizeof(s7[0]));
 
 int get_v2_opt(FILE *out, int i, int func_x)
 {
@@ -86,6 +86,42 @@ int get_v3_opt(FILE *out, int i, int func_x)
     return v3;
 }
 
+
+int get_v3_opt2(FILE *out, int i, int func_x, int *iscon)
+{
+    int v3;
+    int reg_index, adr;
+    vector<reg> regs;
+    regs = btab[func_x].regs;
+    int vsize = btab[func_x].vsize;
+    int n_localvar = btab[func_x].n_localvar;
+
+    *iscon = 0;
+    if (midcode[i].t3 == _intcon || midcode[i].t3 == _charcon) {
+        *iscon = 1;
+        v3 = midcode[i].v3;
+    }
+    else {
+        if (midcode[i].t3 == _localvar) {
+            reg_index = tab[midcode[i].v3].pos;
+            adr = tab[midcode[i].v3].adr;
+        }
+        else {
+            reg_index = n_localvar + midcode[i].v3;
+            adr = vsize + midcode[i].v3 * 4;
+        }
+        if (regs[reg_index].kind == 2) {
+            v3 = regs[reg_index].num;
+        }
+        else {
+            fprintf(out, "    lw $25, -%d($fp)\n", adr);
+            v3 = 25;
+        }
+    }
+    return v3;
+}
+
+
 void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
 {
     int dsp, dfp;
@@ -99,18 +135,28 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
     vector<reg> regs;
     regs = btab[func_x].regs;
     string str;
+    int iscon, label;
 
     if (opset6.count(midcode[i].op)) {
         str = "ERROR";
+        v2 = get_v2_opt(out, i, func_x);
+        v3 = get_v3_opt2(out, i, func_x, &iscon);
+
         switch (midcode[i].op) {
         case _neg:
             str = "negu";
             break;
         case _plus:
             str = "addu";
+            if (iscon) {
+                str = "addiu";
+            }
             break;
         case _minus:
             str = "subu";
+            if (iscon) {
+                str = "subiu";
+            }
             break;
         case _times:
             str = "mul";
@@ -118,31 +164,12 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
         case _idiv:
             str = "div";
             break;
-        case _eql:
-            str = "seq";
-            break;
-        case _neq:
-            str = "sne";
-            break;
-        case _gtr:
-            str = "sgt";
-            break;
-        case _geq:
-            str = "sge";
-            break;
-        case _lss:
-            str = "slt";
-            break;
-        case _leq:
-            str = "sle";
-            break;
         default:
             str = "ERROR";
             break;
         }
 
-        v2 = get_v2_opt(out, i, func_x);
-        v3 = get_v3_opt(out, i, func_x);
+
 
         if (midcode[i].t1 == _globalvar) {
             v1 = 24;
@@ -168,7 +195,12 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
             fprintf(out, "    negu $%d, $%d\n", v1, v2);
         }
         else {
-            fprintf(out, "    %s $%d, $%d, $%d\n", str.c_str(), v1, v2, v3);
+            if (iscon) {
+                fprintf(out, "    %s $%d, $%d, %d\n", str.c_str(), v1, v2, v3);
+            }
+            else {
+                fprintf(out, "    %s $%d, $%d, $%d\n", str.c_str(), v1, v2, v3);
+            }
         }
 
         if (midcode[i].t1 == _globalvar) {
@@ -177,6 +209,47 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
         else if (regs[reg_index].kind != 2) {
             fprintf(out, "    sw $24, -%d($fp)\n", adr);
         }
+        return;
+    }
+
+
+    if (opset7.count(midcode[i].op)) {
+        str = "ERROR";
+        v2 = get_v2_opt(out, i, func_x);
+        v3 = get_v3_opt2(out, i, func_x, &iscon);
+
+        switch (midcode[i].op) {
+        case _eql:
+            str = "bne";
+            break;
+        case _neq:
+            str = "beq";
+            break;
+        case _gtr:
+            str = "ble";
+            break;
+        case _geq:
+            str = "blt";
+            break;
+        case _lss:
+            str = "bge";
+            break;
+        case _leq:
+            str = "bgt";
+            break;
+        default:
+            str = "ERROR";
+            break;
+        }
+        label = midcode[i + 1].v1;
+
+        if (iscon) {
+            fprintf(out, "    %s $%d, %d, label_%d\n", str.c_str(), v2, v3, label);
+        }
+        else {
+            fprintf(out, "    %s $%d, $%d, label_%d\n", str.c_str(), v2, v3, label);
+        }
+
         return;
     }
 
@@ -226,7 +299,7 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
 
     case _push:
         if (midcode[i].v1 != PRINTF) {
-            v2 = get_v2_opt(out,i, func_x);
+            v2 = get_v2_opt(out, i, func_x);
             fprintf(out, "    addiu $sp, $sp, -4\n");
             fprintf(out, "    sw $%d, 0($sp)\n", v2);
         }
@@ -277,49 +350,55 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
     case _call:
         dsp = btab[tab[midcode[i].v1].ref].vsize - btab[tab[midcode[i].v1].ref].psize + btab[tab[midcode[i].v1].ref].n_tmpvar * 4 + 8;
         dfp = btab[tab[midcode[i].v1].ref].vsize + btab[tab[midcode[i].v1].ref].n_tmpvar * 4 + 8 - 4;
+        if (!btab[tab[midcode[i].v1].ref].is_leaf) {
+            for (int j = 0; j < block_tab[blk_x].def1.size(); j++) {
+                if (regs[j].kind == 2 && (block_tab[blk_x].def1[j] || block_tab[blk_x].in1[j])) {
+                    if (j < n_localvar) {
+                        int k = btab[func_x].last;
+                        while (tab[k].pos != j) {
+                            k--;
+                        }
+                        fprintf(out, "    sw $%d, -%d($fp)\n", regs[j].num, tab[k].adr);
+                    }
+                    else {
+                        fprintf(out, "    sw $%d, -%d($fp)\n", regs[j].num, vsize + (j - n_localvar) * 4);
+
+                    }
+                }
+            }
+        }
+
         fprintf(out, "    addiu $sp, $sp, -%d\n", dsp);
         fprintf(out, "    sw $fp, 4($sp)\n");
         fprintf(out, "    sw $ra, 0($sp)\n");
-
-        for (int j = 0; j < block_tab[blk_x].def1.size(); j++) {
-            if (regs[j].kind == 2 && (block_tab[blk_x].def1[j] || block_tab[blk_x].in1[j])) {
-                if (j < n_localvar) {
-                    int k = btab[func_x].last;
-                    while (tab[k].pos != j) {
-                        k--;
-                    }
-                    fprintf(out, "    sw $%d, -%d($fp)\n", regs[j].num, tab[k].adr);
-                }
-                else {
-                    fprintf(out, "    sw $%d, -%d($fp)\n", regs[j].num, vsize + (j - n_localvar) * 4);
-                    
-                }
-            }
-        }
-
         fprintf(out, "    addiu $fp, $sp, %d\n", dfp);
         fprintf(out, "    jal func_%d\n", tab[midcode[i].v1].ref);
-        fprintf(out, "    lw $fp, 4($sp)\n");
-        fprintf(out, "    lw $ra, 0($sp)\n");
 
-        for (int j = 0; j < block_tab[blk_x].def1.size(); j++) {
-            if (regs[j].kind == 2 && (block_tab[blk_x].def1[j] || block_tab[blk_x].in1[j])) {
-                if (j < n_localvar) {
-                    int k = btab[func_x].last;
-                    while (tab[k].pos != j) {
-                        k--;
+        dsp = btab[tab[midcode[i].v1].ref].vsize + btab[tab[midcode[i].v1].ref].n_tmpvar * 4 + 8;
+        fprintf(out, "    lw $ra, 0($sp)\n");
+        fprintf(out, "    lw $fp, 4($sp)\n");
+        fprintf(out, "    addiu $sp, $sp, %d\n", dsp);
+
+        if (!btab[tab[midcode[i].v1].ref].is_leaf) { 
+            for (int j = 0; j < block_tab[blk_x].def1.size(); j++) {
+                if (regs[j].kind == 2 && (block_tab[blk_x].def1[j] || block_tab[blk_x].in1[j])) {
+                    if (j < n_localvar) {
+                        int k = btab[func_x].last;
+                        while (tab[k].pos != j) {
+                            k--;
+                        }
+                        fprintf(out, "    lw $%d, -%d($fp)\n", regs[j].num, tab[k].adr);
                     }
-                    fprintf(out, "    lw $%d, -%d($fp)\n", regs[j].num, tab[k].adr);
-                }
-                else {
-                    fprintf(out, "    lw $%d, -%d($fp)\n", regs[j].num, vsize + (j - n_localvar) * 4);
+                    else {
+                        fprintf(out, "    lw $%d, -%d($fp)\n", regs[j].num, vsize + (j - n_localvar) * 4);
+                    }
                 }
             }
         }
 
-        dsp = btab[tab[midcode[i].v1].ref].vsize + btab[tab[midcode[i].v1].ref].n_tmpvar * 4 + 8;
-        fprintf(out, "    addiu $sp, $sp, %d\n", dsp);
         break;
+
+
     case _ret:
         if (midcode[i].t2 != -1) {
             v2 = get_v2_opt(out, i, func_x);
@@ -437,8 +516,8 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
         fprintf(out, "    j label_%d\n", midcode[i].v1);
         break;
     case _bz:
-        v2 = get_v2_opt(out, i, func_x);
-        fprintf(out, "    beq $%d, $0, label_%d\n", v2, midcode[i].v1);
+        //v2 = get_v2_opt(out, i, func_x);
+        //fprintf(out, "    beq $%d, $0, label_%d\n", v2, midcode[i].v1);
         break;
     default:
         fprintf(out, "ERROR: unknown midcode op: %d!\n", midcode[i].op);
@@ -485,7 +564,9 @@ void gen_obj_code_opt()
 
         for (int j = btab[i].start_blk; j <= btab[i].end_blk; j++) {
             for (int k = block_tab[j].start; k <= block_tab[j].end; k++) {
-                gen_mips_opt(out, k, i, j);
+                if (midcode[k].is_valid) {
+                    gen_mips_opt(out, k, i, j);
+                }
             }
         }
     }

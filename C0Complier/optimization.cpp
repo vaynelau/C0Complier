@@ -193,6 +193,9 @@ void print_block()
             fprintf(out, "  block_%d:\n", j);
             for (int k = block_tab[j].start; k <= block_tab[j].end; k++) {
                 print_midcode(out, k);
+                if (j != btab[i].start_blk && block_tab[j].n_pre == 0) {
+                    midcode[k].is_valid = false;
+                }
             }
 
             fprintf(out, "  Ç°Çý: ");
@@ -240,6 +243,7 @@ void reg_alloc()
 {
     int n_reg = 3 + 8 + 8;
     FILE *out = fopen("../regs.txt", "w");
+    int reg_index = 0;
 
     for (int i = 1; i <= b; i++) {
         fprintf(out, "func_%d:\n", i);
@@ -248,6 +252,13 @@ void reg_alloc()
         //int n_para = btab[i].psize / 4;
         int n_tmpvar = btab[i].n_tmpvar;
         int sum = n_tmpvar + n_localvar;
+
+        if (btab[i].is_leaf) {
+            n_reg = 8;
+        }
+        else {
+            n_reg = 15;
+        }
 
         vector<reg> regs;
         btab[i].regs.resize(n_localvar + n_tmpvar);
@@ -288,7 +299,7 @@ void reg_alloc()
         }
 
         if (sum > 0) {
-            for (int j = graph.size()-1; j >=0 ; j--) {
+            for (int j = graph.size() - 1; j >= 0; j--) {
                 int cnt = 0;
                 for (int k = 0; k < graph[j].size(); k++) {
                     if (graph[j][k]) {
@@ -316,15 +327,32 @@ void reg_alloc()
                     set1.insert(btab[i].regs[l].num);
                 }
             }
-            for (int l = 5; l < 24; l++) {
-                if (!set1.count(l)) {
-                    btab[i].regs[k].kind = 2;
-                    btab[i].regs[k].num = l;
-                    break;
+            if (!btab[i].is_leaf) {
+                for (int l = 3; l < 19; l++) {
+                    if (l == 4) {
+                        continue;
+                    }
+                    if (!set1.count(l)) {
+                        btab[i].regs[k].kind = 2;
+                        btab[i].regs[k].num = l;
+                        break;
+                    }
+                }
+            }
+            else {
+                for (int l = 19; l < 29; l++) {
+                    if (l == 24 || l == 25) {
+                        continue;
+                    }
+                    if (!set1.count(l)) {
+                        btab[i].regs[k].kind = 2;
+                        btab[i].regs[k].num = l;
+                        break;
+                    }
                 }
             }
         }
-        
+
         for (int j = 0; j < btab[i].regs.size(); j++) {
             fprintf(out, "    var_%d kind: %d reg: $%d\n", j, btab[i].regs[j].kind, btab[i].regs[j].num);
         }

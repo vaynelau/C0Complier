@@ -14,6 +14,7 @@ using namespace std;
 int dx, prt;
 //int prmx;
 bool retflag;
+bool is_leaf_func;
 int labelx;
 int conindexflag;
 int arrindex;
@@ -631,29 +632,19 @@ void ifstatement()
             if (dtyp2 != ints) {
                 error(47); //关系运算符右侧表达式类型不为整型
             }
-            if (otyp1 == _intcon && otyp2 == _intcon) {
-                switch (op) {
-                case _eql:ret1 = (ret1 == ret2); break;
-                case _neq:ret1 = (ret1 != ret2); break;
-                case _gtr:ret1 = (ret1 > ret2); break;
-                case _geq:ret1 = (ret1 >= ret2); break;
-                case _lss:ret1 = (ret1 < ret2); break;
-                case _leq:ret1 = (ret1 <= ret2); break;
-                default:
-                    break;
-                }
-            }
-            else {
-                midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
-                otyp1 = _tmpvar;
-                ret1 = tmpindex;
-            }
+
+            midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
+            otyp1 = _tmpvar;
+            ret1 = tmpindex;
 
         }
         else {
             if (dtyp1 != ints) {
                 error(28); //条件表达式的类型不为整型
             }
+            midcode_enter2(_neq, ++tmpindex, ret1, 0, _tmpvar, otyp1, _intcon);
+            otyp1 = _tmpvar;
+            ret1 = tmpindex;
         }
 
         if (sy == rparent) {
@@ -707,28 +698,19 @@ void whilestatement()
             if (dtyp2 != ints) {
                 error(47); //关系运算符右侧表达式类型不为整型
             }
-            if (otyp1 == _intcon && otyp2 == _intcon) {
-                switch (op) {
-                case _eql:ret1 = (ret1 == ret2); break;
-                case _neq:ret1 = (ret1 != ret2); break;
-                case _gtr:ret1 = (ret1 > ret2); break;
-                case _geq:ret1 = (ret1 >= ret2); break;
-                case _lss:ret1 = (ret1 < ret2); break;
-                case _leq:ret1 = (ret1 <= ret2); break;
-                default:
-                    break;
-                }
-            }
-            else {
-                midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
-                otyp1 = _tmpvar;
-                ret1 = tmpindex;
-            }
+
+            midcode_enter2(op, ++tmpindex, ret1, ret2, _tmpvar, otyp1, otyp2);
+            otyp1 = _tmpvar;
+            ret1 = tmpindex;
+
         }
         else {
             if (dtyp1 != ints) {
                 error(28); //条件表达式的类型不为整型
             }
+            midcode_enter2(_neq, ++tmpindex, ret1, 0, _tmpvar, otyp1, _intcon);
+            otyp1 = _tmpvar;
+            ret1 = tmpindex;
         }
         if (sy == rparent) {
             insymbol();
@@ -1021,7 +1003,9 @@ int funccall(int i)
     operandtyp otyp;
     symbol s[] = { comma, rparent };
     set<symbol> sys(s, s + sizeof(s) / sizeof(s[0]));
-
+    
+    is_leaf_func = false;
+    
     insymbol();
     if (sy == lparent) {
         insymbol();
@@ -1234,6 +1218,9 @@ int paralist()
                 insymbol(); //参数表为空
                 return 0;
             }
+            else if (sy == lbrace) {
+                break;
+            }
         }
         if (sy == intsy || sy == charsy) {
             typ = (sy == intsy) ? ints : chars;
@@ -1277,7 +1264,7 @@ bool funcdef(datatyp typ, string name)
     int n_paras;
 
     n_localvar = 0;
-
+    is_leaf_func = true;
     tmpindex = -1;
     btab_enter();
     tab_enter(name, function, typ, 0);
@@ -1319,7 +1306,7 @@ bool funcdef(datatyp typ, string name)
     midcode_enter(_ret, -1, -1, -1);
     btab[b].n_tmpvar = tmpindex + 1;
     btab[b].n_localvar = n_localvar;
-
+    btab[b].is_leaf = is_leaf_func;
     if (name == "main") {
         return true;
     }

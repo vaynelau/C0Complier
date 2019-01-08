@@ -28,6 +28,7 @@ typedef struct {
     int v1, v2, v3;
     int t1, t2, t3; 
     int lev;
+    bool is_valid;
 } midcodeitem;
 
 extern vector<midcodeitem> midcode;

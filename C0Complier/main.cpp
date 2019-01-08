@@ -30,9 +30,9 @@ int main(void)
     syntax_analysis();
     if (noerror) {
         print_midcodes();
-        print_midcodes_opt();
         code_opt();
         gen_obj_code();
+        print_midcodes_opt();
         gen_obj_code_opt();
     }
     

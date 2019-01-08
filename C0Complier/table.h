@@ -44,6 +44,7 @@ typedef struct {
     int last, lastpar, psize, vsize;
     int start_blk, end_blk;
     int n_tmpvar, n_localvar;
+    bool is_leaf;
     vector<vector<bool>> conflict_graph;
     vector<reg> regs;
     /*

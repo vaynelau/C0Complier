@@ -8,7 +8,7 @@ int N, n;
 int fibo[100], num[100];
 char str[1000];
 
-void init_fibo()
+void init_fibo(
 {
     int i;
     i = 0;
