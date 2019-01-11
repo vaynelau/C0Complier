@@ -241,7 +241,7 @@ void print_midcodes()
 {
     FILE *out;
 
-    out = fopen("..\\16061175_刘卫_优化前中间代码.TXT", "w");
+    out = fopen("..\\优化前中间代码.TXT", "w");
     for (int i = 0; i <= mx; i++) {
         print_midcode(out, i);
     }
@@ -253,7 +253,7 @@ void print_midcodes_opt()
 {
     FILE *out;
 
-    out = fopen("..\\16061175_刘卫_优化后中间代码.TXT", "w");
+    out = fopen("..\\优化后中间代码.TXT", "w");
     for (int i = 0; i <= mx; i++) {
         if (midcode[i].is_valid) {
             print_midcode(out, i);

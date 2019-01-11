@@ -347,7 +347,7 @@ void gen_obj_code()
     int dsp;
     FILE *out;
 
-    out = fopen("..\\16061175_刘卫_优化前目标代码.TXT", "w");
+    out = fopen("..\\优化前目标代码.TXT", "w");
     fprintf(out, ".data\n");
     fprintf(out, "    global_var: .space %d\n", btab[0].vsize);
     for (int i = 0; i <= sx; i++) {
