@@ -135,9 +135,9 @@ void error(int n)
     case 26:
         puts("缺少左小括号");
         break;
-    //case 27:
-    //    puts("关系运算符两侧表达式类型不一致");
-    //    break;
+        //case 27:
+        //    puts("关系运算符两侧表达式类型不一致");
+        //    break;
     case 28:
         puts("条件表达式的类型不为整型");
         break;
@@ -201,9 +201,9 @@ void error(int n)
     case 48:
         puts("main函数定义不规范");
         break;
-    case 49:
-        puts("缺少逗号分隔符");
-        break;
+        //case 49:
+        //    puts("缺少逗号分隔符");
+        //    break;
     default:
         puts("其他错误");
         break;

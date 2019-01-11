@@ -24,7 +24,7 @@ int get_v2(FILE *out, int i, int func_x)
     if (midcode[i].t2 == _intcon || midcode[i].t2 == _charcon) {
         fprintf(out, "    li $24, %d\n", midcode[i].v2);
     }
-    else {
+    else if (midcode[i].t2 != -1) {
         if (midcode[i].t2 == _localvar) {
             adr = tab[midcode[i].v2].adr;
         }
@@ -46,7 +46,7 @@ int get_v3(FILE *out, int i, int func_x)
         fprintf(out, "    li $25, %d\n", midcode[i].v3);
 
     }
-    else {
+    else if (midcode[i].t3 != -1) {
         if (midcode[i].t3 == _localvar) {
             adr = tab[midcode[i].v3].adr;
         }

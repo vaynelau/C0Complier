@@ -52,10 +52,6 @@ void constdef(bool isglobal)
                         tab[t].adr = sign * inum;
                         midcode_enter(_condef, ints, t, sign * inum);
                         insymbol();
-                        if (!sepsys.count(sy) && !sys.count(sy)) {
-                            error(49);
-                            skip2(sepsys, sys);
-                        }
                     }
                     else {
                         error(8);
@@ -85,10 +81,6 @@ void constdef(bool isglobal)
                         tab[t].adr = inum;
                         midcode_enter(_condef, chars, t, inum);
                         insymbol();
-                        if (!sepsys.count(sy) && !sys.count(sy)) {
-                            error(49);
-                            skip2(sepsys, sys);
-                        }
                     }
                     else {
                         error(8);
@@ -118,6 +110,7 @@ void constdef(bool isglobal)
     }
     else {
         error(13);
+        skip(sys);
     }
 }
 
@@ -151,10 +144,6 @@ void vardef(datatyp typ, string name, bool isglobal)
             insymbol();
             if (sy == rbracket) {
                 insymbol();
-                if (!sepsys.count(sy) && !sys.count(sy)) {
-                    error(49);
-                    skip2(sepsys, sys);
-                }
             }
             else {
                 error(12);//缺少右中括号
@@ -174,10 +163,6 @@ void vardef(datatyp typ, string name, bool isglobal)
         //dx += (dtyp == ints) ? 4 : 1;
         dx += 4;
         n_localvar += 1;
-        if (!sepsys.count(sy) && !sys.count(sy)) {
-            error(49);
-            skip2(sepsys, sys);
-        }
     }
     else {
         error(6); //变量无标识符
@@ -205,10 +190,6 @@ void vardef(datatyp typ, string name, bool isglobal)
                     insymbol();
                     if (sy == rbracket) {
                         insymbol();
-                        if (!sepsys.count(sy) && !sys.count(sy)) {
-                            error(49);
-                            skip2(sepsys, sys);
-                        }
                     }
                     else {
                         error(12);//缺少右中括号
@@ -228,10 +209,6 @@ void vardef(datatyp typ, string name, bool isglobal)
                 //dx += (dtyp == ints) ? 4 : 1;
                 dx += 4;
                 n_localvar += 1;
-                if (!sepsys.count(sy) && !sys.count(sy)) {
-                    error(49);
-                    skip2(sepsys, sys);
-                }
             }
         }
         else {
@@ -245,6 +222,7 @@ void vardef(datatyp typ, string name, bool isglobal)
     }
     else {
         error(13);
+        skip(sys);
     }
 }
 
@@ -914,10 +892,6 @@ void stdfunccall()
                     otyp = (tab[i].lev == 0) ? _globalvar : _localvar;
                     midcode_enter2(_push_scanf, i, -1, -1, otyp, -1, -1);
                     insymbol();
-                    if (!sys.count(sy) && !statskipsys.count(sy)) {
-                        error(49);
-                        skip2(sys, statskipsys);
-                    }
                 }
                 else {
                     error(6);
@@ -1024,10 +998,6 @@ int funccall(int i)
                 }
                 midcode_enter2(_push, -1, ret, -1, -1, otyp, -1);
             }
-            if (!sys.count(sy) && !statskipsys.count(sy)) {
-                error(49);
-                skip2(sys, statskipsys);
-            }
 
             while (sy == comma) {
                 insymbol();
@@ -1044,10 +1014,6 @@ int funccall(int i)
                         error(35); //实参与形参类型不一致
                     }
                     midcode_enter2(_push, -1, ret, -1, -1, otyp, -1);
-                }
-                if (!sys.count(sy) && !statskipsys.count(sy)) {
-                    error(49);
-                    skip2(sys, statskipsys);
                 }
             }
         }
@@ -1233,10 +1199,6 @@ int paralist()
                 n_localvar += 1;
                 paracnt++;
                 insymbol();
-                if (!procbegsys.count(sy) && !sys.count(sy)) {
-                    error(49);
-                    skip2(sys, procbegsys); // , )  {
-                }
             }
             else {
                 error(6); //缺少参数名标识符
@@ -1254,6 +1216,9 @@ int paralist()
     }
     else {
         error(14);
+        sys.erase(comma);
+        sys.erase(rparent);
+        skip2(sys, procbegsys); // , )  { 
     }
     return paracnt;
 }

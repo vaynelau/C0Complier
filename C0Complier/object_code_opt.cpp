@@ -21,7 +21,7 @@ set<optyp> opset7(s7, s7 + sizeof(s7) / sizeof(s7[0]));
 
 int get_v2_opt(FILE *out, int i, int func_x)
 {
-    int v2;
+    int v2 = 0;
     int reg_index, adr;
     vector<reg> regs;
     regs = btab[func_x].regs;
@@ -32,7 +32,7 @@ int get_v2_opt(FILE *out, int i, int func_x)
         fprintf(out, "    li $24, %d\n", midcode[i].v2);
         v2 = 24;
     }
-    else {
+    else if (midcode[i].t2 != -1) {
         if (midcode[i].t2 == _localvar) {
             reg_index = tab[midcode[i].v2].pos;
             adr = tab[midcode[i].v2].adr;
@@ -55,7 +55,7 @@ int get_v2_opt(FILE *out, int i, int func_x)
 
 int get_v3_opt(FILE *out, int i, int func_x)
 {
-    int v3;
+    int v3 = 0;
     int reg_index, adr;
     vector<reg> regs;
     regs = btab[func_x].regs;
@@ -66,7 +66,7 @@ int get_v3_opt(FILE *out, int i, int func_x)
         fprintf(out, "    li $25, %d\n", midcode[i].v3);
         v3 = 25;
     }
-    else {
+    else if (midcode[i].t3 != -1) {
         if (midcode[i].t3 == _localvar) {
             reg_index = tab[midcode[i].v3].pos;
             adr = tab[midcode[i].v3].adr;
@@ -89,7 +89,7 @@ int get_v3_opt(FILE *out, int i, int func_x)
 
 int get_v3_opt2(FILE *out, int i, int func_x, int *iscon)
 {
-    int v3;
+    int v3 = 0;
     int reg_index, adr;
     vector<reg> regs;
     regs = btab[func_x].regs;
@@ -101,7 +101,7 @@ int get_v3_opt2(FILE *out, int i, int func_x, int *iscon)
         *iscon = 1;
         v3 = midcode[i].v3;
     }
-    else {
+    else if (midcode[i].t3 != -1) {
         if (midcode[i].t3 == _localvar) {
             reg_index = tab[midcode[i].v3].pos;
             adr = tab[midcode[i].v3].adr;
@@ -379,7 +379,7 @@ void gen_mips_opt(FILE *out, int i, int func_x, int blk_x)
         fprintf(out, "    lw $fp, 4($sp)\n");
         fprintf(out, "    addiu $sp, $sp, %d\n", dsp);
 
-        if (!btab[tab[midcode[i].v1].ref].is_leaf) { 
+        if (!btab[tab[midcode[i].v1].ref].is_leaf) {
             for (int j = 0; j < block_tab[blk_x].def1.size(); j++) {
                 if (regs[j].kind == 2 && (block_tab[blk_x].def1[j] || block_tab[blk_x].in1[j])) {
                     if (j < n_localvar) {

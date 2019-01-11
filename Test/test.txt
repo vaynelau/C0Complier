@@ -1,22 +1,23 @@
-const int _ = -0;
+const int _ = -100000;
 const int __=+0;
 const int _2 = 2, _PoS_3 = 3, neg5_ = -5;
 const char add = '+', sub = '-', mul = '*', _div = '/';
 const int MAX_FIBO = 100;
-
+int i;
 int N, n;
 int fibo[100], num[100];
 char str[1000];
 
-void init_fibo(
+int init_fibo()
 {
-    int i;
+    
     i = 0;
     while (i < MAX_FIBO/2+1) {
-        fibo[i] = 0;
+        fibo[i] = -i;
         fibo[MAX_FIBO-1-i] = 0;
         i = i + 1;
     }
+    return (0);
 }
 
 int fibonacci(int n)
